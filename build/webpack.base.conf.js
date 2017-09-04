@@ -29,7 +29,7 @@ module.exports = {
   },
   module: {
     rules: [
-      {
+      /*{
         test: /\.(js|vue)$/,
         loader: 'eslint-loader',
         enforce: 'pre',
@@ -37,7 +37,7 @@ module.exports = {
         options: {
           formatter: require('eslint-friendly-formatter')
         }
-      },
+      },*/
       {
         test: /\.vue$/,
         loader: 'vue-loader',
@@ -49,8 +49,17 @@ module.exports = {
         include: [resolve('src'), resolve('test')]
       },
       {
+        test: /\.svg$/,
+        loader: 'svg-sprite-loader',
+        include: [resolve('src/assets/icons')],
+        options: {
+          symbolId: 'icon-[name]'
+        }
+      },
+      {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         loader: 'url-loader',
+        exclude: [resolve('src/assets/icons')],
         options: {
           limit: 10000,
           name: utils.assetsPath('img/[name].[hash:7].[ext]')

@@ -6,8 +6,8 @@
       </div>
       <div class="top_bx right">
         <!--如果没有登录-->
-        <span class="svg-container"><icon-svg iconClass="user"/></span><a href="http://zwfw.itl.gov.cn:8080/web/login.html">登录</a><em>|</em>
-        <a href="http://zwfw.itl.gov.cn:8080/web/register.html">注册</a><em></em>
+        <span class="svg-container"><icon-svg iconClass="user"/></span><router-link :to="{path: '/login'}">登录</router-link> <em>|</em>
+        <router-link :to="{path: '/register'}">注册</router-link><em></em>
         <!--<a href="javascript:void(0)">分享</a>-->
       </div>
     </div>

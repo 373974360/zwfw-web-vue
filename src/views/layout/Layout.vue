@@ -1,8 +1,9 @@
 <template>
   <div class="app-wrapper">
     <top></top>
+    <navbar></navbar>
     <div class="main-container">
-      <navbar></navbar>
+      <search></search>
       <app-main></app-main>
     </div>
     <foot></foot>
@@ -10,7 +11,7 @@
 </template>
 
 <script>
-  import { Top, Foot, Navbar, AppMain } from '../layout'
+  import { Top, Foot, Navbar, Search, AppMain } from '../layout'
 
   export default {
     name: 'layout',
@@ -18,6 +19,7 @@
       Top,
       Foot,
       Navbar,
+      Search,
       AppMain
     }
   }
@@ -25,4 +27,17 @@
 
 <style rel="stylesheet/scss" lang="scss" scoped="">
   @import "../../styles/mixin.scss";
+
+  .app-wrapper {
+    @include clearfix;
+    position: relative;
+    height: 100%;
+    width: 100%;
+    .main-container {
+      background: #f1f2f3;
+      margin: 0 auto;
+      padding: 12px 0 18px 0;
+      min-width: 1154px;
+    }
+  }
 </style>

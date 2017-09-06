@@ -2,7 +2,7 @@
   <div class="top">
     <div class="topmn">
       <div class="top_bx left">
-        <span class="svg-container"><icon-svg iconClass="computer2"/></span><a href="http://www.itl.gov.cn/" target="_blank">西安国际港务区门户网站</a>
+        <span class="svg-container"><icon-svg iconClass="computer"/></span><a href="http://www.itl.gov.cn/" target="_blank">西安国际港务区门户网站</a>
       </div>
       <div class="top_bx right">
         <!--如果没有登录-->

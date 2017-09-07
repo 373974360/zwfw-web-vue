@@ -2,17 +2,17 @@
   <div>
     <div class="banner"></div>
     <div class="navbar-container">
-      <el-menu class="navbar" mode="horizontal" theme="dark">
-        <el-menu-item>
+      <el-menu class="navbar" mode="horizontal" theme="dark" router="true">
+        <el-menu-item index="/login">
           <span>首页</span>
         </el-menu-item>
-        <el-menu-item>
+        <el-menu-item index="/once">
           <span>最多跑一次</span>
         </el-menu-item>
-        <el-menu-item>
+        <el-menu-item index="/fta">
           <span>自贸区一站式服务</span>
         </el-menu-item>
-        <el-menu-item>
+        <el-menu-item index="/guide">
           <span>办事指南</span>
         </el-menu-item>
         <el-menu-item>
@@ -34,6 +34,7 @@
 <style rel="stylesheet/scss" lang="scss">
   .banner {
     height: 124px;
+    background: url(../../assets/img/banner.png) top center no-repeat;;
   }
   .navbar-container {
     height: 45px;

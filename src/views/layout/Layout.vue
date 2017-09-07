@@ -4,7 +4,9 @@
     <navbar></navbar>
     <div class="main-container">
       <search></search>
-      <app-main></app-main>
+      <div class="main">
+        <app-main></app-main>
+      </div>
     </div>
     <foot></foot>
   </div>
@@ -25,7 +27,7 @@
   }
 </script>
 
-<style rel="stylesheet/scss" lang="scss" scoped="">
+<style rel="stylesheet/scss" lang="scss">
   @import "../../styles/mixin.scss";
 
   .app-wrapper {
@@ -38,6 +40,13 @@
       margin: 0 auto;
       padding: 12px 0 18px 0;
       min-width: 1154px;
+      .main {
+        width: 1156px;
+        margin: 0 auto;
+        padding: 12px;
+        border: 1px solid #e5e5e5;
+        background: #ffffff;
+      }
     }
   }
 </style>

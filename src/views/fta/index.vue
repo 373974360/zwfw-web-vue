@@ -2,8 +2,8 @@
   <el-row>
     <el-col :span="4">
       <div class="menu-title">
-        <div class="svg-container"><icon-svg iconClass="department"></icon-svg></div>
-        <div class="svg-text">按部门分类</div>
+        <div class="svg-container"><icon-svg iconClass="business"></icon-svg></div>
+        <div class="svg-text">按业务分类</div>
       </div>
       <el-menu class="category" mode="vertical">
         <template v-for="item in deptList">
@@ -22,9 +22,6 @@
               </p>
               <p class="p2">
                 办理机构：{{item.deptName}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;咨询电话：{{item.deptTel}}
-              </p>
-              <p class="p3">
-                <el-button type="primary">收藏</el-button>
               </p>
             </div>
           </li>
@@ -70,7 +67,7 @@
             {serviceId: 7, serviceName: '外商投资项目核准', deptName: '国土局', deptTel: '029-83332253'},
             {serviceId: 8, serviceName: '食品经营许可证注销', deptName: '国土局', deptTel: '029-83332253'},
           ]},
-          {deptId: 3, deptName: '统筹城乡发展工作局'},
+          {deptId: 3, deptName: '规划局'},
           {deptId: 4, deptName: '建设局'},
           {deptId: 5, deptName: '市容环保局'},
           {deptId: 6, deptName: '社会事业局'},
@@ -120,8 +117,7 @@
       height: 40px;
       line-height: 40px;
       font-size: 15px;
-      text-align: left;
-      padding-left: 36px !important;
+      text-align: center;
       border-bottom: 1px solid #e6e6e6;
     }
   }
@@ -143,12 +139,6 @@
           .p2 {
             font-size: 12px;
             color: #919191;
-          }
-          .p3 {
-            float: right;
-            position: absolute;
-            top: 16px;
-            right: 20px;
           }
         }
       }

@@ -15,7 +15,7 @@
       </div>
       <div class="dzjg">
         <a href="http://bszs.conac.cn/sitename?method=show&amp;id=0A9CA9CBC31744D1E053012819ACDD52">
-          <img src="../../assets/ico_net.png" class="dz"></a>
+          <img src="../../assets/img/ico_net.png" class="dz"></a>
       </div>
     </div>
   </div>

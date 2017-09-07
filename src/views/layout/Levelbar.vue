@@ -1,7 +1,7 @@
 <template>
   <div class="levelbar">
-    <span class="svg-container"><icon-svg iconClass="location"/></span>
-    <span>当前位置：</span>
+    <div class="svg-container"><icon-svg iconClass="location"/></div>
+    <div class="svg-text">当前位置：</div>
     <el-breadcrumb separator=">">
       <el-breadcrumb-item v-for="(item, index) in levelList" :key="item.path">
         <span v-if='item.redirect==="noredirect" || index==levelList.length-1' class="no-redirect">{{item.name}}</span>
@@ -45,17 +45,21 @@
 <style rel="stylesheet/scss" lang="scss">
   .levelbar {
     font-size: 14px;
-    color: #133188;
+    div {
+      float: left;
+      padding-left: 6px;
+    }
     .svg-container {
-      width: 30px;
-      padding: 1px 1px 1px 5px;
+      color: #29588c;
+      width: 22px;
+      line-height: 34px;
+    }
+    .svg-text {
+      line-height: 30px;
     }
     .el-breadcrumb {
-      display: inline-block;
+      line-height: 30px;
       font-size: 14px !important;
-    }
-    span {
-      line-height: 10px;
     }
   }
 </style>

@@ -19,9 +19,18 @@ export const constantRouterMap = [
     children: [
       {path: 'register', component: _import('login/register'), name: '注册', hidden: true},
       {path: 'retrieve', component: _import('login/retrieve'), name: '找回密码', hidden: true},
-      {path: 'guide', component: _import('guide/index'), name: '办事指南'},
       {path: 'fta', component: _import('fta/index'), name: '自贸区一站式服务'},
       {path: 'once', component: _import('once/index'), name: '最多跑一次'}
+    ]
+  },
+  {
+    path: '/guide',
+    component: Layout,
+    redirect: '/guide/index',
+    name: '办事指南',
+    children: [
+      {path: 'index', component: _import('guide/index')},
+      {path: 'detail', component: _import('guide/detail'), name: '详细'}
     ]
   }
 ]

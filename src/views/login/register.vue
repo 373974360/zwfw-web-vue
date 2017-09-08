@@ -226,7 +226,7 @@
       line-height: 40px;
       font-size: 12px;
       color: #8c8f91;
-      span {
+      .remind {
         color: red;
         font-weight: bold;
       }

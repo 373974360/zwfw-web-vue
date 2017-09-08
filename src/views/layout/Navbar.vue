@@ -34,7 +34,7 @@
 <style rel="stylesheet/scss" lang="scss">
   .banner {
     height: 124px;
-    background: url(../../assets/img/banner.png) top center no-repeat;;
+    background: url(../../assets/img/banner.png) top center no-repeat;
   }
   .navbar-container {
     height: 45px;
@@ -46,7 +46,7 @@
       margin: 0 auto;
       background: #3060cc;
       .el-menu-item {
-        color: #FFFFFF;
+        color: #ffffff;
         font-size: 16px;
         line-height: 45px;
       }

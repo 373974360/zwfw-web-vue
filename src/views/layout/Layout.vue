@@ -1,7 +1,8 @@
 <template>
   <div class="app-wrapper">
     <top></top>
-    <navbar></navbar>
+    <navbar2></navbar2>
+    <!--<navbar></navbar>-->
     <div class="main-container">
       <search></search>
       <div class="main">
@@ -13,7 +14,7 @@
 </template>
 
 <script>
-  import { Top, Foot, Navbar, Search, AppMain } from '../layout'
+  import { Top, Foot, Navbar, Navbar2, Search, AppMain } from '../layout'
 
   export default {
     name: 'layout',
@@ -21,6 +22,7 @@
       Top,
       Foot,
       Navbar,
+      Navbar2,
       Search,
       AppMain
     }

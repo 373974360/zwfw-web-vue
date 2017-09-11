@@ -10,4 +10,6 @@ export { default as Levelbar } from './Levelbar'
 
 export { default as Search } from './Search'
 
+export { default as Menubar } from './Menubar'
+
 export { default as AppMain} from './AppMain'

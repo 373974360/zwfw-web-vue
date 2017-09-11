@@ -1,38 +1,57 @@
 <template>
   <div class="banner2">
-    <div class="navbar-container">
-      <div class="navbar">
-        <el-button type="text">首页</el-button>
-        <el-button type="text">办事大厅</el-button>
-        <el-button type="text">个人中心</el-button>
-        <el-button type="text">消息</el-button>
+    <div class="navbar-container2">
+      <div class="navbar2">
+        <router-link :to="{path: '/'}">首&nbsp;&nbsp;&nbsp;页</router-link>
+        <router-link :to="{path: '/'}">办事大厅</router-link>
+        <router-link :to="{path: '/member'}">个人中心</router-link>
+        <router-link :to="{path: '/member'}">消&nbsp;&nbsp;&nbsp;息</router-link>
+        <el-input v-model="searchWords" icon="search" :on-icon-click="handleIconClick"/>
       </div>
     </div>
   </div>
 </template>
 
+<script>
+  export default {
+    data() {
+      return {
+        searchWords: ''
+      }
+    },
+    methods: {
+      handleIconClick() {}
+    }
+  }
+</script>
+
 <style rel="stylesheet/scss" lang="scss">
   .banner2 {
     height: 135px;
     background: url(../../assets/img/banner2.png) top center no-repeat;
-    .navbar-container {
+    .navbar-container2 {
       width: 1156px;
       height: 135px;
       margin: 0 auto;
       clear: both;
       overflow: hidden;
       position: relative;
-      .navbar {
+      .navbar2 {
         width: 700px;
         padding: 20px 0;
         position: absolute;
         right: 10px;
         top: 31px;
-        .el-button {
+        a {
           font-size: 18px;
           font-weight: bold;
           color: #ffffff;
           margin-left: 30px;
+          line-height: 40px;
+        }
+        .el-input {
+          width: 180px;
+          float: right;
         }
       }
     }

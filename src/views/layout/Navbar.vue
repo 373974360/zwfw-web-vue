@@ -2,7 +2,7 @@
   <div>
     <div class="banner"></div>
     <div class="navbar-container">
-      <el-menu class="navbar" mode="horizontal" theme="dark" router="true">
+      <el-menu class="navbar" mode="horizontal" theme="dark" router>
         <el-menu-item index="/login">
           <span>首页</span>
         </el-menu-item>
@@ -15,13 +15,13 @@
         <el-menu-item index="/guide">
           <span>办事指南</span>
         </el-menu-item>
-        <el-menu-item>
+        <el-menu-item index="/guide">
           <span>办事大厅</span>
         </el-menu-item>
-        <el-menu-item>
+        <el-menu-item index="/guide">
           <span>云服务</span>
         </el-menu-item>
-        <el-menu-item>
+        <el-menu-item index="/member">
           <span>我要查</span>
         </el-menu-item>
       </el-menu>

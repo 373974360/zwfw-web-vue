@@ -7,34 +7,34 @@
         <div class="login-container">
           <el-form class="login-form" ref="loginForm" :model="loginForm" :rules="loginRules" autoComplete="on" label-position="left">
             <div class="title">用户登录</div>
-            <el-form-item prop="username">
+            <el-form-item prop="loginName">
               <span class="svg-container"><icon-svg iconClass="user"/></span>
-              <el-input name="username" type="text" v-model="loginForm.username" autoComplete="on" placeholder="身份证号"/>
+              <el-input type="text" v-model="loginForm.loginName" autoComplete="on" placeholder="身份证号"/>
             </el-form-item>
             <el-form-item prop="password">
               <span class="svg-container"><icon-svg iconClass="password"/></span>
-              <el-input name="password" type="password" @keyup.enter.native="handleLogin" v-model="loginForm.password"
-                        autoComplete="on" placeholder="请输入密码"/>
+              <el-input type="password" @keyup.enter.native="handleLogin" v-model="loginForm.password" autoComplete="on"
+                        placeholder="请输入密码"/>
             </el-form-item>
             <el-row>
               <el-col :span="12">
-                <el-form-item prop="captcha">
+                <el-form-item prop="verifyCode">
                   <span class="svg-container"><icon-svg iconClass="captcha"/></span>
-                  <el-input name="captcha" type="text" @keyup.enter.native="handleLogin" v-model="loginForm.captcha" placeholder="验证码"/>
+                  <el-input type="text" @keyup.enter.native="handleLogin" v-model="loginForm.verifyCode" placeholder="验证码"/>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <img class="captcha" :src="loginForm.imgUrl" @click.self="changeCaptcha">
-                <span class="captcha2" @click.self="changeCaptcha">换一张</span>
+                <img class="captcha" :src="imgUrl" @click.self="changeVerifyCode">
+                <span class="captcha2" @click.self="changeVerifyCode">换一张</span>
               </el-col>
             </el-row>
             <el-checkbox v-model="loginForm.autoLogin">下次自动登录</el-checkbox>
             <el-button type="primary" style="width: 100%" :loading="loading" @click.native.prevent="handleLogin">登&nbsp;录</el-button>
             <div class="forget">
-              <el-button type="text" @click="retrieve">忘记密码？</el-button>
+              <router-link :to="{path: '/retrieve'}">忘记密码？</router-link>
             </div>
             <div class="sign-up">
-              <el-button type="text" @click="signUp">立即注册账号</el-button>
+              <router-link :to="{path: '/register'}">立即注册账号</router-link>
             </div>
           </el-form>
         </div>
@@ -46,6 +46,8 @@
 
 <script>
   import { Top, Foot, Navbar } from '../layout'
+  import { isIdCardNo } from '../../utils/validate'
+  import { validateVerifyCode } from '../../api/login'
 
   export default {
     name: 'login',
@@ -53,34 +55,67 @@
       Top, Foot, Navbar
     },
     data() {
+      const validateIdCard = (rule, value, callback) => {
+        if (!isIdCardNo(value)) {
+          callback(new Error('身份证号码格式不正确'))
+        } else {
+          callback()
+        }
+      }
+      const validateCaptcha = (rule, value, callback) => {
+        validateVerifyCode(value).then(response => {
+          console.log('校验成功')
+          callback()
+        }).catch(error => {
+          console.log(error)
+          callback(new Error('验证码不正确'))
+        })
+      }
       return {
         loginForm: {
-          username: '',
+          loginName: '',
           password: '',
-          captcha: '',
-          imgUrl: '',
-          autoLogin: false
+          verifyCode: '',
+          autoLogin: false,
         },
         loginRules: {
-          username: [{required: true, trigger: 'blur'}],
-          password: [{required: true, trigger: 'blur'}],
-          captcha: [{required: true, trigger: 'blur'}]
+          loginName: [
+            {required: true, message: '用户名不能为空', trigger: 'blur'},
+            {validator: validateIdCard, trigger: 'blur'}
+          ],
+          password: [
+            {required: true, message: '密码不能为空', trigger: 'blur'}
+          ],
+          verifyCode: [
+            {required: true, message: '验证码不能为空', trigger: 'blur'},
+            {min: 4, max: 4, message: '验证码为4位', trigger: 'blur'},
+            {validator: validateCaptcha, trigger: 'blur'}
+          ]
         },
+        imgUrl: '',
         loading: false
       }
     },
     methods: {
       handleLogin() {
-
+        this.$refs.loginForm.validate(valid => {
+          if (valid) {
+            this.loading = true
+            this.$store.dispatch('DoLogin', this.loginForm).then(() => {
+              this.$message.success('登录成功')
+              this.loading = false
+              this.$router.push({path: '/member'})
+            }).catch(err => {
+              this.loading = false
+              this.$message.error(err)
+              this.loginForm.verifyCode = ''
+              this.changeVerifyCode();
+            })
+          }
+        })
       },
-      changeCaptcha() {
-
-      },
-      signUp() {
-        this.$router.push({path: '/register'})
-      },
-      retrieve() {
-        this.$router.push({path: '/retrieve'});
+      changeVerifyCode() {
+        this.imgUrl = process.env.BASE_API + '/web/common/getVerifyCode?' + Math.random()
       }
     }
   }
@@ -184,19 +219,18 @@
               cursor: pointer;
             }
             .forget {
-              height: 20px;
+              height: 16px;
               margin: 10px 0 10px 0;
               text-align: right;
-              .el-button {
-                padding: 0;
-                font-size: 14px;
-              }
+              font-size: 14px;
+              color: #1e8bd8;
             }
             .sign-up {
               border-top: 1px solid #bfcbd9;
               text-align: center;
-              height: 44px;
-              line-height: 44px;
+              height: 48px;
+              line-height: 48px;
+              color: #1e8bd8;
             }
           }
         }

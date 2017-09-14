@@ -5,16 +5,39 @@
         <span class="svg-container"><icon-svg iconClass="computer"/></span><a href="http://www.itl.gov.cn/" target="_blank">西安国际港务区门户网站</a>
       </div>
       <div class="top_bx right">
-        <!--如果没有登录-->
-        <span class="svg-container"><icon-svg iconClass="user"/></span><router-link :to="{path: '/login'}">登录</router-link> <em>|</em>
-        <router-link :to="{path: '/register'}">注册</router-link><em></em>
-        <!--<a href="javascript:void(0)">分享</a>-->
+        <template v-if="token">
+          当前用户：{{name}} <em>|</em>
+          <router-link :to="{path: '/member'}">个人中心</router-link> <em>|</em>
+          <a href="javascript:void(0)" @click="logout">注销</a>
+        </template>
+        <template v-else>
+          <!--如果没有登录-->
+          <span class="svg-container"><icon-svg iconClass="user"/></span><router-link :to="{path: '/login'}">登录</router-link> <em>|</em>
+          <router-link :to="{path: '/register'}">注册</router-link>
+        </template>
       </div>
     </div>
   </div>
 </template>
 
-<script></script>
+<script>
+  import { mapGetters } from 'vuex'
+
+  export default {
+    computed: {
+      ...mapGetters([
+        'token', 'name'
+      ])
+    },
+    methods: {
+      logout() {
+        this.$store.dispatch('DoLogout').then(() => {
+          location.reload()
+        })
+      }
+    }
+  }
+</script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
   .top {
@@ -48,6 +71,7 @@
           height: 35px;
           float: left;
           width: 20px;
+          color: #010101;
         }
       }
       .left {

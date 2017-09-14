@@ -22,7 +22,7 @@
         </el-form-item>
       </el-col>
       <el-col :span="8">
-        <span class="input-tip"><span class="remind">*</span>请输入姓名</span>
+        <span class="input-tip"><span>*</span>请输入姓名</span>
       </el-col>
     </el-row>
     <el-row>
@@ -36,7 +36,7 @@
         </el-form-item>
       </el-col>
       <el-col :span="8">
-        <span class="input-tip"><span class="remind">*</span>请填写本人身份证号作为登录账号</span>
+        <span class="input-tip"><span>*</span>请填写本人身份证号作为登录账号</span>
       </el-col>
     </el-row>
     <el-row>
@@ -50,7 +50,7 @@
         </el-form-item>
       </el-col>
       <el-col :span="8">
-        <span class="input-tip"><span class="remind">*</span>密码可由数字或字母组成，6-16个字符，区分大小写</span>
+        <span class="input-tip"><span>*</span>密码可由数字或字母组成，6-16个字符，区分大小写</span>
       </el-col>
     </el-row>
     <el-row>
@@ -64,7 +64,7 @@
         </el-form-item>
       </el-col>
       <el-col :span="8">
-        <span class="input-tip"><span class="remind">*</span>确认密码</span>
+        <span class="input-tip"><span>*</span>确认密码</span>
       </el-col>
     </el-row>
     <el-row>
@@ -78,7 +78,7 @@
         </el-form-item>
       </el-col>
       <el-col :span="8">
-        <span class="input-tip"><span class="remind">*</span>请输入有效的手机号码</span>
+        <span class="input-tip"><span>*</span>请输入有效的手机号码</span>
       </el-col>
     </el-row>
     <el-row>
@@ -106,7 +106,7 @@
         </el-form-item>
       </el-col>
       <el-col :span="8">
-        <span class="input-tip"><span class="remind">*</span>请填写联系地址</span>
+        <span class="input-tip"><span>*</span>请填写联系地址</span>
       </el-col>
     </el-row>
     <el-row>
@@ -123,10 +123,122 @@
         <span class="input-tip">请输入有效的电子邮箱</span>
       </el-col>
     </el-row>
+    <el-row v-show="registerForm.type == 1">
+      <el-col :span="6">
+        <span class="input-label">QQ号码：</span>
+      </el-col>
+      <el-col :span="10">
+        <el-form-item prop="qq">
+          <el-input type="text" v-model="registerForm.qq" autoComplete="on" placeholder=""/>
+          <span class="svg-container"><icon-svg iconClass="wrong"/></span>
+        </el-form-item>
+      </el-col>
+      <el-col :span="8">
+        <span class="input-tip">请填写QQ号码</span>
+      </el-col>
+    </el-row>
+    <el-row v-show="registerForm.type == 1">
+      <el-col :span="6">
+        <span class="input-label">微信号码：</span>
+      </el-col>
+      <el-col :span="10">
+        <el-form-item prop="wechat">
+          <el-input type="text" v-model="registerForm.wechat" autoComplete="on" placeholder=""/>
+          <span class="svg-container"><icon-svg iconClass="wrong"/></span>
+        </el-form-item>
+      </el-col>
+      <el-col :span="8">
+        <span class="input-tip">请填写微信号码</span>
+      </el-col>
+    </el-row>
+    <el-row v-show="registerForm.type == 1">
+      <el-col :span="6">
+        <span class="input-label">固定电话：</span>
+      </el-col>
+      <el-col :span="10">
+        <el-form-item prop="tellphone">
+          <el-input type="text" v-model="registerForm.tellphone" autoComplete="on" placeholder=""/>
+          <span class="svg-container"><icon-svg iconClass="wrong"/></span>
+        </el-form-item>
+      </el-col>
+      <el-col :span="8">
+        <span class="input-tip">请填写固定电话</span>
+      </el-col>
+    </el-row>
+    <el-row v-show="registerForm.type == 2">
+      <el-col :span="6">
+        <span class="input-label">企业名称：</span>
+      </el-col>
+      <el-col :span="10">
+        <el-form-item prop="companyName">
+          <el-input type="text" v-model="registerForm.company.name" autoComplete="on" placeholder=""/>
+          <span class="svg-container"><icon-svg iconClass="wrong"/></span>
+        </el-form-item>
+      </el-col>
+      <el-col :span="8">
+        <span class="input-tip"><span>*</span>请填写企业名称</span>
+      </el-col>
+    </el-row>
+    <el-row v-show="registerForm.type == 2">
+      <el-col :span="6">
+        <span class="input-label">统一社会信用代码：</span>
+      </el-col>
+      <el-col :span="10">
+        <el-form-item prop="companyUnifyCode">
+          <el-input type="text" v-model="registerForm.company.unifyCode" autoComplete="on" placeholder=""/>
+          <span class="svg-container"><icon-svg iconClass="wrong"/></span>
+        </el-form-item>
+      </el-col>
+      <el-col :span="8">
+        <span class="input-tip"><span>*</span>请填写统一社会信用代码</span>
+      </el-col>
+    </el-row>
+    <el-row v-show="registerForm.type == 2">
+      <el-col :span="6">
+        <span class="input-label">企业法人：</span>
+      </el-col>
+      <el-col :span="10">
+        <el-form-item prop="companyLegalPerson">
+          <el-input type="text" v-model="registerForm.company.legalPerson" autoComplete="on" placeholder=""/>
+          <span class="svg-container"><icon-svg iconClass="wrong"/></span>
+        </el-form-item>
+      </el-col>
+      <el-col :span="8">
+        <span class="input-tip"><span>*</span>请填写企业法人姓名</span>
+      </el-col>
+    </el-row>
+    <el-row v-show="registerForm.type == 2">
+      <el-col :span="6">
+        <span class="input-label">法人身份证：</span>
+      </el-col>
+      <el-col :span="10">
+        <el-form-item prop="companyLegalPersonCard">
+          <el-input type="text" v-model="registerForm.company.legalPersonCard" autoComplete="on" placeholder=""/>
+          <span class="svg-container"><icon-svg iconClass="wrong"/></span>
+        </el-form-item>
+      </el-col>
+      <el-col :span="8">
+        <span class="input-tip"><span>*</span>请输入有效证件号码</span>
+      </el-col>
+    </el-row>
+    <el-row v-show="registerForm.type == 2">
+      <el-col :span="6">
+        <span class="input-label">企业注册地址：</span>
+      </el-col>
+      <el-col :span="10">
+        <el-form-item prop="companyAddress">
+          <el-input type="text" v-model="registerForm.company.address" autoComplete="on" placeholder=""/>
+          <span class="svg-container"><icon-svg iconClass="wrong"/></span>
+        </el-form-item>
+      </el-col>
+      <el-col :span="8">
+        <span class="input-tip"><span>*</span>请填写企业注册地址</span>
+      </el-col>
+    </el-row>
     <el-row>
       <el-col :span="6"></el-col>
       <el-col :span="10" align="center">
-        <el-checkbox></el-checkbox>&nbsp;我已经阅读并接受<el-button type="text">《用户服务协议》</el-button>
+        <el-checkbox v-model="registerForm.agree"></el-checkbox>&nbsp;我已经阅读并接受<el-button type="text">《用户服务协议》</el-button>
       </el-col>
       <el-col :span="8"></el-col>
     </el-row>
@@ -160,11 +272,17 @@
           callback(new Error('身份证格式不正确，请重新输入'))
         } else {
           isUserExist(value).then(response => {
-            console.log('该身份证可以注册')
+            console.log('isUserExist:')
+            console.log(response)
+            /*if (response.status != 200) {
+
+            } else */if (response.status != 200 || response.data) {
+              callback(new Error('身份证号码已存在，请重新输入'))
+            }
             callback()
           }).catch(error => {
             console.log(error)
-            callback(error)
+            callback(new Error(error))
           })
         }
       }
@@ -184,11 +302,14 @@
       }
       const validatePhoneCaptcha = (rule, value, callback) => {
         validatePhoneVerifyCode(value).then(response => {
-          console.log('验证通过')
+          console.log('validatePhoneVerifyCode:')
+          console.log(response)
+          if (response.status != 200) {
+            callback(new Error('验证码不正确'))
+          }
           callback()
         }).catch(error => {
-          console.log('验证码不正确')
-          callback(error)
+          callback(new Error(error))
         })
       }
       const validateEmail = (rule, value, callback) => {
@@ -205,9 +326,8 @@
           disabled: false
         },
         resendFun: '',
-        waitSecond: '',
         registerForm: {
-          type: '',
+          type: '1',
           name: '',
           loginName: '',
           password: '',
@@ -218,7 +338,15 @@
           email: '',
           qq: '',
           wechat: '',
-          tellphone: ''
+          tellphone: '',
+          agree: false,
+          company: {
+            name: '',
+            unifyCode: '',
+            legalPerson: '',
+            legalPersonCard: '',
+            address: ''
+          }
         },
         registerRules: {
           name: [
@@ -258,15 +386,25 @@
       handleRegister() {
         this.$refs.registerForm.validate(valid => {
           if (valid) {
-            this.loading = true
-            doRegister(this.registerForm).then(response => {
-              this.loading = false
-              this.$message.success('会员注册成功！')
-              this.$router.push({path: '/login'})
-            }).catch(error => {
-              this.loading = false
-              this.$message.error(err)
-            })
+            if (this.registerForm.agree) {
+              this.loading = true
+              doRegister(this.registerForm).then(response => {
+                console.log('doRegister:')
+                console.log(response)
+                this.loading = false
+                if (response.status != 200) {
+                  this.$message.error('注册失败')
+                } else {
+                  this.$message.success('会员注册成功！')
+                  this.$router.push({path: '/login'})
+                }
+              }).catch(error => {
+                this.loading = false
+                this.$message.error(error)
+              })
+            } else {
+              this.$message.error('必须同意协议后才能注册')
+            }
           }
         })
       },
@@ -274,14 +412,24 @@
         this.$refs.registerForm.resetFields()
       },
       getVerifyCode() {
-        const _this = this
+        let _this = this
         this.$refs.registerForm.validateField('mobilephone', function (error) {
           if (!error) {
             _this.sendBtn.disabled = true
             getPhoneVerifyCode(_this.registerForm.mobilephone).then(response => {
+              console.log('getPhoneVerifyCode:')
+              console.log(response)
               _this.sendBtn.second = 60
               _this.sendBtn.text = `重新发送(${_this.sendBtn.second})`
               _this.resendFun = setInterval(_this.changeSendBtn, 1000)
+              if (response.status == 200) {
+                _this.$message.success('短信已发送，请注意查看')
+              } else {
+                _this.$message.error('短信发送失败，请重新获取')
+              }
+            }).catch(err => {
+              this.sendBtn.disabled = false
+              _this.$message.error(err)
             })
           }
         });
@@ -349,7 +497,7 @@
       line-height: 40px;
       font-size: 12px;
       color: #8c8f91;
-      .remind {
+      span {
         color: red;
         font-weight: bold;
       }

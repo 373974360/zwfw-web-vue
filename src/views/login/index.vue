@@ -64,11 +64,14 @@
       }
       const validateCaptcha = (rule, value, callback) => {
         validateVerifyCode(value).then(response => {
-          console.log('校验成功')
+          console.log('validateVerifyCode:')
+          console.log(response)
+          if (response.status !== 200) {
+            callback(new Error('验证码不正确'))
+          }
           callback()
         }).catch(error => {
-          console.log(error)
-          callback(new Error('验证码不正确'))
+          callback(new Error(error))
         })
       }
       return {
@@ -115,8 +118,11 @@
         })
       },
       changeVerifyCode() {
-        this.imgUrl = process.env.BASE_API + '/web/common/getVerifyCode?' + Math.random()
+        this.imgUrl = process.env.SYS_API + '/web/common/getVerifyCode?' + Math.random()
       }
+    },
+    mounted() {
+      this.changeVerifyCode();
     }
   }
 </script>

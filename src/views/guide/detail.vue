@@ -6,9 +6,12 @@
           <p class="p1">事项类型</p>
           <p class="p2">行政审批</p>
           <p class="p1">办理主体</p>
-          <p class="p2">国土局</p>
+          <p class="p2">{{basicInfo.departmentName}}</p>
           <p class="p1">办理类型</p>
-          <p class="p2">承诺件</p>
+          <p class="p2">
+            <template v-if="basicInfo.type == 1">即办件</template>
+            <template v-if="basicInfo.type == 2">承诺件</template>
+          </p>
         </div>
         <el-button type="primary">
           <div class="svg-container"><icon-svg iconClass="online"/></div>
@@ -34,42 +37,46 @@
     </el-col>
     <el-col :span="20">
       <div class="right">
-        <p class="title">国有建设用地使用权注销登记（最多跑一次）</p>
+        <p class="title">{{basicInfo.name}}</p>
         <div class="table-container">
           <table>
             <tr>
-              <th>涉及部门</th><td>国土局</td>
-              <th>受理范围</th><td>国际港务区范围内</td></tr>
+              <th>涉及部门</th><td>{{basicInfo.departmentNames}}</td>
+              <th>受理范围</th><td>{{basicInfo.acceptScope}}</td></tr>
             <tr>
-              <th>承诺期限</th><td>5个工作日</td>
-              <th>法定期限</th><td>15个工作日</td>
+              <th>承诺期限</th><td>{{basicInfo.promiseDay}} 个工作日</td>
+              <th>法定期限</th><td>{{basicInfo.legalDay}} 个工作日</td>
             </tr>
             <tr>
               <th>办理时间</th><td>法定工作日 上午9:00-12:00 下午14:00-17:00</td>
-              <th>咨询电话</th><td>029-83332253/029-83332252</td>
+              <th>咨询电话</th><td>{{basicInfo.tellphone}}</td>
             </tr>
             <tr>
-              <th>办理地点</th><td>西安国际港务区综合服务大厅（港务大道101号梦想公社）</td>
-              <th>监督电话</th><td>029-83620315</td>
+              <th>办理地点</th><td>{{basicInfo.workAddress}}</td>
+              <th>监督电话</th><td>{{basicInfo.superviseTellphone}}</td>
             </tr>
             <tr>
-              <th>办理结果</th><td>《不动产权属证书》</td>
-              <th>核准数量</th><td>不限</td>
+              <th>办理结果</th><td>{{basicInfo.approvalDocumentName}}</td>
+              <th>核准数量</th><td>{{basicInfo.authorizedQuantity==0 ? '不限' : basicInfo.authorizedQuantity}}</td>
             </tr>
           </table>
         </div>
-        <div class="message">
+        <div class="message" v-show="basicInfo.legalBasis != '-'">
           <span>办理依据</span>
-          <div class="msg-content">中华人民共和国土地管理法第二章第11条、13条<br/>《土地管理法》《土地登记办法》</div>
+          <!--<div class="msg-content">{{{basicInfo.legalBasis | splitLines}}}</div>-->
         </div>
-        <div class="message">
+        <div class="message" v-cloak v-show="conditions.length">
           <span>办理条件</span>
-          <div class="msg-content">1、符合《土地登记办法》第五十条、五十一条、第五十二条和第五十三条的规定，可办理注销登记</div>
+          <div class="msg-content">
+            <template v-for="(index, condition) in conditions">
+              {{index+1}}、{{condition.content}}
+            </template>
+          </div>
         </div>
         <div class="message">
           <span>提交材料</span>
           <div class="msg-content">
-            <el-table border>
+            <el-table :data="materials" border>
               <el-table-column type="index" label="序号" width="80" align="center"></el-table-column>
               <el-table-column prop="" label="材料名称" min-width="320" align="center"></el-table-column>
               <el-table-column prop="" label="份数" min-width="80" align="center"></el-table-column>
@@ -102,6 +109,12 @@
   export default {
     data() {
       return {
+        basicInfo: {
+          id: '',
+          departmentName: '',
+          type: '',
+          onlineHandleMode: ''
+        },
         serviceDetail: {}
       }
     }

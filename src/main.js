@@ -6,8 +6,9 @@ import router from './router'
 import store from './store'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
-import '@/assets/icons'
-import '@/mock'
+import './assets/icons'
+import './permission'
+// import '@/mock'
 
 Vue.use(ElementUI)
 

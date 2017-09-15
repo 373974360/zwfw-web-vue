@@ -1,6 +1,6 @@
 import { fetchZwfw } from "../utils/fetch"
 
-export function getItemCategoryByPid(parentId) {
+export function getDeptCategoryByPid(parentId) {
   return fetchZwfw({
     url: '/web/data/getItemCategoryByPid',
     method: 'get',
@@ -8,47 +8,58 @@ export function getItemCategoryByPid(parentId) {
   })
 }
 
+export function getItemListByDept(offset, limit, itemCategories) {
+  return fetchZwfw({
+    url: '/web/item/list',
+    method: 'get',
+    params: {offset, limit, itemCategories}
+  })
+}
+
 export function getSimpleItemList(offset, limit, itemCategories) {
-  const data = {offset, limit, itemCategories}
   return fetchZwfw({
     url: '/web/item/list/simple',
     method: 'get',
-    data
+    params: {offset, limit, itemCategories}
   })
 }
 
 export function getItemDetail(id) {
-  const data = {id}
   return fetchZwfw({
     url: '/web/item/findById',
     method: 'get',
-    data
+    params: {id}
   })
 }
 
 export function getItemConditions(itemId) {
-  const data = {itemId}
   return fetchZwfw({
     url: '/web/itemCondition/listByItemId',
     method: 'get',
-    data
+    params: {itemId}
   })
 }
 
 export function getItemMaterials(itemId) {
-  const data = {itemId}
   return fetchZwfw({
     url: '/web/itemMaterial/listByItemId',
     method: 'get',
-    data
+    params: {itemId}
+  })
+}
+
+export function getItemPreorderConfig(itemId) {
+  return fetchZwfw({
+    url: '/web/itempreorder/config',
+    method: 'get',
+    params: {itemId}
   })
 }
 
 export function getAllFavorites() {
   return fetchZwfw({
     url: '/web/member/favorites/getAll',
-    method: 'get',
-    data
+    method: 'get'
   })
 }
 

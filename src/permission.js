@@ -3,8 +3,10 @@ import store from './store'
 import { getToken } from "./utils/auth"
 
 const whiteList = [
-  '/login', '/register', '/retrieve', '/guide/index', '/guide/detail', '/fta', '/once'
+  '/login', '/register', '/retrieve', '/guide/index', '/fta', '/once'
 ]
+
+const whitePath = '/guide/detail'
 
 router.beforeEach((to, from, next) => {
   if (getToken()) {//判断是否有token
@@ -22,7 +24,7 @@ router.beforeEach((to, from, next) => {
       }
     }
   } else {
-    if (whiteList.includes(to.path)) {
+    if (whiteList.includes(to.path) || to.path.startsWith(whitePath)) {
       next()
     } else {
       next('/login')

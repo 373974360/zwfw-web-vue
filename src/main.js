@@ -6,11 +6,16 @@ import router from './router'
 import store from './store'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
+import * as filters from './filters';
 import './assets/icons'
 import './permission'
 // import '@/mock'
 
 Vue.use(ElementUI)
+
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key])
+})
 
 Vue.config.productionTip = false
 

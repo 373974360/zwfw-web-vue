@@ -13,23 +13,39 @@
             <template v-if="basicInfo.type == 2">承诺件</template>
           </p>
         </div>
-        <el-button type="primary">
+        <el-button type="primary" :disabled="basicInfo.onlineHandleMode == 0">
           <div class="svg-container"><icon-svg iconClass="online"/></div>
-          <p>在线预审</p>
+          <p v-if="basicInfo.onlineHandleMode == 0">不支持预审</p>
+          <p v-if="basicInfo.onlineHandleMode == 1">在线预审</p>
+          <p v-if="basicInfo.onlineHandleMode == 2">在线办理</p>
         </el-button>
         <el-button type="primary">
           <div class="svg-container"><icon-svg iconClass="online"/></div>
           <p>现在预约</p>
         </el-button>
-        <el-button type="primary">
+        <el-button type="primary" @click="exampleShow = !exampleShow">
           <div class="svg-container"><icon-svg iconClass="list"/></div>
           <p>样表查询</p>
         </el-button>
-        <el-button type="primary">
+        <div class="downloadList" v-show="exampleShow">
+            <p v-for="(material, index) in exampleMaterials">
+              <a>{{index + 1}}、{{material.name}}</a>
+            </p>
+        </div>
+        <el-button type="primary" @click="originalShow = !originalShow">
           <div class="svg-container"><icon-svg iconClass="download"/></div>
           <p>表格下载</p>
         </el-button>
-        <el-button type="primary">
+        <div class="downloadList" v-show="originalShow">
+            <p v-for="(material, index) in originalMaterials">
+              <a>{{index + 1}}、{{material.name}}</a>
+            </p>
+        </div>
+        <el-button v-if="isFavorite()" type="primary" @click="removeFavorite">
+          <div class="svg-container"><icon-svg iconClass="collect"/></div>
+          <p>取消收藏</p>
+        </el-button>
+        <el-button v-else type="primary" @click="appendFavorite">
           <div class="svg-container"><icon-svg iconClass="collect"/></div>
           <p>我要收藏</p>
         </el-button>
@@ -57,48 +73,54 @@
             </tr>
             <tr>
               <th>办理结果</th><td>{{basicInfo.approvalDocumentName}}</td>
-              <th>核准数量</th><td>{{basicInfo.authorizedQuantity==0 ? '不限' : basicInfo.authorizedQuantity}}</td>
+              <th>核准数量</th><td>{{basicInfo.authorizedQuantity == 0 ? '不限' : basicInfo.authorizedQuantity}}</td>
             </tr>
           </table>
         </div>
         <div class="message" v-show="basicInfo.legalBasis != '-'">
           <span>办理依据</span>
-          <!--<div class="msg-content">{{{basicInfo.legalBasis | splitLines}}}</div>-->
+          <div class="msg-content" v-html="$options.filters.splitLines(basicInfo.legalBasis)"></div>
         </div>
         <div class="message" v-cloak v-show="conditions.length">
           <span>办理条件</span>
           <div class="msg-content">
-            <template v-for="(index, condition) in conditions">
+            <p v-for="(condition, index) in conditions">
               {{index+1}}、{{condition.content}}
-            </template>
+            </p>
           </div>
         </div>
-        <div class="message">
+        <div class="message" v-show="materials.length">
           <span>提交材料</span>
           <div class="msg-content">
             <el-table :data="materials" border>
               <el-table-column type="index" label="序号" width="80" align="center"></el-table-column>
-              <el-table-column prop="" label="材料名称" min-width="320" align="center"></el-table-column>
-              <el-table-column prop="" label="份数" min-width="80" align="center"></el-table-column>
-              <el-table-column prop="" label="材料形式" min-width="160" align="center"></el-table-column>
-              <el-table-column prop="" label="网上预审环节" min-width="160" align="center"></el-table-column>
+              <el-table-column prop="name" label="材料名称" min-width="320" align="center"></el-table-column>
+              <el-table-column prop="number" label="份数" min-width="80" align="center"></el-table-column>
+              <el-table-column prop="form" label="材料形式" min-width="160" align="center"></el-table-column>
+              <el-table-column v-if="basicInfo.onlineHandleMode == 1" prop="pretrialDescription" label="网上预审环节"
+                               min-width="160" align="center"></el-table-column>
             </el-table>
           </div>
         </div>
-        <div class="message">
+        <div class="message" v-show="materials.length">
           <span>注意事项</span>
           <div class="msg-content">
             <p class="remind">1、提交的材料如为复印件须加盖单位公章，并携带原件已备核实。
               2、网上预审环节中标★的，为必要材料，没有★标记的，为网上预审非必须材料。</p>
           </div>
         </div>
-        <div class="message">
+        <div class="message" v-show="basicInfo.handleTaskUrl">
           <span>办理流程</span>
-          <div class="msg-content"></div>
+          <div class="msg-content">
+            <img :src="basicInfo.handleTaskUrl"/>
+          </div>
         </div>
-        <div class="message">
+        <div class="message" v-show="basicInfo.chargeStandard != '-' || basicInfo.chargeBasis != '-'">
           <span>收费情况</span>
-          <div class="msg-content"></div>
+          <div class="msg-content">
+            <p><b>收费标准：</b>{{basicInfo.chargeStandard}}</p>
+            <p><b>收费依据：</b>{{basicInfo.chargeBasis}}</p>
+          </div>
         </div>
       </div>
     </el-col>
@@ -106,16 +128,107 @@
 </template>
 
 <script>
+  import { getItemDetail, getItemConditions, getItemMaterials, getItemPreorderConfig, getAllFavorites, addFavorite, delFavorite } from '../../api/guide'
+  import { mapGetters } from 'vuex'
+
   export default {
     data() {
       return {
-        basicInfo: {
-          id: '',
-          departmentName: '',
-          type: '',
-          onlineHandleMode: ''
-        },
-        serviceDetail: {}
+        itemId: '',
+        basicInfo: {},
+        conditions: [],
+        materials: [],
+        exampleMaterials: [],
+        originalMaterials: [],
+        favoriteList: [],
+        exampleShow: false,
+        originalShow: false
+      }
+    },
+    computed: {
+      ...mapGetters([
+        'token'
+      ]),
+      isPreorder() {
+        let flag = false
+        getItemPreorderConfig(this.itemId).then(response => {
+          console.log('isPreorder')
+          console.log(response)
+          if (response.status == 200 && response.data.ispreorder == 1) {
+            flag = true
+          }
+        })
+        return flag
+      }
+    },
+    created() {
+      this.itemId = this.$route.params.itemId
+      getItemDetail(this.itemId).then(response => {
+        console.log(response)
+        this.basicInfo = response.data
+      })
+      getItemConditions(this.itemId).then(response => {
+        console.log(response)
+        this.conditions = response.data
+      })
+      getItemMaterials(this.itemId).then(response => {
+        console.log(response)
+        this.materials = response.data
+        let originalIndex = 0;
+        let originalMaterials = [];
+        let exampleIndex = 0;
+        let exampleMaterials = [];
+        for (let i = 0; i < response.data.length; i++) {
+          if (response.data[i].exampleUrl != '') {
+            exampleMaterials[exampleIndex] = response.data[i];
+            exampleIndex++;
+          }
+          if (response.data[i].originalUrl != '') {
+            originalMaterials[originalIndex] = response.data[i];
+            originalIndex++;
+          }
+        }
+        this.originalMaterials = originalMaterials;
+        this.exampleMaterials = exampleMaterials;
+      })
+      getAllFavorites().then(response => {
+        console.log('all favorite')
+        console.log(response)
+        this.favoriteList = response.data
+      })
+    },
+    methods: {
+      isFavorite() {
+        if (this.token) {
+          for (var i = 0; i < this.favoriteList.length; i++) {
+            if (this.itemId == this.favoriteList[i].itemId) {
+              return true
+            }
+          }
+        }
+        return false
+      },
+      appendFavorite() {
+        if (this.token) {
+          addFavorite(this.itemId).then(response => {
+            if (response.status == 200) {
+              this.favoriteList.push({itemId: this.itemId})
+            }
+          })
+        } else {
+          this.$router.push({path: '/login'})
+        }
+      },
+      removeFavorite() {
+        if (this.token) {
+          delFavorite(this.itemId).then(response => {
+            if (response.status == 200) {
+//              todo 从列表中移除
+            }
+          })
+        } else {
+          this.$router.push({path: '/login'})
+        }
       }
     }
   }
@@ -143,7 +256,6 @@
         }
       }
       .el-button {
-        color: #ffffff;
         font-size: 16px;
         margin-top: 5px;
         margin-left: 0;
@@ -152,16 +264,29 @@
           float: left;
         }
         p {
-          margin: 0 10px;
+          margin: 0;
           line-height: 24px;
         }
         .svg-container {
           height: 24px;
           margin-left: 20px;
+          margin-right: 10px;
           .svg-icon {
             width: 1.5em;
             height: 1.5em;
           }
+        }
+      }
+      .downloadList {
+        width: 100%;
+        margin: 0;
+        font-size: 14px;
+        text-align: left;
+        p {
+          margin-bottom: 0;
+          margin-top: 5px;
+          text-indent: 22px;
+          line-height: 25px;
         }
       }
     }
@@ -212,6 +337,11 @@
         }
         .msg-content {
           padding: 15px 0;
+          .el-table {
+            th {
+              font-weight: normal;
+            }
+          }
           p {
             margin: 0;
             line-height: 30px;

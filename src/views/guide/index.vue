@@ -7,24 +7,25 @@
       </div>
       <el-menu class="category" mode="vertical">
         <template v-for="item in deptList">
-          <el-menu-item :index="item.deptId" @click="showService(item)">{{item.deptName}}</el-menu-item>
+          <el-menu-item :index="item.id" @click="loadItemList(item.id)">{{item.name}}</el-menu-item>
         </template>
       </el-menu>
     </el-col>
     <el-col :span="20">
       <div class="itemList">
         <ul>
-          <li v-for="item in serviceList">
+          <li v-for="item in itemList">
             <!--<p>{{item.serviceName}}</p>-->
             <div class="itemContent">
               <p class="p1">
-                <router-link :to="{path: '/'}">{{item.serviceName}}</router-link>
+                <router-link :to="{path: `/guide/detail/${item.id}`}">{{item.name}}</router-link>
               </p>
               <p class="p2">
-                办理机构：{{item.deptName}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;咨询电话：{{item.deptTel}}
+                办理机构：{{item.departmentName}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;咨询电话：{{item.tellphone}}
               </p>
               <p class="p3">
-                <el-button type="primary">收藏</el-button>
+                <el-button v-if="isFavorite(item.id)" type="primary" @click="removeFavorite(item.id)">取消收藏</el-button>
+                <el-button v-else type="primary" @click="appendFavorite(item.id)">收藏</el-button>
               </p>
             </div>
           </li>
@@ -33,9 +34,9 @@
       <div class="pageTool">
         <el-button size="small">首页</el-button>
         <el-button size="small">上一页</el-button>
-        <el-button size="small">下一页</el-button>
+        <el-button size="small" @click="nextPage">下一页</el-button>
         <el-button size="small">末页</el-button>
-        <span class="span">共 {{serviceList.length}} 条记录</span>
+        <span class="span">共 {{total}} 条记录</span>
         <span class="span">
           跳转到
           <!--<el-select v-model="currentPage" size="small">-->
@@ -49,51 +50,110 @@
 </template>
 
 <script>
-  import { getItemCategoryByPid } from '../../api/guide'
+  import { getDeptCategoryByPid, getItemListByDept, getAllFavorites, addFavorite, delFavorite } from '../../api/guide'
+  import { mapGetters } from 'vuex'
 
   export default {
     name: 'service_guide',
     data() {
       return {
-        deptList: [
-          {deptId: '1', deptName: '经发局', deptItems: [
-            {serviceId: '1', serviceName: '食品经营许可证', deptName: '经发局', deptTel: '029-83620300/029-83620301'},
-            {serviceId: '2', serviceName: '餐饮服务许可证注销', deptName: '经发局', deptTel: '029-83620300/029-83620301'},
-            {serviceId: '3', serviceName: '食品经营许可证注销', deptName: '经发局', deptTel: '029-83620300/029-83620301'},
-            {serviceId: '4', serviceName: '外商投资项目核准', deptName: '经发局', deptTel: '029-83620300/029-83620301'},
-          ]},
-          {deptId: '2', deptName: '国土局', deptItems: [
-            {serviceId: '5', serviceName: '餐饮服务许可证注销', deptName: '国土局', deptTel: '029-83332253/029-83332252'},
-            {serviceId: '6', serviceName: '食品经营许可证', deptName: '国土局', deptTel: '029-83332253'},
-            {serviceId: '7', serviceName: '外商投资项目核准', deptName: '国土局', deptTel: '029-83332253'},
-            {serviceId: '8', serviceName: '食品经营许可证注销', deptName: '国土局', deptTel: '029-83332253'},
-          ]},
-          {deptId: '3', deptName: '统筹城乡发展工作局'},
-          {deptId: '4', deptName: '建设局'},
-          {deptId: '5', deptName: '市容环保局'},
-          {deptId: '6', deptName: '社会事业局'},
-          {deptId: '7', deptName: '组织人事局'},
-          {deptId: '8', deptName: '工商局'},
-          {deptId: '9', deptName: '国税局'}
-        ],
-        serviceList: [],
+        deptList: [],
+        itemList: [],
+        favoriteList: [],
+        currentDeptId: '',
+        total: 0,
+        page: 1,
+        pageSize: 6,
         currentPage: 1
       }
     },
+    computed: {
+      ...mapGetters([
+        'token'
+      ]),
+      totalPage() {
+        if (this.total == 0) {
+          return 1;
+        }
+        return parseInt((this.total + this.pageSize - 1) / this.pageSize);
+      },
+      offset() {
+        return (this.page - 1) * this.pageSize;
+      },
+      limit() {
+        return this.pageSize;
+      },
+      isFirstPage() {
+        return this.page == 1;
+      },
+      isLastPage() {
+        return this.page === this.totalPage;
+      }
+    },
     created() {
-      this.serviceList = this.deptList[0].deptItems;
-      this.getItemCategory(1)
-      this.getItemCategory(29)
+      getDeptCategoryByPid(1).then(response => {
+        console.log(response)
+        this.deptList = response.data
+        this.loadItemList(response.data[0].id)
+      })
+      getAllFavorites().then(response => {
+        console.log('all favorite')
+        console.log(response)
+        this.favoriteList = response.data
+      })
     },
     methods: {
-      showService(dept) {
-        this.serviceList = dept.deptItems;
+      loadItemList(deptId) {
+        this.currentDeptId = deptId
+        this.page = 1
+        this.pageSize = 6
+        this.loadPage()
       },
-      getItemCategory(id) {
-        getItemCategoryByPid(id).then(response => {
-          console.log(id)
+      nextPage() {
+        if (this.page < this.totalPage) {
+          this.page++
+          this.loadPage()
+        }
+      },
+//      todo 引用el分页
+      loadPage() {
+        getItemListByDept(this.offset, this.pageSize, this.currentDeptId).then(response => {
           console.log(response)
+          this.itemList = response.rows
+          this.total = response.total
         })
+      },
+      isFavorite(itemId) {
+        if (this.token) {
+          for (var i = 0; i < this.favoriteList.length; i++) {
+            if (itemId == this.favoriteList[i].itemId) {
+              return true
+            }
+          }
+        }
+        return false
+      },
+      appendFavorite(itemId) {
+        if (this.token) {
+          addFavorite(itemId).then(response => {
+            if (response.status == 200) {
+              this.favoriteList.push({itemId: itemId})
+            }
+          })
+        } else {
+          this.$router.push({path: '/login'})
+        }
+      },
+      removeFavorite(itemId) {
+        if (this.token) {
+          delFavorite(itemId).then(response => {
+            if (response.status == 200) {
+//              todo 从列表中移除
+            }
+          })
+        } else {
+          this.$router.push({path: '/login'})
+        }
       }
     }
   }

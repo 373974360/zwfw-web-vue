@@ -8,7 +8,7 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 import * as filters from './filters';
 import './assets/icons'
-import './permission'
+// import './permission'
 // import '@/mock'
 
 Vue.use(ElementUI)

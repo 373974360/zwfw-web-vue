@@ -4,14 +4,19 @@ import { getToken, setToken, removeToken } from "../../utils/auth"
 const user = {
   state: {
     token: getToken(),
+    user: '',
     id: '',
     type: '',
     name: '',
-    companyId: ''
+    companyId: '',
+    resourceUrl: 'http://zwfw.itl.gov.cn:8080'
   },
   mutations: {
     SET_TOKEN: (state, token) => {
       state.token = token
+    },
+    SET_USER: (state, user) => {
+      state.user = user
     },
     SET_ID: (state, id) => {
       state.id = id
@@ -49,14 +54,19 @@ const user = {
     GetInfo({commit}) {
       return new Promise((resolve, reject) => {
         getInfo().then(response => {
-          console.log('getInfo:')
-          console.log(response)
-          const data = response.data
-          commit('SET_ID', data.id)
-          commit('SET_TYPE', data.type)
-          commit('SET_NAME', data.name)
-          commit('SET_COMPANYID', data.companyId)
-          resolve()
+          if (response.status == 200) {
+            const data = response.data
+            commit('SET_USER', data)
+            commit('SET_ID', data.id)
+            commit('SET_TYPE', data.type)
+            commit('SET_NAME', data.name)
+            commit('SET_COMPANYID', data.companyId)
+            resolve()
+          } else {
+            removeToken()
+            commit('SET_Token', '')
+            resolve()
+          }
         }).catch(error => {
           reject(error)
         })

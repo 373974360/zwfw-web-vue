@@ -80,3 +80,11 @@ export function delFavorite(itemId) {
     data
   })
 }
+
+export function getItemPretrial(id) {
+  return fetchZwfw({
+    url: '/web/itemPretrial/findById',
+    method: 'get',
+    params: {id}
+  })
+}

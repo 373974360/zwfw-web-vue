@@ -8,12 +8,13 @@
           </div>
         </div>
         <div class="msg-content">
-          <el-checkbox :indeterminate="isSelectAll">全选</el-checkbox>
-          <b>办理该项业务，需满足以下申请条件才能进行业务的办理，请自检是否满足，符合请打勾</b>
-          <div v-for="(condition, index) in conditions">
-            <el-checkbox v-model="conditionsCheck"></el-checkbox>
-            {{index}}、{{condition.content}}
-          </div>
+          <p><el-checkbox :indeterminate="indeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+          <b>办理该项业务，需满足以下申请条件才能进行业务的办理，请自检是否满足，符合请打勾</b></p>
+          <el-checkbox-group v-model="checkedConditions">
+            <p v-for="(condition, index) in conditions">
+              <el-checkbox :label="condition" @change="handleCheckOneChange">{{index + 1}}、{{condition.content}}</el-checkbox>
+            </p>
+          </el-checkbox-group>
         </div>
       </div>
       <div class="message">
@@ -23,7 +24,7 @@
           </div>
         </div>
         <div class="msg-content">
-          <p></p>
+          <p v-for="(material, index) in materials">{{index + 1}}、{{material.name}}</p>
         </div>
       </div>
       <p class="remind">注：本人对办理该事项所提交的材料实质内容的真实性负责。</p>
@@ -39,26 +40,46 @@
           </div>
         </div>
         <div class="msg-content">
-          <div class="table-title">事项名称</div>
+          <div class="table-title">{{item.name}}</div>
           <table>
             <tr>
-              <th>企业名称：</th><td></td>
-              <th>企业工商注册号：</th><td></td>
+              <th>企业名称：</th><td><!--{{user.company.name}}--></td>
+              <th>企业工商注册号：</th><td><!--{{user.company.unifyCode}}--></td>
             </tr>
             <tr>
-              <th>企业法人：</th><td></td>
-              <th>法人身份证号：</th><td></td>
+              <th>企业法人：</th><td><!--{{user.company.legalPerson}}--></td>
+              <th>法人身份证号：</th><td><!--{{user.company.legalPersonCard}}--></td>
             </tr>
             <tr>
-              <th>联系人姓名：</th><td></td>
-              <th>联系人身份证号：</th><td></td>
+              <th>联系人姓名：</th><td>{{user.name}}</td>
+              <th>联系人身份证号：</th><td>{{user.loginName}}</td>
             </tr>
             <tr>
-              <th>联系人电话：</th><td></td>
-              <th>电子邮箱：</th><td></td>
+              <th>联系人电话：</th><td>{{user.mobilephone}}</td>
+              <th>电子邮箱：</th><td>{{user.email}}</td>
             </tr>
             <tr>
-              <th>通讯地址：</th><td colspan="3"></td>
+              <th>通讯地址：</th><td colspan="3">{{user.address}}</td>
+            </tr>
+            <tr v-if="item.onlineHandleMode == 2">
+              <th>取件方式：</th>
+              <td colspan="3">
+                <el-radio class="radio" v-model="itemPretrial.takeType" label="1">大厅自取</el-radio>
+                <el-radio class="radio" v-model="itemPretrial.takeType" label="2">快递邮寄</el-radio>
+              </td>
+            </tr>
+          </table>
+          <table v-if="item.onlineHandleMode == 2" v-show="itemPretrial.takeType == 2">
+            <tr><td colspan="4" style="text-align: center">确认邮寄信息</td></tr>
+            <tr>
+              <th>收件人姓名：</th>
+              <td><el-input type="text" v-model="itemPretrial.itemPostInfo.name"></el-input></td>
+              <th>收件人电话：</th>
+              <td><el-input type="text" v-model="itemPretrial.itemPostInfo.tellphone"></el-input></td>
+            </tr>
+            <tr>
+              <th>收件地址：</th>
+              <td colspan="3"><el-input type="text" v-model="itemPretrial.itemPostInfo.address"></el-input></td>
             </tr>
           </table>
         </div>
@@ -70,20 +91,42 @@
           </div>
         </div>
         <div class="msg-content">
-          <div class="materials-item">
+          <div class="materials-item" v-for="(material, index) in materials">
             <p>
               <span>材料名称：</span>
-              <icon-svg iconClass="star"></icon-svg><icon-svg iconClass="star_fill"></icon-svg>
-              {{}}
-              <a>（点击下载）</a>
+              <icon-svg iconClass="star_fill" v-if="material.isPretrialSubmit == 1"></icon-svg>
+              <icon-svg iconClass="star" v-else></icon-svg>
+              {{material.name}}
+              <a v-if="material.originalUrl" :href="resourceUrl + material.originalUrl" :download="material.name" :title="material.name">（点击下载）</a>
             </p>
             <p>
-              <span>材料形式：</span>{{}}
-              <span>需要份数：</span>{{}}
-              <span>上传说明：</span>{{}}
+              <template v-if="material.form"><span>材料形式：</span>{{material.form}}</template>&nbsp;&nbsp;&nbsp;
+              <template v-if="material.number"><span>需要份数：</span>{{material.number}}</template>&nbsp;&nbsp;&nbsp;
+              <template v-if="material.pretrialDescription"><span>上传说明：</span>{{material.pretrialDescription}}</template>
             </p>
-            <p>上传材料：</p>
-            <p class="p3"><el-button type="primary">上传</el-button></p>
+            <p v-if="material.detailRequirement">
+              <span>详细要求：</span>{{material.detailRequirement}}
+            </p>
+            <p>上传材料：
+              <template v-for="itemPretrialMaterial in itemPretrial.itemPretrialMaterialVoList">
+                <template v-if="itemPretrialMaterial.itemMaterialId == material.id">
+                  <template v-for="file in itemPretrialMaterial.multipleFile">
+                    <div>
+                      <a target="_blank" :href="file.url"
+                         :download="file.fileName"
+                         :title="file.fileName">{{file.fileName}}</a>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+                      onclick="removeNode(this)">删除</span>
+                    </div>
+                  </template>
+                </template>
+              </template>
+            </p>
+            <p class="p3">
+              <el-upload :action="uploadUrl">
+                <el-button type="primary">点击上传</el-button>
+              </el-upload>
+            </p>
           </div>
         </div>
       </div>
@@ -96,20 +139,46 @@
 </template>
 
 <script>
-  import { getItemConditions, getItemMaterials } from '../../api/guide'
+  import { getItemConditions, getItemMaterials, getItemDetail, getItemPretrial } from '../../api/guide'
+  import { mapGetters } from 'vuex'
 
   export default {
     data() {
       return {
-        itemId: 24,
+        itemId: '',
         conditions: [],
         materials: [],
-        conditionsCheck: '',
-        isSelectAll: false,
-        secondForm: false
+        checkAll: false,
+        checkedConditions: [],
+        indeterminate: false,
+        secondForm: false,
+        item: {},
+        itemPretrial: {
+          id: '',
+          memberId: '',
+          companyId: '',
+          itemId: '',
+          itemName: '',
+          takeType: '',
+          itemPostInfo: {
+            pretrialId: '',
+            name: '',
+            mobilephone: '',
+            address: ''
+          },
+          itemPretrialMaterialVoList: []
+        },
+        uploadUrl: ''
       }
     },
+    computed: {
+      ...mapGetters([
+        'user', 'resourceUrl'
+      ])
+    },
     created() {
+      this.itemId = this.$route.params.itemId
+      this.uploadUrl = `${process.env.ZWFW_API}/ueditor/pretrialUpload`
       getItemConditions(this.itemId).then(response => {
         this.conditions = response.data
       })
@@ -120,12 +189,20 @@
         title: '提醒',
         message: '您本次网上申报的办件，工作人员将在预受理之后联系您。',
         duration: 0,
-        offset: 200
+        offset: 25
       })
     },
     methods: {
+      handleCheckAllChange(event) {
+        this.checkedConditions = event.target.checked ? this.conditions : []
+        this.indeterminate = false
+      },
+      handleCheckOneChange() {
+        this.checkAll = this.checkedConditions.length === this.conditions.length
+        this.indeterminate = this.checkedConditions.length > 0 && this.checkedConditions.length < this.conditions.length
+      },
       nextPage() {
-        if (!this.conditions) {
+        if (!this.checkAll) {
           this.$message({
             showClose: true,
             message: '请先满足审批条件再点击下一步',
@@ -133,6 +210,13 @@
           })
           return
         }
+        this.showSecondForm()
+      },
+      showSecondForm() {
+        getItemDetail(this.itemId).then(response => {
+          this.item = response.data
+        })
+        this.itemPretrial.takeType = '1'
         this.secondForm = true
         this.secondPageNotify()
       },
@@ -141,7 +225,7 @@
           title: '提醒',
           message: '★为必要材料，您必须提交才能申报，☆为容缺候补材料，您可以在网上预受理后在窗口提交， 为非必要材料， 根据您实际情况选择提交。',
           duration: 0,
-          offset: 200
+          offset: 25
         })
       }
     }
@@ -212,28 +296,38 @@
               width: 30%;
               border: 1px solid #dedede;
               text-align: left;
+              padding: 3px 25px;
+              input {
+                height: 32px;
+              }
             }
           }
         }
         .materials-item {
-          min-height: 130px;
+          min-height: 122px;
           border: 1px solid #ccc;
           padding: 8px 20px;
           margin-bottom: 12px;
           position: relative;
-          .svg-icon {
-            color: red;
-          }
-          span {
-            color: #3060cc;
-          }
-          a {
-            color: red;
+          p {
+            color: #565656;
+            .svg-icon {
+              color: red;
+            }
+            span {
+              color: #3060cc;
+            }
+            a {
+              color: red;
+            }
           }
           .p3 {
             position: absolute;
             top: 30px;
             right: 35px;
+            span {
+              color: #fff;
+            }
           }
         }
       }

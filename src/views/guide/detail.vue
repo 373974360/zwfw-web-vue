@@ -13,7 +13,7 @@
             <template v-if="basicInfo.type == 2">承诺件</template>
           </p>
         </div>
-        <el-button type="primary" :disabled="basicInfo.onlineHandleMode == 0">
+        <el-button type="primary" :disabled="basicInfo.onlineHandleMode == 0" @click="linkToPretrial">
           <div class="svg-container"><icon-svg iconClass="online"/></div>
           <p v-if="basicInfo.onlineHandleMode == 0">不支持预审</p>
           <p v-if="basicInfo.onlineHandleMode == 1">在线预审</p>
@@ -112,7 +112,7 @@
         <div class="message" v-show="basicInfo.handleTaskUrl">
           <span>办理流程</span>
           <div class="msg-content">
-            <img :src="basicInfo.handleTaskUrl"/>
+            <img :src="resourceUrl + basicInfo.handleTaskUrl"/>
           </div>
         </div>
         <div class="message" v-show="basicInfo.chargeStandard != '-' || basicInfo.chargeBasis != '-'">
@@ -142,12 +142,12 @@
         originalMaterials: [],
         favoriteList: [],
         exampleShow: false,
-        originalShow: false
+        originalShow: false,
       }
     },
     computed: {
       ...mapGetters([
-        'token'
+        'token', 'resourceUrl'
       ]),
       isPreorder() {
         let flag = false
@@ -229,6 +229,9 @@
         } else {
           this.$router.push({path: '/login'})
         }
+      },
+      linkToPretrial() {
+        this.$router.push({path: `/guide/pretrial/${this.itemId}`})
       }
     }
   }

@@ -32,7 +32,7 @@ export const constantRouterMap = [
     children: [
       {path: 'index', component: _import('guide/index')},
       {path: 'detail/:itemId', component: _import('guide/detail'), name: '详细'},
-      {path: 'pretrial', component: _import('guide/pretrial')}
+      {path: 'pretrial/:itemId', component: _import('guide/pretrial')}
     ]
   },
   {

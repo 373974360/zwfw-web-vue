@@ -107,25 +107,17 @@
             <p v-if="material.detailRequirement">
               <span>详细要求：</span>{{material.detailRequirement}}
             </p>
-            <p>上传材料：
-              <template v-for="itemPretrialMaterial in itemPretrial.itemPretrialMaterialVoList">
-                <template v-if="itemPretrialMaterial.itemMaterialId == material.id">
-                  <template v-for="file in itemPretrialMaterial.multipleFile">
-                    <div>
-                      <a target="_blank" :href="file.url"
-                         :download="file.fileName"
-                         :title="file.fileName">{{file.fileName}}</a>
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
-                      onclick="removeNode(this)">删除</span>
-                    </div>
-                  </template>
-                </template>
-              </template>
-            </p>
-            <p class="p3">
-              <el-upload :action="uploadUrl">
-                <el-button type="primary">点击上传</el-button>
-              </el-upload>
+            <p>
+              <!--<el-upload :ref='"upload"+index' name="upfile" :action="uploadUrl" :multiple="true" :auto-upload="false"
+                         :on-preview="handlePreview" :on-success="handleSuccess" :on-remove="handleRemove">
+                <el-button size="small" type="primary">选取文件</el-button>
+                <el-button size="small" type="success" @click.stop="submitUpload(index)">上传到服务器</el-button>
+              </el-upload>-->
+              <file-upload :ref='"upload"+index' name="upfile" :action="uploadUrl" :multiple="true" :auto-upload="false" :uploadId="index"
+                           :on-preview="handlePreview" :on-success="handleSuccess" :on-remove="handleRemove">
+                <el-button size="small" type="primary">选取文件</el-button>
+                <el-button size="small" type="success" @click.stop="submitUpload(index)">上传到服务器</el-button>
+              </file-upload>
             </p>
           </div>
         </div>
@@ -141,6 +133,7 @@
 <script>
   import { getItemConditions, getItemMaterials, getItemDetail, getItemPretrial } from '../../api/guide'
   import { mapGetters } from 'vuex'
+  import FileUpload from '../../components/FileUpload'
 
   export default {
     data() {
@@ -175,6 +168,9 @@
       ...mapGetters([
         'user', 'resourceUrl'
       ])
+    },
+    components: {
+      FileUpload
     },
     created() {
       this.itemId = this.$route.params.itemId
@@ -216,6 +212,15 @@
         getItemDetail(this.itemId).then(response => {
           this.item = response.data
         })
+        for (let i=0; i<this.materials.length; i++) {
+          this.itemPretrial.itemPretrialMaterialVoList.push({
+            itemMaterialId: this.materials[i].id,
+            itemMaterialName: this.materials[i].name,
+            itemMaterialUrl: '',
+            fileName: '',
+            fileType: ''
+          })
+        }
         this.itemPretrial.takeType = '1'
         this.secondForm = true
         this.secondPageNotify()
@@ -227,6 +232,29 @@
           duration: 0,
           offset: 25
         })
+      },
+      submitUpload(index) {
+        let uploader = 'upload' + index
+        console.log(this.$refs[uploader])
+        this.$refs[uploader][0].submit()
+      },
+      handlePreview(file) {
+        console.log(file.response)
+//        window.open('E:\\deya\\zwfw' + file.response.url)
+        var aLink = document.createElement('a');
+        var evt = document.createEvent("HTMLEvents");
+        evt.initEvent("click", false, false);//initEvent 不加后两个参数在FF下会报错, 感谢 Barret Lee 的反馈
+        aLink.download = file.response.title;
+        aLink.href = 'E:\\deya\\zwfw' + file.response.url;
+        aLink.dispatchEvent(evt);
+      },
+      handleSuccess(response, file, fileList, index) {
+        this.itemPretrial.itemPretrialMaterialVoList[index].itemMaterialUrl += `|${response.url}`
+        this.itemPretrial.itemPretrialMaterialVoList[index].fileName += `|${response.title}`
+        this.itemPretrial.itemPretrialMaterialVoList[index].fileType += `|${file.ext}`
+      },
+      handleRemove(file, fileList, index) {
+        console.log(file, fileList)
       }
     }
   }
@@ -320,15 +348,20 @@
             a {
               color: red;
             }
+            .el-button {
+              span {
+                color: #fff;
+              }
+            }
           }
-          .p3 {
+          /*.p3 {
             position: absolute;
             top: 30px;
             right: 35px;
             span {
               color: #fff;
             }
-          }
+          }*/
         }
       }
     }

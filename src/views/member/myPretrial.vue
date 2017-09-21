@@ -16,18 +16,18 @@
           <el-checkbox v-model="done">通过</el-checkbox>
         </div>
       </div>
-      <review-table></review-table>
+      <pretrial-table></pretrial-table>
     </div>
   </div>
 </template>
 
 <script>
-  import { ReviewTable } from './table'
+  import { PretrialTable } from './table'
 
   export default {
     name: 'review',
     components: {
-      ReviewTable
+      PretrialTable
     },
     data() {
       return {

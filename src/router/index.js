@@ -9,9 +9,8 @@ const _import = require('./_import_production')
 Vue.use(Router)
 
 export const constantRouterMap = [
-  {
-    path:'/login', component: _import('login/index'), hidden: true
-  },
+  { path: '/login', component: _import('login/index'), hidden: true },
+  { path: '/404', component: _import('errorPage/404'), hidden: true },
   {
     path: '/',
     component: Layout,
@@ -32,7 +31,7 @@ export const constantRouterMap = [
     children: [
       {path: 'index', component: _import('guide/index')},
       {path: 'detail/:itemId', component: _import('guide/detail'), name: '详细'},
-      {path: 'pretrial/:itemId', component: _import('guide/pretrial')}
+      {path: 'pretrial/:key/:value', component: _import('guide/pretrial')}
     ]
   },
   {
@@ -50,7 +49,8 @@ export const constantRouterMap = [
       {path: 'companyInfo', component: _import('member/companyInfo'), name: '企业信息'},
       {path: 'changePw', component: _import('member/changePw'), name: '修改密码'}
     ]
-  }
+  },
+  { path: '*', redirect: '/404', hidden: true }
 ]
 
 export default new Router({

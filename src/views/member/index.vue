@@ -12,24 +12,48 @@
         <div class="label">我的预审</div>
         <div class="more"><router-link :to="{path: '/member/review'}">更多></router-link></div>
       </div>
-      <div class="data-bg"><review-table></review-table></div>
+      <div class="data-bg"><pretrial-table :data="pretrialData"></pretrial-table></div>
     </div>
     <div class="data-box">
       <div class="label-bg">
         <div class="label">我的收藏</div>
         <div class="more"><router-link :to="{path: '/member/collection'}">更多></router-link></div>
       </div>
-      <div class="data-bg"><collection-table></collection-table></div>
+      <div class="data-bg"><collection-table :data="favoriteData"></collection-table></div>
     </div>
   </div>
 </template>
 
 <script>
-  import { TransactionTable, ReviewTable, CollectionTable } from './table'
+  import { TransactionTable, PretrialTable, CollectionTable } from './table'
+  import { findMyItem } from '../../api/guide'
+  import { mapGetters } from 'vuex'
 
   export default {
     components: {
-      TransactionTable, ReviewTable, CollectionTable
+      TransactionTable, PretrialTable, CollectionTable
+    },
+    data() {
+      return {
+        pretrialData: [],
+        favoriteData: [],
+        processData: []
+      }
+    },
+    computed: {
+      ...mapGetters([
+        'id'
+      ])
+    },
+    created() {
+      findMyItem(this.id).then(response => {
+        console.log(response)
+        if (response.status == 200) {
+          this.pretrialData = response.data.itemPretrials
+          this.favoriteData = response.data.memberFavorites
+          this.processData = response.data.memberProcesses
+        }
+      })
     }
   }
 </script>

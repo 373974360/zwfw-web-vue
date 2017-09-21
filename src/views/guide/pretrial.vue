@@ -108,12 +108,8 @@
               <span>详细要求：</span>{{material.detailRequirement}}
             </p>
             <p>
-              <!--<el-upload :ref='"upload"+index' name="upfile" :action="uploadUrl" :multiple="true" :auto-upload="false"
-                         :on-preview="handlePreview" :on-success="handleSuccess" :on-remove="handleRemove">
-                <el-button size="small" type="primary">选取文件</el-button>
-                <el-button size="small" type="success" @click.stop="submitUpload(index)">上传到服务器</el-button>
-              </el-upload>-->
-              <file-upload :ref='"upload"+index' name="upfile" :action="uploadUrl" :multiple="true" :auto-upload="false" :uploadId="index"
+              <file-upload :ref='"upload"+index' name="upfile" :action="uploadUrl" :multiple="true" :auto-upload="false"
+                           :uploadId="index" :file-list="uploadFileList[index]"
                            :on-preview="handlePreview" :on-success="handleSuccess" :on-remove="handleRemove">
                 <el-button size="small" type="primary">选取文件</el-button>
                 <el-button size="small" type="success" @click.stop="submitUpload(index)">上传到服务器</el-button>
@@ -124,21 +120,25 @@
       </div>
       <div class="btn-container">
         <el-button size="large" @click="secondForm = false">上一步</el-button>
-        <el-button type="primary" size="large" @click="">提交</el-button>
+        <el-button type="primary" size="large" @click="handleSubmit" :loading="loading">提交</el-button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-  import { getItemConditions, getItemMaterials, getItemDetail, getItemPretrial } from '../../api/guide'
+  import { getItemConditions, getItemMaterials, getItemDetail, getItemPretrial, submitPretrial } from '../../api/guide'
   import { mapGetters } from 'vuex'
   import FileUpload from '../../components/FileUpload'
 
   export default {
+    components: {
+      FileUpload
+    },
     data() {
       return {
         itemId: '',
+        pretrialId: '',
         conditions: [],
         materials: [],
         checkAll: false,
@@ -151,17 +151,19 @@
           memberId: '',
           companyId: '',
           itemId: '',
-          itemName: '',
-          takeType: '',
+          takeType: '1',
           itemPostInfo: {
             pretrialId: '',
+            memberId: '',
             name: '',
             mobilephone: '',
             address: ''
           },
           itemPretrialMaterialVoList: []
         },
-        uploadUrl: ''
+        uploadUrl: '',
+        uploadFileList: [],
+        loading: false
       }
     },
     computed: {
@@ -169,26 +171,101 @@
         'user', 'resourceUrl'
       ])
     },
-    components: {
-      FileUpload
-    },
     created() {
-      this.itemId = this.$route.params.itemId
+      let param = this.$route.params.key
+      if (param == 'itemId') {
+        this.itemId = this.$route.params.value
+        this.init1()
+      } else if (param == 'id') {
+        this.pretrialId = this.$route.params.value
+        this.init2()
+      }
       this.uploadUrl = `${process.env.ZWFW_API}/ueditor/pretrialUpload`
-      getItemConditions(this.itemId).then(response => {
-        this.conditions = response.data
-      })
-      getItemMaterials(this.itemId).then(response => {
-        this.materials = response.data
-      })
-      this.$notify.info({
-        title: '提醒',
-        message: '您本次网上申报的办件，工作人员将在预受理之后联系您。',
-        duration: 0,
-        offset: 25
-      })
+
     },
     methods: {
+      init1() {
+        this.initConditions()
+        this.initMaterials()
+        this.initItemDetail()
+        this.itemPretrial.memberId = this.user.id
+        this.itemPretrial.companyId = this.user.companyId
+        this.itemPretrial.itemId = this.itemId
+        this.itemPretrial.itemPostInfo.memberId = this.user.id
+        this.notify1()
+      },
+      init2() {
+        this.secondForm = true
+        getItemPretrial(this.pretrialId).then(response => {
+          if (response.status == 200) {
+            this.itemPretrial = response.data
+            this.itemId = response.data.itemId
+            this.initItemDetail()
+            this.initMaterials()
+            this.initUploadFileList()
+          } else {
+            this.$message.error('初始化信息失败，请刷新页面！')
+          }
+        })
+        this.notify2()
+      },
+      initConditions() {
+        getItemConditions(this.itemId).then(response => {
+          if (response.status == 200) {
+            this.conditions = response.data
+          } else {
+            this.$message.error('初始化信息失败，请刷新页面！')
+          }
+        })
+      },
+      initMaterials() {
+        getItemMaterials(this.itemId).then(response => {
+          if (response.status == 200) {
+            this.materials = response.data
+            if (!this.pretrialId) {
+              this.initPretrialMaterials()
+            }
+          } else {
+            this.$message.error('初始化信息失败，请刷新页面！')
+          }
+        })
+      },
+      initItemDetail() {
+        getItemDetail(this.itemId).then(response => {
+          if (response.status == 200) {
+            this.item = response.data
+          } else {
+            this.$message.error('初始化信息失败，请刷新页面！')
+          }
+        })
+      },
+      initPretrialMaterials() {
+        for (let val of this.materials) {
+          this.itemPretrial.itemPretrialMaterialVoList.push({
+            itemMaterialId: val.id,
+            itemMaterialName: val.name,
+            itemMaterialUrl: '',
+            fileName: '',
+            fileType: ''
+          })
+        }
+      },
+      initUploadFileList() {
+        for (let filesInfo of this.itemPretrial.itemPretrialMaterialVoList) {
+          let urlArr = filesInfo.itemMaterialUrl.split('|')
+          let nameArr = filesInfo.fileName.split('|')
+          let fileList = []
+          for (let index of urlArr.keys()) {
+            if (index > 0) {
+              fileList.push({
+                'name': nameArr[index],
+                'url': urlArr[index]
+              })
+            }
+          }
+          this.uploadFileList.push(fileList)
+        }
+      },
       handleCheckAllChange(event) {
         this.checkedConditions = event.target.checked ? this.conditions : []
         this.indeterminate = false
@@ -200,42 +277,16 @@
       nextPage() {
         if (!this.checkAll) {
           this.$message({
-            showClose: true,
             message: '请先满足审批条件再点击下一步',
             type: 'warning'
           })
           return
         }
-        this.showSecondForm()
-      },
-      showSecondForm() {
-        getItemDetail(this.itemId).then(response => {
-          this.item = response.data
-        })
-        for (let i=0; i<this.materials.length; i++) {
-          this.itemPretrial.itemPretrialMaterialVoList.push({
-            itemMaterialId: this.materials[i].id,
-            itemMaterialName: this.materials[i].name,
-            itemMaterialUrl: '',
-            fileName: '',
-            fileType: ''
-          })
-        }
-        this.itemPretrial.takeType = '1'
         this.secondForm = true
-        this.secondPageNotify()
-      },
-      secondPageNotify() {
-        this.$notify.info({
-          title: '提醒',
-          message: '★为必要材料，您必须提交才能申报，☆为容缺候补材料，您可以在网上预受理后在窗口提交， 为非必要材料， 根据您实际情况选择提交。',
-          duration: 0,
-          offset: 25
-        })
+        this.notify2()
       },
       submitUpload(index) {
         let uploader = 'upload' + index
-        console.log(this.$refs[uploader])
         this.$refs[uploader][0].submit()
       },
       handlePreview(file) {
@@ -243,7 +294,7 @@
 //        window.open('E:\\deya\\zwfw' + file.response.url)
         var aLink = document.createElement('a');
         var evt = document.createEvent("HTMLEvents");
-        evt.initEvent("click", false, false);//initEvent 不加后两个参数在FF下会报错, 感谢 Barret Lee 的反馈
+        evt.initEvent("click", false, false);
         aLink.download = file.response.title;
         aLink.href = 'E:\\deya\\zwfw' + file.response.url;
         aLink.dispatchEvent(evt);
@@ -251,10 +302,76 @@
       handleSuccess(response, file, fileList, index) {
         this.itemPretrial.itemPretrialMaterialVoList[index].itemMaterialUrl += `|${response.url}`
         this.itemPretrial.itemPretrialMaterialVoList[index].fileName += `|${response.title}`
-        this.itemPretrial.itemPretrialMaterialVoList[index].fileType += `|${file.ext}`
+        let fileType = this.resolveFileType(response.title)
+        this.itemPretrial.itemPretrialMaterialVoList[index].fileType += `|${fileType}`
+      },
+      resolveFileType(fileName) {
+        let arr = fileName.split('.')
+        return arr[arr.length - 1]
       },
       handleRemove(file, fileList, index) {
-        console.log(file, fileList)
+        let filesInfo = this.itemPretrial.itemPretrialMaterialVoList[index]
+        let urlArr = filesInfo.itemMaterialUrl.split('|')
+        let nameArr = filesInfo.fileName.split('|')
+        let typeArr = filesInfo.fileType.split('|')
+        let position = urlArr.indexOf(file.response.url)
+        urlArr.splice(position, 1)
+        nameArr.splice(position, 1)
+        typeArr.splice(position, 1)
+        filesInfo.itemMaterialUrl = urlArr.join('|')
+        filesInfo.fileName = nameArr.join('|')
+        filesInfo.fileType = typeArr.join('|')
+      },
+      handleSubmit() {
+        this.loading = true
+        //若在线办理且需要邮寄，判断收件信息是否填写
+        if (this.item.onlineHandleMode == 2 && this.itemPretrial.takeType == 2
+          && (!this.itemPretrial.itemPostInfo.name
+            || !this.itemPretrial.itemPostInfo.mobilephone
+            || !this.itemPretrial.itemPostInfo.address)) {
+          this.$message.warning('请完善收件信息')
+          this.loading = false
+          return
+        }
+        //判断所有预审材料是否均已上传
+        for (let [index, val] of this.materials.entries()) {
+          if (val.isPretrialSubmit == 1 && !this.itemPretrial.itemPretrialMaterialVoList[index].itemMaterialUrl) {
+            this.$message.warning('资料提交不全，请先上传资料！')
+            this.loading = false
+            return
+          }
+        }
+        this.doSubmit()
+      },
+      doSubmit() {
+        submitPretrial(this.itemPretrial).then(response => {
+          if (response.status == 200) {
+            this.$message.success('申请提交成功，请耐心等待审核！')
+            this.$router.push({path: '/member'})
+          } else {
+            this.$message.error('申请提交失败，请重新提交！')
+            this.loading = false
+          }
+        }).catch(error => {
+          this.$message.error('系统繁忙，请稍后重试！')
+          this.loading = false
+        })
+      },
+      notify1() {
+        this.$notify.info({
+          title: '提醒',
+          message: '您本次网上申报的办件，工作人员将在预受理之后联系您。',
+          duration: 0,
+          offset: 25
+        })
+      },
+      notify2() {
+        this.$notify.info({
+          title: '提醒',
+          message: '★为必要材料，您必须提交才能申报，☆为容缺候补材料，您可以在网上预受理后在窗口提交，其他为非必要材料，根据您实际情况选择提交。',
+          duration: 0,
+          offset: 25
+        })
       }
     }
   }

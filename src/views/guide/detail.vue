@@ -143,6 +143,7 @@
         favoriteList: [],
         exampleShow: false,
         originalShow: false,
+        id: undefined
       }
     },
     computed: {
@@ -231,7 +232,8 @@
         }
       },
       linkToPretrial() {
-        this.$router.push({path: `/guide/pretrial/${this.itemId}`})
+        //todo 如果是企业事项判断是否完善企业信息
+        this.$router.push({path: `/guide/pretrial/itemId/${this.itemId}`})
       }
     }
   }

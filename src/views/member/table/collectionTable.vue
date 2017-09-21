@@ -1,5 +1,5 @@
 <template>
-  <el-table :data="tableData" stripe border style="width: 100%">
+  <el-table :data="data" stripe border style="width: 100%">
     <el-table-column type="index" label="序号" width="80" align="center"></el-table-column>
     <el-table-column prop="itemName" label="事项名称" width="460" align="center"></el-table-column>
     <el-table-column prop="createTime" label="收藏时间" width="180" align="center"></el-table-column>
@@ -16,17 +16,8 @@
 
   export default {
     name: 'collection-table',
-    data() {
-      return {
-        tableData: []
-      }
-    },
-    created() {
-      getAllFavorites().then(response => {
-        if (response.status == 200) {
-          this.tableData = response.data
-        }
-      })
+    props: {
+      data: Array
     },
     methods: {
       removeFavorite(itemId) {

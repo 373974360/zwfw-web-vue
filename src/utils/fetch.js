@@ -24,7 +24,7 @@ function fetch(object) {
     transformRequest: [function(data) {
       if (!data)
         data = {}
-      data = Qs.stringify(data, {arrayFormat: 'brackets', allowDots: true})
+      data = Qs.stringify(data, {arrayFormat: 'indices', allowDots: true})
       return data
     }]
   })

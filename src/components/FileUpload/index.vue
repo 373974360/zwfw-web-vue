@@ -52,7 +52,7 @@
       handleRemove() {
         var arg = [].slice.call(arguments)
         arg.push(this.uploadId)
-        this.onSuccess.apply(this, arg)
+        this.onRemove.apply(this, arg)
       }
     }
   }

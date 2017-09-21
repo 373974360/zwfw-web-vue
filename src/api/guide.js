@@ -81,10 +81,35 @@ export function delFavorite(itemId) {
   })
 }
 
+export function submitPretrial(pretrialInfo) {
+  const data = pretrialInfo
+  console.log(data)
+  return fetchZwfw({
+    url: '/web/itemPretrial/insert',
+    method: 'post',
+    data
+  })
+}
+
 export function getItemPretrial(id) {
   return fetchZwfw({
     url: '/web/itemPretrial/findById',
     method: 'get',
     params: {id}
+  })
+}
+
+export function getPretrialList() {
+  return fetchZwfw({
+    url: '/web/member/pretrial/list',
+    method: 'get'
+  })
+}
+
+export function findMyItem(memberId) {
+  return fetchZwfw({
+    url: '/web/member/findMyItem',
+    method: 'get',
+    params: {memberId}
   })
 }

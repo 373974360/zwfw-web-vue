@@ -5,29 +5,36 @@
         <div class="label">我的办件</div>
         <div class="more"><router-link :to="{path: '/member/transaction'}">更多></router-link></div>
       </div>
-      <div class="data-bg"><transaction-table></transaction-table></div>
+      <div class="data-bg">
+        <transaction-table :data="transactionData"></transaction-table>
+      </div>
     </div>
     <div class="data-box">
       <div class="label-bg">
         <div class="label">我的预审</div>
-        <div class="more"><router-link :to="{path: '/member/review'}">更多></router-link></div>
+        <div class="more"><router-link :to="{path: '/member/pretrial'}">更多></router-link></div>
       </div>
-      <div class="data-bg"><pretrial-table :data="pretrialData"></pretrial-table></div>
+      <div class="data-bg">
+        <pretrial-table :data="pretrialData"></pretrial-table>
+      </div>
     </div>
     <div class="data-box">
       <div class="label-bg">
         <div class="label">我的收藏</div>
         <div class="more"><router-link :to="{path: '/member/collection'}">更多></router-link></div>
       </div>
-      <div class="data-bg"><collection-table :data="favoriteData"></collection-table></div>
+      <div class="data-bg">
+        <collection-table :data="collectionData" :handle-remove="removeFavorite"></collection-table>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
   import { TransactionTable, PretrialTable, CollectionTable } from './table'
-  import { findMyItem } from '../../api/guide'
   import { mapGetters } from 'vuex'
+  import { getMyItem } from '../../api/member/member'
+  import { delFavorite } from '../../api/member/favorite'
 
   export default {
     components: {
@@ -36,8 +43,8 @@
     data() {
       return {
         pretrialData: [],
-        favoriteData: [],
-        processData: []
+        collectionData: [],
+        transactionData: []
       }
     },
     computed: {
@@ -46,14 +53,29 @@
       ])
     },
     created() {
-      findMyItem(this.id).then(response => {
-        console.log(response)
+      getMyItem(this.id).then(response => {
         if (response.status == 200) {
           this.pretrialData = response.data.itemPretrials
-          this.favoriteData = response.data.memberFavorites
-          this.processData = response.data.memberProcesses
+          this.collectionData = response.data.memberFavorites
+          this.transactionData = response.data.memberProcesses
         }
       })
+    },
+    methods: {
+      removeFavorite(row) {
+        delFavorite(row.itemId).then(response => {
+          if (response.status == 200) {
+            let index
+            for (let [i, item] of this.collectionData.entries()) {
+              if (row.itemId == item.itemId) {
+                index = i
+                break
+              }
+            }
+            this.collectionData.splice(index, 1)
+          }
+        })
+      }
     }
   }
 </script>

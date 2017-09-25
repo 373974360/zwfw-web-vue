@@ -1,15 +1,10 @@
 <template>
   <div class="data-box">
     <div class="label-bg">
-      <div class="label">我的消息</div>
-      <div class="read"><el-button size="small">全部标为已读</el-button></div>
+      <div class="label">我的收藏</div>
     </div>
     <div class="data-bg">
-      <el-table :data="messageData" stripe border style="width: 100%">
-        <el-table-column prop="title" label="标题" width="100" align="center"></el-table-column>
-        <el-table-column prop="content" label="消息内容" width="600" align="center"></el-table-column>
-        <el-table-column prop="sendTime" :formatter="formatDate" label="消息时间" width="180" align="center"></el-table-column>
-      </el-table>
+      <collection-table :data="collectionData" :handle-remove="removeFavorite"></collection-table>
       <div class="page-container">
         <el-pagination
           @size-change="handleSizeChange"
@@ -18,8 +13,7 @@
           :page-sizes="[5, 10, 15, 20]"
           :page-size="pageSize"
           layout="prev, pager, next, total, sizes, jumper"
-          :total="total"
-          :page-count="pageCount">
+          :total="total">
         </el-pagination>
       </div>
     </div>
@@ -27,13 +21,16 @@
 </template>
 
 <script>
-  import { getMyMessagePage } from '../../api/member/member'
-  import { date } from '../../filters'
+  import { CollectionTable } from './table'
+  import { getFavoritePage, delFavorite } from '../../api/member/favorite'
 
   export default {
+    components: {
+      CollectionTable
+    },
     data() {
       return {
-        messageData: [],
+        collectionData: [],
         page: 1,
         pageSize: 10,
         total: 0
@@ -49,19 +46,32 @@
     },
     methods: {
       loadPage() {
-        getMyMessagePage(this.offset, this.pageSize, '').then(response => {
-          this.messageData = response.rows
+        getFavoritePage(this.offset, this.pageSize).then(response => {
+          this.collectionData = response.rows
           this.total = response.total
         })
       },
-      formatDate(row, column, cellValue) {
-        return date(cellValue, 'YYYY-MM-DD HH:mm')
+      handleSizeChange(pageSize) {
+        this.pageSize = pageSize
+        this.page = 1
+        this.loadPage()
+      },
+      handleCurrentChange(page) {
+        this.page = page
+        this.loadPage()
+      },
+      removeFavorite(row) {
+        delFavorite(row.itemId).then(response => {
+          if (response.status == 200) {
+            loadPage()
+          }
+        })
       }
     }
   }
 </script>
 
-<style rel="stylesheet/scss" lang="scss">
+<style rel="stylesheet/scss" lang="scss" scoped>
   .data-box {
     border: 1px solid #e1e2e4;
     margin-bottom: 18px;
@@ -77,24 +87,11 @@
         line-height: 40px;
         font-size: 16px;
       }
-      .read {
-        height: 40px;
-        line-height: 38px;
-      }
-      .el-button {
-        background: #ededf0;
-        margin-left: 10px;
-      }
     }
     .data-bg {
       padding: 16px;
       min-height: 100px;
       overflow: hidden;
-      .el-table {
-        th {
-          font-weight: normal;
-        }
-      }
       .page-container {
         text-align: center;
         margin-top: 16px;

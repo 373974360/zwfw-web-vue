@@ -50,8 +50,9 @@
 </template>
 
 <script>
-  import { getDeptCategoryByPid, getItemListByDept, getAllFavorites, addFavorite, delFavorite } from '../../api/guide'
   import { mapGetters } from 'vuex'
+  import { getDeptCategoryByPid, getItemPageByDept } from '../../api/guide'
+  import { getAllFavorites, addFavorite, delFavorite } from '../../api/member/favorite'
 
   export default {
     name: 'service_guide',
@@ -97,8 +98,7 @@
         this.loadItemList(response.data[0].id)
       })
       getAllFavorites().then(response => {
-        console.log('all favorite')
-        console.log(response)
+        console.log('all favorite', response)
         this.favoriteList = response.data
       })
     },
@@ -117,8 +117,8 @@
       },
 //      todo 引用el分页
       loadPage() {
-        getItemListByDept(this.offset, this.pageSize, this.currentDeptId).then(response => {
-          console.log(response)
+        getItemPageByDept(this.offset, this.pageSize, this.currentDeptId).then(response => {
+          console.log('item_page', response)
           this.itemList = response.rows
           this.total = response.total
         })

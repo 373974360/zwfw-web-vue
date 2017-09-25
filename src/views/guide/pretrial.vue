@@ -127,9 +127,10 @@
 </template>
 
 <script>
-  import { getItemConditions, getItemMaterials, getItemDetail, getItemPretrial, submitPretrial } from '../../api/guide'
-  import { mapGetters } from 'vuex'
   import FileUpload from '../../components/FileUpload'
+  import { mapGetters } from 'vuex'
+  import { getItemDetail, getItemConditions, getItemMaterials } from '../../api/item'
+  import { getPretrialInfo, submitPretrial } from '../../api/member/pretrial'
 
   export default {
     components: {
@@ -196,7 +197,7 @@
       },
       init2() {
         this.secondForm = true
-        getItemPretrial(this.pretrialId).then(response => {
+        getPretrialInfo(this.pretrialId).then(response => {
           if (response.status == 200) {
             this.itemPretrial = response.data
             this.itemId = response.data.itemId

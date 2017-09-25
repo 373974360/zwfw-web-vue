@@ -128,8 +128,9 @@
 </template>
 
 <script>
-  import { getItemDetail, getItemConditions, getItemMaterials, getItemPreorderConfig, getAllFavorites, addFavorite, delFavorite } from '../../api/guide'
   import { mapGetters } from 'vuex'
+  import { getItemDetail, getItemConditions, getItemMaterials, getItemPreorderConfig } from '../../api/item'
+  import { getAllFavorites, addFavorite, delFavorite } from '../../api/member/favorite'
 
   export default {
     data() {

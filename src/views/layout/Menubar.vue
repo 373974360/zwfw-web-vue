@@ -18,7 +18,7 @@
       return {
         menuList: [
           {menuId: 1, menuName: '我的办件', menuRouter: '/member/transaction'},
-          {menuId: 2, menuName: '我的预审', menuRouter: '/member/review'},
+          {menuId: 2, menuName: '我的预审', menuRouter: '/member/pretrial'},
           {menuId: 3, menuName: '我的收藏', menuRouter: '/member/collection'},
           {menuId: 4, menuName: '我的消息', menuRouter: '/member/message'},
           {menuId: 5, menuName: '个人信息', menuRouter: '/member/personInfo'},

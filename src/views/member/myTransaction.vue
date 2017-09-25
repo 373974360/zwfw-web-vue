@@ -1,7 +1,7 @@
 <template>
   <div class="data-box">
     <div class="label-bg">
-      <div class="label">我的预审</div>
+      <div class="label">我的办件</div>
     </div>
     <div class="data-bg">
       <div class="data-tool">
@@ -11,14 +11,13 @@
         </div>
         <div class="checkbox-container">
           <el-checkbox-group v-model="checkList" @change="reloadPage">
-            <el-checkbox label="1">草稿</el-checkbox>
-            <el-checkbox label="2">待审</el-checkbox>
-            <el-checkbox label="3">未通过</el-checkbox>
-            <el-checkbox label="4">通过</el-checkbox>
+            <el-checkbox label="10">在办</el-checkbox>
+            <el-checkbox label="15">办结</el-checkbox>
+            <el-checkbox label="99">不予受理</el-checkbox>
           </el-checkbox-group>
         </div>
       </div>
-      <pretrial-table :data="pretrialData"></pretrial-table>
+      <transaction-table :data="transactionData"></transaction-table>
       <div class="page-container">
         <el-pagination
           @size-change="handleSizeChange"
@@ -35,18 +34,18 @@
 </template>
 
 <script>
-  import { PretrialTable } from './table'
-  import { getPretrialPage } from '../../api/member/pretrial'
+  import { TransactionTable } from './table'
+  import { getMyProcessPage } from '../../api/member/member'
 
   export default {
     components: {
-      PretrialTable
+      TransactionTable
     },
     data() {
       return {
         keywords: '',
         checkList: [],
-        pretrialData: [],
+        transactionData: [],
         page: 1,
         pageSize: 10,
         total: 0
@@ -65,8 +64,8 @@
     },
     methods: {
       loadPage() {
-        getPretrialPage(this.offset, this.pageSize, this.keywords, this.checkedStatus).then(response => {
-          this.pretrialData = response.rows
+        getMyProcessPage(this.offset, this.pageSize, this.keywords, this.checkedStatus).then(response => {
+          this.transactionData = response.rows
           this.total = response.total
         })
       },
@@ -121,7 +120,6 @@
             input {
               height: 28px;
               line-height: 29px;
-              font-size: 12px;
             }
           }
           .el-button {

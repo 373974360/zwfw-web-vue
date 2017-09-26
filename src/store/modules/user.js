@@ -35,9 +35,8 @@ const user = {
     DoLogin({commit}, loginInfo) {
       return new Promise((resolve, reject) => {
         doLogin(loginInfo).then(response => {
-          console.log('doLogin:')
-          console.log(response)
-          if (response.status != 200) {
+          console.log('doLogin: ', response)
+          if (response.httpCode != 200) {
             reject(response.msg)
           } else {
             const data = response.data
@@ -54,7 +53,8 @@ const user = {
     GetInfo({commit}) {
       return new Promise((resolve, reject) => {
         getInfo().then(response => {
-          if (response.status == 200) {
+          console.log('getInfo: ', response)
+          if (response.httpCode == 200) {
             const data = response.data
             commit('SET_USER', data)
             commit('SET_ID', data.id)

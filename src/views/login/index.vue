@@ -7,9 +7,9 @@
         <div class="login-container">
           <el-form class="login-form" ref="loginForm" :model="loginForm" :rules="loginRules" autoComplete="on" label-position="left">
             <div class="title">用户登录</div>
-            <el-form-item prop="loginName">
+            <el-form-item prop="account">
               <span class="svg-container"><icon-svg iconClass="user"/></span>
-              <el-input type="text" v-model="loginForm.loginName" autoComplete="on" placeholder="身份证号"/>
+              <el-input type="text" v-model="loginForm.account" autoComplete="on" placeholder="身份证号"/>
             </el-form-item>
             <el-form-item prop="password">
               <span class="svg-container"><icon-svg iconClass="password"/></span>
@@ -18,9 +18,9 @@
             </el-form-item>
             <el-row>
               <el-col :span="12">
-                <el-form-item prop="verifyCode">
+                <el-form-item prop="captcha">
                   <span class="svg-container"><icon-svg iconClass="captcha"/></span>
-                  <el-input type="text" @keyup.enter.native="handleLogin" v-model="loginForm.verifyCode" placeholder="验证码"/>
+                  <el-input type="text" @keyup.enter.native="handleLogin" v-model="loginForm.captcha" placeholder="验证码"/>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -64,10 +64,9 @@
       }
       const validateCaptcha = (rule, value, callback) => {
         validateVerifyCode(value).then(response => {
-          console.log('validateVerifyCode:')
-          console.log(response)
-          if (response.status !== 200) {
-            callback(new Error('验证码不正确'))
+          console.log('validateVerifyCode: ', response)
+          if (response.httpCode !== 200) {
+            callback(new Error(response.msg))
           }
           callback()
         }).catch(error => {
@@ -76,20 +75,20 @@
       }
       return {
         loginForm: {
-          loginName: '',
+          account: '',
           password: '',
-          verifyCode: '',
+          captcha: '',
           autoLogin: false,
         },
         loginRules: {
-          loginName: [
+          account: [
             {required: true, message: '用户名不能为空', trigger: 'blur'},
             {validator: validateIdCard, trigger: 'blur'}
           ],
           password: [
             {required: true, message: '密码不能为空', trigger: 'blur'}
           ],
-          verifyCode: [
+          captcha: [
             {required: true, message: '验证码不能为空', trigger: 'blur'},
             {min: 4, max: 4, message: '验证码为4位', trigger: 'blur'},
             {validator: validateCaptcha, trigger: 'blur'}

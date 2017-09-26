@@ -20,7 +20,7 @@ export function doLogin(loginInfo) {
 
 export function getInfo() {
   return fetchZwfw({
-    url: '/web/findMemberById',
+    url: '/web/member/getMyProfile',
     method: 'get'
   })
 }

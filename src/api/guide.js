@@ -1,26 +1,17 @@
 import { fetchZwfw } from "../utils/fetch"
 
-export function getDeptCategoryByPid(parentId) {
+export function getItemCategory() {
   return fetchZwfw({
-    url: '/web/data/getItemCategoryByPid',
-    method: 'get',
-    params: {parentId}
+    url: '/web/category/getItemCategory',
+    method: 'get'
   })
 }
 
-export function getItemPageByDept(offset, limit, itemCategories) {
+export function getItemPageByCategories(page, rows, itemCategories) {
   return fetchZwfw({
     url: '/web/item/list',
     method: 'get',
-    params: {offset, limit, itemCategories}
-  })
-}
-
-export function getSimpleItemList(offset, limit, itemCategories) {
-  return fetchZwfw({
-    url: '/web/item/list/simple',
-    method: 'get',
-    params: {offset, limit, itemCategories}
+    params: {page, rows, itemCategories}
   })
 }
 

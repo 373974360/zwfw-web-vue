@@ -51,7 +51,7 @@
 
 <script>
   import { mapGetters } from 'vuex'
-  import { getDeptCategoryByPid, getItemPageByDept } from '../../api/guide'
+  import { getItemCategory, getItemPageByCategories } from '../../api/guide'
   import { getAllFavorites, addFavorite, delFavorite } from '../../api/member/favorite'
 
   export default {
@@ -92,15 +92,15 @@
       }
     },
     created() {
-      getDeptCategoryByPid(1).then(response => {
-        console.log(response)
+      getItemCategory().then(response => {
+        console.log('itemCategory: ', response)
         this.deptList = response.data
         this.loadItemList(response.data[0].id)
       })
-      getAllFavorites().then(response => {
+      /*getAllFavorites().then(response => {
         console.log('all favorite', response)
         this.favoriteList = response.data
-      })
+      })*/
     },
     methods: {
       loadItemList(deptId) {
@@ -117,10 +117,10 @@
       },
 //      todo 引用el分页
       loadPage() {
-        getItemPageByDept(this.offset, this.pageSize, this.currentDeptId).then(response => {
+        getItemPageByCategories(this.page, this.pageSize, this.currentDeptId).then(response => {
           console.log('item_page', response)
-          this.itemList = response.rows
-          this.total = response.total
+          this.itemList = response.data.list
+          this.total = response.data.total
         })
       },
       isFavorite(itemId) {

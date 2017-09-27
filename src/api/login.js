@@ -35,7 +35,7 @@ export function doLogout() {
 export function isUserExist(loginName) {
   const data = {loginName}
   return fetchZwfw({
-    url: '/web/register/isExist',
+    url: '/web/member/isExist',
     method: 'post',
     data
   })

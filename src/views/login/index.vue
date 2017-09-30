@@ -75,9 +75,9 @@
       }
       return {
         loginForm: {
-          account: '320321199308130420',
-          password: '',
-          captcha: '',
+          account: '342601199311014355',
+          password: undefined,
+          captcha: undefined,
           autoLogin: false,
         },
         loginRules: {
@@ -117,7 +117,7 @@
         })
       },
       changeVerifyCode() {
-        this.imgUrl = process.env.SYS_API + '/web/common/getVerifyCode?' + Math.random()
+        this.imgUrl = process.env.ZWFW_API + '/web/common/getVerifyCode?' + Math.random()
       }
     },
     mounted() {

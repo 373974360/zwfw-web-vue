@@ -108,7 +108,7 @@
               <span>详细要求：</span>{{material.detailRequirement}}
             </p>
             <p>
-              <file-upload :ref='"upload"+index' name="upfile" :action="uploadUrl" :multiple="true" :auto-upload="false"
+              <file-upload :ref='"upload"+index' name="uploadFile" :action="uploadUrl" :multiple="true" :auto-upload="false"
                            :uploadId="index" :file-list="uploadFileList[index]"
                            :on-preview="handlePreview" :on-success="handleSuccess" :on-remove="handleRemove">
                 <el-button size="small" type="primary">选取文件</el-button>
@@ -154,6 +154,7 @@
           itemId: '',
           takeType: '1',
           itemPostInfo: {
+            id: '',
             pretrialId: '',
             memberId: '',
             name: '',
@@ -181,7 +182,7 @@
         this.pretrialId = this.$route.params.value
         this.init2()
       }
-      this.uploadUrl = `${process.env.ZWFW_API}/ueditor/pretrialUpload`
+      this.uploadUrl = `${process.env.ZWFW_API}/web/pretrial/upload`
 
     },
     methods: {
@@ -198,7 +199,7 @@
       init2() {
         this.secondForm = true
         getPretrialInfo(this.pretrialId).then(response => {
-          if (response.status == 200) {
+          if (response.httpCode == 200) {
             this.itemPretrial = response.data
             this.itemId = response.data.itemId
             this.initItemDetail()
@@ -212,7 +213,8 @@
       },
       initConditions() {
         getItemConditions(this.itemId).then(response => {
-          if (response.status == 200) {
+          console.log('itemConditions:', response)
+          if (response.httpCode == 200) {
             this.conditions = response.data
           } else {
             this.$message.error('初始化信息失败，请刷新页面！')
@@ -221,7 +223,8 @@
       },
       initMaterials() {
         getItemMaterials(this.itemId).then(response => {
-          if (response.status == 200) {
+          console.log('itemMaterials:', response)
+          if (response.httpCode == 200) {
             this.materials = response.data
             if (!this.pretrialId) {
               this.initPretrialMaterials()
@@ -233,7 +236,8 @@
       },
       initItemDetail() {
         getItemDetail(this.itemId).then(response => {
-          if (response.status == 200) {
+          console.log('itemDetail:', response)
+          if (response.httpCode == 200) {
             this.item = response.data
           } else {
             this.$message.error('初始化信息失败，请刷新页面！')
@@ -346,7 +350,7 @@
       },
       doSubmit() {
         submitPretrial(this.itemPretrial).then(response => {
-          if (response.status == 200) {
+          if (response.httpCode == 200) {
             this.$message.success('申请提交成功，请耐心等待审核！')
             this.$router.push({path: '/member'})
           } else {

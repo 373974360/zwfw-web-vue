@@ -9,13 +9,19 @@ const whiteList = [
 const whitePath = '/guide/detail'
 
 router.beforeEach((to, from, next) => {
+  if (store.getters.enums.length === 0) {
+    store.dispatch('SetEnums');
+  }
+  if (store.getters.dicts.length === 0) {
+    store.dispatch('SetDicts');
+  }
   if (getToken()) {//判断是否有token
     if (to.path === '/login' || to.path === '/register') {
       next({path: '/guide'})
     } else {
       if (store.getters.id.length === 0) {
         store.dispatch('GetInfo').then(() => {
-          next({...to})
+          next(to.path)
         }).catch(() => {
 
         })

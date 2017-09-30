@@ -18,8 +18,7 @@
           :page-sizes="[5, 10, 15, 20]"
           :page-size="pageSize"
           layout="prev, pager, next, total, sizes, jumper"
-          :total="total"
-          :page-count="pageCount">
+          :total="total">
         </el-pagination>
       </div>
     </div>
@@ -39,20 +38,27 @@
         total: 0
       }
     },
-    computed: {
-      offset() {
-        return (this.page - 1) * this.pageSize
-      }
-    },
     created() {
       this.loadPage()
     },
     methods: {
       loadPage() {
-        getMyMessagePage(this.offset, this.pageSize, '').then(response => {
-          this.messageData = response.rows
-          this.total = response.total
+        getMyMessagePage(this.page, this.pageSize).then(response => {
+          console.log('MessagePage:', response)
+          if (response.httpCode == 200) {
+            this.messageData = response.data.list
+            this.total = response.data.total
+          }
         })
+      },
+      handleSizeChange(pageSize) {
+        this.pageSize = pageSize
+        this.page = 1
+        this.loadPage()
+      },
+      handleCurrentChange(page) {
+        this.page = page
+        this.loadPage()
       },
       formatDate(row, column, cellValue) {
         return date(cellValue, 'YYYY-MM-DD HH:mm')

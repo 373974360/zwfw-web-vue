@@ -1,9 +1,10 @@
 import { fetchZwfw } from "../utils/fetch"
 
-export function getItemCategory() {
+export function getItemCategory(parentId) {
   return fetchZwfw({
     url: '/web/category/getItemCategory',
-    method: 'get'
+    method: 'get',
+    params: {parentId}
   })
 }
 

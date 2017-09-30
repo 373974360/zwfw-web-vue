@@ -31,7 +31,7 @@
     data() {
       return {
         collectionData: [],
-        page: 1,
+        page: this.$store.state.app.page,
         pageSize: 10,
         total: 0
       }
@@ -46,9 +46,12 @@
     },
     methods: {
       loadPage() {
-        getFavoritePage(this.offset, this.pageSize).then(response => {
-          this.collectionData = response.rows
-          this.total = response.total
+        getFavoritePage(this.page, this.pageSize).then(response => {
+          console.log('favoritePage:', response)
+          if (response.httpCode == 200) {
+            this.collectionData = response.data.list
+            this.total = response.data.total
+          }
         })
       },
       handleSizeChange(pageSize) {
@@ -61,8 +64,8 @@
         this.loadPage()
       },
       removeFavorite(row) {
-        delFavorite(row.itemId).then(response => {
-          if (response.status == 200) {
+        delFavorite(row.id).then(response => {
+          if (response.httpCode == 200) {
             loadPage()
           }
         })

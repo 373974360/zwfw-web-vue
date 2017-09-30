@@ -8,8 +8,7 @@ const user = {
     id: '',
     type: '',
     name: '',
-    companyId: '',
-    resourceUrl: 'http://zwfw.itl.gov.cn:8080'
+    companyId: ''
   },
   mutations: {
     SET_TOKEN: (state, token) => {
@@ -68,6 +67,8 @@ const user = {
             resolve()
           }
         }).catch(error => {
+          removeToken()
+          commit('SET_Token', '')
           reject(error)
         })
       })

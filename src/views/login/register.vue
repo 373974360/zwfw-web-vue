@@ -6,8 +6,10 @@
         <span class="input-label">会员类型：</span>
       </el-col>
       <el-col :span="10">
-        <el-radio class="radio" v-model="registerForm.type" label="1">个人会员</el-radio>
-        <el-radio class="radio" v-model="registerForm.type" label="2">企业会员</el-radio>
+        <div class="el-form-item-radio">
+          <el-radio class="radio" v-model="registerForm.type" label="1">个人会员</el-radio>
+          <el-radio class="radio" v-model="registerForm.type" label="2">企业会员</el-radio>
+        </div>
       </el-col>
       <el-col :span="8"></el-col>
     </el-row>
@@ -37,6 +39,19 @@
       </el-col>
       <el-col :span="8">
         <span class="input-tip"><span>*</span>请填写本人身份证号作为登录账号</span>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="6">
+        <span class="input-label">性别：</span>
+      </el-col>
+      <el-col :span="10">
+        <div class="el-form-item-radio">
+          <el-radio class="radio" v-model="registerForm.gender" label="1">男</el-radio>
+          <el-radio class="radio" v-model="registerForm.gender" label="0">女</el-radio>
+        </div>
+      </el-col>
+      <el-col :span="8">
       </el-col>
     </el-row>
     <el-row>
@@ -245,7 +260,7 @@
     <el-row>
       <el-col :span="6"></el-col>
       <el-col :span="10" align="center">
-        <el-button type="primary" @click.native.prevent="handleRegister">注册</el-button>
+        <el-button type="primary" :loading="loading" @click.native.prevent="handleRegister">注册</el-button>
         <el-button type="primary" @click.native.prevent="resetForm">重置</el-button>
       </el-col>
       <el-col :span="8"></el-col>
@@ -272,11 +287,8 @@
           callback(new Error('身份证格式不正确，请重新输入'))
         } else {
           isUserExist(value).then(response => {
-            console.log('isUserExist:')
-            console.log(response)
-            /*if (response.status != 200) {
-
-            } else */if (response.status != 200 || response.data) {
+            console.log('isUserExist:', response)
+            if (response.httpCode == 200 && response.data) {
               callback(new Error('身份证号码已存在，请重新输入'))
             }
             callback()
@@ -287,6 +299,12 @@
         }
       }
       const validatePassword = (rule, value, callback) => {
+        if (this.registerForm.password2) {
+          this.$refs.registerForm.validateField('password2')
+        }
+        callback()
+      }
+      const validatePassword2 = (rule, value, callback) => {
         if (this.registerForm.password && this.registerForm.password2
           && this.registerForm.password != this.registerForm.password2) {
           callback(new Error('两次密码输入不同，请重新输入'))
@@ -302,9 +320,8 @@
       }
       const validatePhoneCaptcha = (rule, value, callback) => {
         validatePhoneVerifyCode(value).then(response => {
-          console.log('validatePhoneVerifyCode:')
-          console.log(response)
-          if (response.status != 200) {
+          console.log('validatePhoneVerifyCode:', response)
+          if (response.httpCode != 200) {
             callback(new Error('验证码不正确'))
           }
           callback()
@@ -322,30 +339,32 @@
       return {
         sendBtn: {
           text: '获取验证码',
-          second: '',
+          second: undefined,
           disabled: false
         },
-        resendFun: '',
+        resendFun: undefined,
+        loading: false,
         registerForm: {
           type: '1',
-          name: '',
-          loginName: '',
-          password: '',
-          password2: '',
-          mobilephone: '',
-          verifyCode: '',
-          address: '',
-          email: '',
-          qq: '',
-          wechat: '',
-          tellphone: '',
+          name: undefined,
+          loginName: undefined,
+          gender: '1',
+          password: undefined,
+          password2: undefined,
+          mobilephone: undefined,
+          verifyCode: undefined,
+          address: undefined,
+          email: undefined,
+          qq: undefined,
+          wechat: undefined,
+          tellphone: undefined,
           agree: false,
           company: {
-            name: '',
-            unifyCode: '',
-            legalPerson: '',
-            legalPersonCard: '',
-            address: ''
+            name: undefined,
+            unifyCode: undefined,
+            legalPerson: undefined,
+            legalPersonCard: undefined,
+            address: undefined
           }
         },
         registerRules: {
@@ -359,11 +378,12 @@
           ],
           password: [
             {required: true, message: '登录密码不能为空', trigger: 'blur'},
-            {min: 6, max: 16, message: '密码只能6-16位', trigger: 'blur'}
+            {min: 6, max: 16, message: '密码只能6-16位', trigger: 'blur'},
+            {validator: validatePassword, trigger: 'blur'}
           ],
           password2: [
             {required: true, message: '确认密码不能为空', trigger: 'blur'},
-            {validator: validatePassword, trigger: 'blur'}
+            {validator: validatePassword2, trigger: 'blur'}
           ],
           mobilephone: [
             {required: true, message: '手机号码不能为空', trigger: 'blur'},
@@ -389,10 +409,9 @@
             if (this.registerForm.agree) {
               this.loading = true
               doRegister(this.registerForm).then(response => {
-                console.log('doRegister:')
-                console.log(response)
+                console.log('doRegister:', response)
                 this.loading = false
-                if (response.status != 200) {
+                if (response.httpCode != 200) {
                   this.$message.error('注册失败')
                 } else {
                   this.$message.success('会员注册成功！')
@@ -417,12 +436,11 @@
           if (!error) {
             _this.sendBtn.disabled = true
             getPhoneVerifyCode(_this.registerForm.mobilephone).then(response => {
-              console.log('getPhoneVerifyCode:')
-              console.log(response)
+              console.log('getPhoneVerifyCode:', response)
               _this.sendBtn.second = 60
               _this.sendBtn.text = `重新发送(${_this.sendBtn.second})`
               _this.resendFun = setInterval(_this.changeSendBtn, 1000)
-              if (response.status == 200) {
+              if (response.httpCode == 200) {
                 _this.$message.success('短信已发送，请注意查看')
               } else {
                 _this.$message.error('短信发送失败，请重新获取')
@@ -433,7 +451,6 @@
             })
           }
         });
-
       },
       changeSendBtn() {
         this.sendBtn.second -= 1
@@ -471,6 +488,10 @@
       .el-form-item__content {
         line-height: 34px;
       }
+    }
+    .el-form-item-radio {
+      margin: 0 25px;
+      line-height: 36px;
     }
     .el-input {
       display: inline-block;

@@ -53,26 +53,25 @@
       ])
     },
     created() {
-      getMyItem(this.id).then(response => {
-        if (response.status == 200) {
-          this.pretrialData = response.data.itemPretrials
-          this.collectionData = response.data.memberFavorites
-          this.transactionData = response.data.memberProcesses
-        }
-      })
+      this.init()
     },
     methods: {
+      init() {
+        getMyItem(this.id).then(response => {
+          console.log('myItems:', response)
+          if (response.httpCode == 200) {
+            this.pretrialData = response.data.pretrialList
+            this.collectionData = response.data.favoriteList
+            this.transactionData = response.data.processList
+          } else {
+            this.$message.error('数据加载失败')
+          }
+        })
+      },
       removeFavorite(row) {
-        delFavorite(row.itemId).then(response => {
-          if (response.status == 200) {
-            let index
-            for (let [i, item] of this.collectionData.entries()) {
-              if (row.itemId == item.itemId) {
-                index = i
-                break
-              }
-            }
-            this.collectionData.splice(index, 1)
+        delFavorite(row.id).then(response => {
+          if (response.httpCode == 200) {
+            this.init()
           }
         })
       }

@@ -3,7 +3,7 @@ import { fetchZwfw } from "../../utils/fetch"
 export function submitPretrial(pretrialInfo) {
   const data = pretrialInfo
   return fetchZwfw({
-    url: '/web/itemPretrial/insert',
+    url: '/web/pretrial/submit',
     method: 'post',
     data
   })
@@ -11,16 +11,16 @@ export function submitPretrial(pretrialInfo) {
 
 export function getPretrialInfo(id) {
   return fetchZwfw({
-    url: '/web/itemPretrial/findById',
+    url: '/web/pretrial/getById',
     method: 'get',
     params: {id}
   })
 }
 
-export function getPretrialPage(offset, limit, q, status) {
+export function getPretrialPage(page, rows, itemName, statusList) {
   return fetchZwfw({
-    url: '/web/member/pretrial/list',
+    url: '/web/pretrial/list',
     method: 'get',
-    params: {offset, limit, q, status}
+    params: {page, rows, itemName, statusList}
   })
 }

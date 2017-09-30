@@ -11,10 +11,7 @@
         </div>
         <div class="checkbox-container">
           <el-checkbox-group v-model="checkList" @change="reloadPage">
-            <el-checkbox label="1">草稿</el-checkbox>
-            <el-checkbox label="2">待审</el-checkbox>
-            <el-checkbox label="3">未通过</el-checkbox>
-            <el-checkbox label="4">通过</el-checkbox>
+            <el-checkbox v-for="status in statusList" :key="status.code" :label="status.code">{{status.value}}</el-checkbox>
           </el-checkbox-group>
         </div>
       </div>
@@ -45,6 +42,12 @@
     data() {
       return {
         keywords: '',
+        statusList: [
+          {code: 1, value: '草稿'},
+          {code: 2, value: '待审'},
+          {code: 3, value: '未通过'},
+          {code: 4, value: '通过'}
+        ],
         checkList: [],
         pretrialData: [],
         page: 1,
@@ -52,22 +55,17 @@
         total: 0
       }
     },
-    computed: {
-      offset() {
-        return (this.page - 1) * this.pageSize
-      },
-      checkedStatus() {
-        return this.checkList.join()
-      }
-    },
     created() {
       this.loadPage()
     },
     methods: {
       loadPage() {
-        getPretrialPage(this.offset, this.pageSize, this.keywords, this.checkedStatus).then(response => {
-          this.pretrialData = response.rows
-          this.total = response.total
+        getPretrialPage(this.page, this.pageSize, this.keywords, this.checkList).then(response => {
+          console.log('pretrialPage:', response)
+          if (response.httpCode == 200) {
+            this.pretrialData = response.data.list
+            this.total = response.data.total
+          }
         })
       },
       reloadPage() {

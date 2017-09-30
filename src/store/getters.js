@@ -5,7 +5,10 @@ const getters = {
   type: state => state.user.type,
   name: state => state.user.name,
   companyId: state => state.user.companyId,
-  resourceUrl: state => state.user.resourceUrl
+  enums: state => state.app.enums,
+  dicts: state => state.app.dicts,
+  deptCategoryId: state => state.app.deptCategoryId,
+  resourceUrl: state => state.app.resourceUrl
 }
 
 export default getters

@@ -2,32 +2,32 @@ import { fetchZwfw } from "../../utils/fetch"
 
 export function getAllFavorites() {
   return fetchZwfw({
-    url: '/web/member/favorites/getAll',
+    url: '/web/member/favorite/getAll',
     method: 'get'
   })
 }
 
-export function getFavoritePage(offset, limit) {
+export function getFavoritePage(page, rows) {
   return fetchZwfw({
-    url: '/web/member/favorites/list',
+    url: '/web/member/favorite/list',
     method: 'get',
-    params: {offset, limit}
+    params: {page, rows}
   })
 }
 
 export function addFavorite(itemId) {
   const data = {itemId}
   return fetchZwfw({
-    url: '/web/memberFavorite/insert',
+    url: '/web/member/favorite/add',
     method: 'post',
     data
   })
 }
 
-export function delFavorite(itemId) {
-  const data = {itemId}
+export function delFavorite(id) {
+  const data = {id}
   return fetchZwfw({
-    url: '/web/memberFavorite/delete',
+    url: '/web/member/favorite/delete',
     method: 'post',
     data
   })

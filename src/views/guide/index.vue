@@ -7,7 +7,7 @@
       </div>
       <el-menu class="category" mode="vertical">
         <template v-for="item in deptList">
-          <el-menu-item :index="item.id" @click="loadItemList(item.id)">{{item.name}}</el-menu-item>
+          <el-menu-item :index="item.name" @click="loadItemList(item.id)">{{item.name}}</el-menu-item>
         </template>
       </el-menu>
     </el-col>
@@ -70,7 +70,7 @@
     },
     computed: {
       ...mapGetters([
-        'token'
+        'token', 'deptCategoryId'
       ]),
       totalPage() {
         if (this.total == 0) {
@@ -92,15 +92,15 @@
       }
     },
     created() {
-      getItemCategory().then(response => {
+      getItemCategory(this.deptCategoryId).then(response => {
         console.log('itemCategory: ', response)
         this.deptList = response.data
         this.loadItemList(response.data[0].id)
       })
-      /*getAllFavorites().then(response => {
-        console.log('all favorite', response)
+      getAllFavorites().then(response => {
+        console.log('favorite: ', response)
         this.favoriteList = response.data
-      })*/
+      })
     },
     methods: {
       loadItemList(deptId) {
@@ -118,15 +118,15 @@
 //      todo 引用el分页
       loadPage() {
         getItemPageByCategories(this.page, this.pageSize, this.currentDeptId).then(response => {
-          console.log('item_page', response)
+          console.log('item_page: ', response)
           this.itemList = response.data.list
           this.total = response.data.total
         })
       },
       isFavorite(itemId) {
         if (this.token) {
-          for (var i = 0; i < this.favoriteList.length; i++) {
-            if (itemId == this.favoriteList[i].itemId) {
+          for (let favorite of this.favoriteList) {
+            if (itemId == favorite.itemId) {
               return true
             }
           }
@@ -136,8 +136,9 @@
       appendFavorite(itemId) {
         if (this.token) {
           addFavorite(itemId).then(response => {
-            if (response.status == 200) {
-              this.favoriteList.push({itemId: itemId})
+            console.log('addFavorite: ', response)
+            if (response.httpCode == 200) {
+              this.favoriteList.push(response.data)
             }
           })
         } else {
@@ -146,11 +147,16 @@
       },
       removeFavorite(itemId) {
         if (this.token) {
-          delFavorite(itemId).then(response => {
-            if (response.status == 200) {
-//              todo 从列表中移除
+          for (let [index, favorite] of this.favoriteList.entries()) {
+            if (itemId == favorite.itemId) {
+              delFavorite(favorite.id).then(response => {
+                if (response.httpCode == 200) {
+                  this.favoriteList.splice(index, 1)
+                }
+              })
+              break
             }
-          })
+          }
         } else {
           this.$router.push({path: '/login'})
         }

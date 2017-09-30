@@ -6,18 +6,19 @@
           <p class="p1">事项类型</p>
           <p class="p2">行政审批</p>
           <p class="p1">办理主体</p>
-          <p class="p2">{{basicInfo.departmentName}}</p>
+          <p class="p2">{{basicInfo.implAgency}}</p>
           <p class="p1">办理类型</p>
           <p class="p2">
-            <template v-if="basicInfo.type == 1">即办件</template>
-            <template v-if="basicInfo.type == 2">承诺件</template>
+            <!--<template v-if="basicInfo.processType == 'bjlx_jbj'">即办件</template>
+            <template v-if="basicInfo.processType == 'bjlx_cnj'">承诺件</template>-->
+            {{basicInfo.processType | dicts('bjlx')}}
           </p>
         </div>
-        <el-button type="primary" :disabled="basicInfo.onlineHandleMode == 0" @click="linkToPretrial">
+        <el-button type="primary" :disabled="basicInfo.handleType == 'blxs_ckbl'" @click="linkToPretrial">
           <div class="svg-container"><icon-svg iconClass="online"/></div>
-          <p v-if="basicInfo.onlineHandleMode == 0">不支持预审</p>
-          <p v-if="basicInfo.onlineHandleMode == 1">在线预审</p>
-          <p v-if="basicInfo.onlineHandleMode == 2">在线办理</p>
+          <p v-if="basicInfo.handleType == 'blxs_ckbl'">不支持预审</p>
+          <p v-if="basicInfo.handleType == 'blxs_wsbl'">在线办理</p>
+          <!--<p v-if="basicInfo.handleType == 1">在线预审</p>-->
         </el-button>
         <el-button type="primary">
           <div class="svg-container"><icon-svg iconClass="online"/></div>
@@ -57,29 +58,29 @@
         <div class="table-container">
           <table>
             <tr>
-              <th>涉及部门</th><td>{{basicInfo.departmentNames}}</td>
-              <th>受理范围</th><td>{{basicInfo.acceptScope}}</td></tr>
+              <th>涉及部门</th><td>{{basicInfo.unionAgency}}</td>
+              <th>受理范围</th><td>{{basicInfo.handleScope | dicts('tbfw')}}</td></tr>
             <tr>
-              <th>承诺期限</th><td>{{basicInfo.promiseDay}} 个工作日</td>
-              <th>法定期限</th><td>{{basicInfo.legalDay}} 个工作日</td>
+              <th>承诺期限</th><td>{{basicInfo.promiseEndTime}} 个工作日</td>
+              <th>法定期限</th><td>{{basicInfo.legalEndTime}} 个工作日</td>
             </tr>
             <tr>
               <th>办理时间</th><td>法定工作日 上午9:00-12:00 下午14:00-17:00</td>
-              <th>咨询电话</th><td>{{basicInfo.tellphone}}</td>
+              <th>咨询电话</th><td>{{basicInfo.askPhone}}</td>
             </tr>
             <tr>
-              <th>办理地点</th><td>{{basicInfo.workAddress}}</td>
-              <th>监督电话</th><td>{{basicInfo.superviseTellphone}}</td>
+              <th>办理地点</th><td>{{basicInfo.handlePlace}}</td>
+              <th>监督电话</th><td>{{basicInfo.supervisePhone}}</td>
             </tr>
             <tr>
-              <th>办理结果</th><td>{{basicInfo.approvalDocumentName}}</td>
-              <th>核准数量</th><td>{{basicInfo.authorizedQuantity == 0 ? '不限' : basicInfo.authorizedQuantity}}</td>
+              <th>办理结果</th><td>{{basicInfo.resultName}}</td>
+              <th>核准数量</th><td>{{basicInfo.numberLimit == 0 ? '不限' : basicInfo.numberLimit}}</td>
             </tr>
           </table>
         </div>
-        <div class="message" v-show="basicInfo.legalBasis != '-'">
+        <div class="message" v-show="basicInfo.setBasis != '-'">
           <span>办理依据</span>
-          <div class="msg-content" v-html="$options.filters.splitLines(basicInfo.legalBasis)"></div>
+          <div class="msg-content" v-html="$options.filters.splitLines(basicInfo.setBasis)"></div>
         </div>
         <div class="message" v-cloak v-show="conditions.length">
           <span>办理条件</span>
@@ -154,8 +155,7 @@
       isPreorder() {
         let flag = false
         getItemPreorderConfig(this.itemId).then(response => {
-          console.log('isPreorder')
-          console.log(response)
+          console.log('isPreorder: ', response)
           if (response.status == 200 && response.data.ispreorder == 1) {
             flag = true
           }
@@ -166,15 +166,15 @@
     created() {
       this.itemId = this.$route.params.itemId
       getItemDetail(this.itemId).then(response => {
-        console.log(response)
+        console.log('itemDetail: ', response)
         this.basicInfo = response.data
       })
       getItemConditions(this.itemId).then(response => {
-        console.log(response)
+        console.log('itemConditions: ', response)
         this.conditions = response.data
       })
       getItemMaterials(this.itemId).then(response => {
-        console.log(response)
+        console.log('itemMaterials: ', response)
         this.materials = response.data
         let originalIndex = 0;
         let originalMaterials = [];
@@ -194,16 +194,15 @@
         this.exampleMaterials = exampleMaterials;
       })
       getAllFavorites().then(response => {
-        console.log('all favorite')
-        console.log(response)
+        console.log('favorite: ', response)
         this.favoriteList = response.data
       })
     },
     methods: {
       isFavorite() {
         if (this.token) {
-          for (var i = 0; i < this.favoriteList.length; i++) {
-            if (this.itemId == this.favoriteList[i].itemId) {
+          for (let favorite of this.favoriteList) {
+            if (this.itemId == favorite.itemId) {
               return true
             }
           }
@@ -213,8 +212,8 @@
       appendFavorite() {
         if (this.token) {
           addFavorite(this.itemId).then(response => {
-            if (response.status == 200) {
-              this.favoriteList.push({itemId: this.itemId})
+            if (response.httpCode == 200) {
+              this.favoriteList.push(response.data)
             }
           })
         } else {
@@ -223,11 +222,16 @@
       },
       removeFavorite() {
         if (this.token) {
-          delFavorite(this.itemId).then(response => {
-            if (response.status == 200) {
-//              todo 从列表中移除
+          for (let [index, favorite] of this.favoriteList.entries()) {
+            if (itemId == favorite.itemId) {
+              delFavorite(favorite.id).then(response => {
+                if (response.httpCode == 200) {
+                  this.favoriteList.splice(index, 1)
+                }
+              })
+              break
             }
-          })
+          }
         } else {
           this.$router.push({path: '/login'})
         }

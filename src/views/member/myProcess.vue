@@ -17,7 +17,7 @@
           </el-checkbox-group>
         </div>
       </div>
-      <transaction-table :data="transactionData"></transaction-table>
+      <process-table :data="processData"></process-table>
       <div class="page-container">
         <el-pagination
           @size-change="handleSizeChange"
@@ -34,39 +34,36 @@
 </template>
 
 <script>
-  import { TransactionTable } from './table'
-  import { getMyProcessPage } from '../../api/member/member'
+  import { processTable } from './table'
+  import { getMyProcessPage } from '../../api/member/process'
 
   export default {
     components: {
-      TransactionTable
+      processTable
     },
     data() {
       return {
         keywords: '',
         checkList: [],
-        transactionData: [],
+        processData: [],
         page: 1,
         pageSize: 10,
         total: 0
       }
     },
     computed: {
-      offset() {
-        return (this.page - 1) * this.pageSize
-      },
-      checkedStatus() {
-        return this.checkList.join()
-      }
     },
     created() {
       this.loadPage()
     },
     methods: {
       loadPage() {
-        getMyProcessPage(this.offset, this.pageSize, this.keywords, this.checkedStatus).then(response => {
-          this.transactionData = response.rows
-          this.total = response.total
+        getMyProcessPage(this.page, this.pageSize, this.keywords, this.checkList).then(response => {
+          console.log('processPage:', response)
+          if (response.httpCode == 200) {
+            this.processData = response.data.list
+            this.total = response.data.total
+          }
         })
       },
       reloadPage() {

@@ -1,9 +1,13 @@
 <template>
-  <div class="transaction-table">
+  <div class="process-table">
     <el-table :data="data" stripe border style="width: 100%">
       <el-table-column type="index" label="序号" width="80" align="center"></el-table-column>
       <el-table-column prop="id" label="办件编号" width="140" align="center"></el-table-column>
-      <el-table-column prop="itemName" label="办件名称" width="300" align="center"></el-table-column>
+      <el-table-column prop="itemName" label="办件名称" width="300" align="center">
+        <template scope="scope">
+          <router-link :to="{path: `/guide/detail/${scope.row.itemId}`}">{{scope.row.itemName}}</router-link>
+        </template>
+      </el-table-column>
       <el-table-column prop="startItemTime" :formatter="formatDate" label="申报日期" width="180" align="center"></el-table-column>
       <el-table-column prop="status" :formatter="formatStatus" label="当前状态" width="180" align="center"></el-table-column>
     </el-table>
@@ -29,7 +33,7 @@
 </script>
 
 <style rel="stylesheet/scss" lang="scss">
-  .transaction-table {
+  .process-table {
     .el-table {
       th {
         font-weight: normal;

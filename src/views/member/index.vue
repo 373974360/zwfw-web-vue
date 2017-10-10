@@ -3,10 +3,10 @@
     <div class="data-box">
       <div class="label-bg">
         <div class="label">我的办件</div>
-        <div class="more"><router-link :to="{path: '/member/transaction'}">更多></router-link></div>
+        <div class="more"><router-link :to="{path: '/member/process'}">更多></router-link></div>
       </div>
       <div class="data-bg">
-        <transaction-table :data="transactionData"></transaction-table>
+        <process-table :data="processTable"></process-table>
       </div>
     </div>
     <div class="data-box">
@@ -31,20 +31,20 @@
 </template>
 
 <script>
-  import { TransactionTable, PretrialTable, CollectionTable } from './table'
+  import { processTable, PretrialTable, CollectionTable } from './table'
   import { mapGetters } from 'vuex'
   import { getMyItem } from '../../api/member/member'
   import { delFavorite } from '../../api/member/favorite'
 
   export default {
     components: {
-      TransactionTable, PretrialTable, CollectionTable
+      processTable, PretrialTable, CollectionTable
     },
     data() {
       return {
         pretrialData: [],
         collectionData: [],
-        transactionData: []
+        processData: []
       }
     },
     computed: {
@@ -62,7 +62,7 @@
           if (response.httpCode == 200) {
             this.pretrialData = response.data.pretrialList
             this.collectionData = response.data.favoriteList
-            this.transactionData = response.data.processList
+            this.processData = response.data.processList
           } else {
             this.$message.error('数据加载失败')
           }

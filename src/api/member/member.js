@@ -7,14 +7,6 @@ export function getMyItem() {
   })
 }
 
-export function getMyProcessPage(offset, limit, q, status) {
-  return fetchZwfw({
-    url: '/web/member/process/list',
-    method: 'get',
-    params: {offset, limit, q, status}
-  })
-}
-
 export function getMyMessagePage(page, rows) {
   return fetchZwfw({
     url: '/web/member/message/list',

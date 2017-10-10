@@ -17,7 +17,7 @@
     data() {
       return {
         menuList: [
-          {menuId: 1, menuName: '我的办件', menuRouter: '/member/transaction'},
+          {menuId: 1, menuName: '我的办件', menuRouter: '/member/process'},
           {menuId: 2, menuName: '我的预审', menuRouter: '/member/pretrial'},
           {menuId: 3, menuName: '我的收藏', menuRouter: '/member/collection'},
           {menuId: 4, menuName: '我的消息', menuRouter: '/member/message'},

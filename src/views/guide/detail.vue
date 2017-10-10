@@ -17,12 +17,12 @@
         <el-button type="primary" :disabled="basicInfo.handleType == 'blxs_ckbl'" @click="linkToPretrial">
           <div class="svg-container"><icon-svg iconClass="online"/></div>
           <p v-if="basicInfo.handleType == 'blxs_ckbl'">不支持预审</p>
-          <p v-if="basicInfo.handleType == 'blxs_wsbl'">在线办理</p>
-          <!--<p v-if="basicInfo.handleType == 1">在线预审</p>-->
+          <p v-if="basicInfo.handleType == 'blxs_wsbl'">在线预审</p>
         </el-button>
-        <el-button type="primary">
+        <el-button type="primary" :disabled="!basicInfo.orderable">
           <div class="svg-container"><icon-svg iconClass="online"/></div>
-          <p>现在预约</p>
+          <p v-if="basicInfo.orderable">现在预约</p>
+          <p v-else>不支持预约</p>
         </el-button>
         <el-button type="primary" @click="exampleShow = !exampleShow">
           <div class="svg-container"><icon-svg iconClass="list"/></div>
@@ -58,8 +58,8 @@
         <div class="table-container">
           <table>
             <tr>
-              <th>涉及部门</th><td>{{basicInfo.unionAgency}}</td>
-              <th>受理范围</th><td>{{basicInfo.handleScope | dicts('tbfw')}}</td></tr>
+              <th>联办机构</th><td>{{basicInfo.unionAgency}}</td>
+              <th>通办范围</th><td>{{basicInfo.handleScope | dicts('tbfw')}}</td></tr>
             <tr>
               <th>承诺期限</th><td>{{basicInfo.promiseEndTime}} 个工作日</td>
               <th>法定期限</th><td>{{basicInfo.legalEndTime}} 个工作日</td>
@@ -74,7 +74,7 @@
             </tr>
             <tr>
               <th>办理结果</th><td>{{basicInfo.resultName}}</td>
-              <th>核准数量</th><td>{{basicInfo.numberLimit == 0 ? '不限' : basicInfo.numberLimit}}</td>
+              <th>数量限制</th><td>{{basicInfo.numberLimit == 0 ? '不限' : basicInfo.numberLimit}}</td>
             </tr>
           </table>
         </div>
@@ -98,7 +98,7 @@
               <el-table-column prop="name" label="材料名称" min-width="320" align="center"></el-table-column>
               <el-table-column prop="number" label="份数" min-width="80" align="center"></el-table-column>
               <el-table-column prop="form" label="材料形式" min-width="160" align="center"></el-table-column>
-              <el-table-column v-if="basicInfo.onlineHandleMode == 1" prop="pretrialDescription" label="网上预审环节"
+              <el-table-column v-if="basicInfo.handleType == 'blxs_wsbl'" prop="pretrialDescription" label="网上预审环节"
                                min-width="160" align="center"></el-table-column>
             </el-table>
           </div>
@@ -110,10 +110,10 @@
               2、网上预审环节中标★的，为必要材料，没有★标记的，为网上预审非必须材料。</p>
           </div>
         </div>
-        <div class="message" v-show="basicInfo.handleTaskUrl">
+        <div class="message" v-show="basicInfo.handleWorkflow">
           <span>办理流程</span>
           <div class="msg-content">
-            <img :src="resourceUrl + basicInfo.handleTaskUrl"/>
+            <img :src="basicInfo.handleWorkflow"/>
           </div>
         </div>
         <div class="message" v-show="basicInfo.chargeStandard != '-' || basicInfo.chargeBasis != '-'">
@@ -152,16 +152,6 @@
       ...mapGetters([
         'token', 'resourceUrl'
       ]),
-      isPreorder() {
-        let flag = false
-        getItemPreorderConfig(this.itemId).then(response => {
-          console.log('isPreorder: ', response)
-          if (response.status == 200 && response.data.ispreorder == 1) {
-            flag = true
-          }
-        })
-        return flag
-      }
     },
     created() {
       this.itemId = this.$route.params.itemId
@@ -181,11 +171,11 @@
         let exampleIndex = 0;
         let exampleMaterials = [];
         for (let i = 0; i < response.data.length; i++) {
-          if (response.data[i].exampleUrl != '') {
+          if (response.data[i].example != '') {
             exampleMaterials[exampleIndex] = response.data[i];
             exampleIndex++;
           }
-          if (response.data[i].originalUrl != '') {
+          if (response.data[i].eform != '') {
             originalMaterials[originalIndex] = response.data[i];
             originalIndex++;
           }
@@ -237,7 +227,6 @@
         }
       },
       linkToPretrial() {
-        //todo 如果是企业事项判断是否完善企业信息
         this.$router.push({path: `/guide/pretrial/itemId/${this.itemId}`})
       }
     }

@@ -31,19 +31,16 @@
           </li>
         </ul>
       </div>
-      <div class="pageTool">
-        <el-button size="small">首页</el-button>
-        <el-button size="small">上一页</el-button>
-        <el-button size="small" @click="nextPage">下一页</el-button>
-        <el-button size="small">末页</el-button>
-        <span class="span">共 {{total}} 条记录</span>
-        <span class="span">
-          跳转到
-          <!--<el-select v-model="currentPage" size="small">-->
-            <!--<el-option></el-option>-->
-          <!--</el-select>-->
-          页
-        </span>
+      <div class="page-container">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="page"
+          :page-sizes="[5, 10, 15, 20]"
+          :page-size="pageSize"
+          layout="prev, pager, next, total, sizes, jumper"
+          :total="total">
+        </el-pagination>
       </div>
     </el-col>
   </el-row>
@@ -64,32 +61,13 @@
         currentDeptId: '',
         total: 0,
         page: 1,
-        pageSize: 6,
-        currentPage: 1
+        pageSize: 10
       }
     },
     computed: {
       ...mapGetters([
         'token', 'deptCategoryId'
-      ]),
-      totalPage() {
-        if (this.total == 0) {
-          return 1;
-        }
-        return parseInt((this.total + this.pageSize - 1) / this.pageSize);
-      },
-      offset() {
-        return (this.page - 1) * this.pageSize;
-      },
-      limit() {
-        return this.pageSize;
-      },
-      isFirstPage() {
-        return this.page == 1;
-      },
-      isLastPage() {
-        return this.page === this.totalPage;
-      }
+      ])
     },
     created() {
       getItemCategory(this.deptCategoryId).then(response => {
@@ -106,22 +84,24 @@
       loadItemList(deptId) {
         this.currentDeptId = deptId
         this.page = 1
-        this.pageSize = 6
+        this.pageSize = 10
         this.loadPage()
       },
-      nextPage() {
-        if (this.page < this.totalPage) {
-          this.page++
-          this.loadPage()
-        }
-      },
-//      todo 引用el分页
       loadPage() {
         getItemPageByCategories(this.page, this.pageSize, this.currentDeptId).then(response => {
           console.log('item_page: ', response)
           this.itemList = response.data.list
           this.total = response.data.total
         })
+      },
+      handleSizeChange(pageSize) {
+        this.pageSize = pageSize
+        this.page = 1
+        this.loadPage()
+      },
+      handleCurrentChange(page) {
+        this.page = page
+        this.loadPage()
       },
       isFavorite(itemId) {
         if (this.token) {
@@ -229,16 +209,8 @@
       }
     }
   }
-  .pageTool {
+  .page-container {
     text-align: center;
-    padding: 10px 0;
-    margin: 10px 0;
-    font-size: 14px;
-    .span {
-      margin-left: 10px;
-      .el-select {
-        width: 60px;
-      }
-    }
+    margin-top: 16px;
   }
 </style>

@@ -30,11 +30,11 @@
           matched = [{name: '首页', path: '/'}].concat(matched)
         }
         this.levelList = matched
-      },
-      watch: {
-        $route() {
-          this.getBreadcrumb();
-        }
+      }
+    },
+    watch: {
+      $route() {
+        this.getBreadcrumb();
       }
     }
   }

@@ -34,12 +34,12 @@
 </template>
 
 <script>
-  import { processTable } from './table'
+  import { ProcessTable } from './table'
   import { getMyProcessPage } from '../../api/member/process'
 
   export default {
     components: {
-      processTable
+      ProcessTable
     },
     data() {
       return {

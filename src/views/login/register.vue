@@ -185,7 +185,7 @@
         <span class="input-label">企业名称：</span>
       </el-col>
       <el-col :span="10">
-        <el-form-item prop="companyName">
+        <el-form-item prop="company.name" :rules="registerRules.companyName">
           <el-input type="text" v-model="registerForm.company.name" autoComplete="on" placeholder=""/>
           <span class="svg-container"><icon-svg iconClass="wrong"/></span>
         </el-form-item>
@@ -199,7 +199,7 @@
         <span class="input-label">统一社会信用代码：</span>
       </el-col>
       <el-col :span="10">
-        <el-form-item prop="companyUnifyCode">
+        <el-form-item prop="company.unifyCode" :rules="registerRules.companyUnifyCode">
           <el-input type="text" v-model="registerForm.company.unifyCode" autoComplete="on" placeholder=""/>
           <span class="svg-container"><icon-svg iconClass="wrong"/></span>
         </el-form-item>
@@ -213,7 +213,7 @@
         <span class="input-label">企业法人：</span>
       </el-col>
       <el-col :span="10">
-        <el-form-item prop="companyLegalPerson">
+        <el-form-item prop="company.legalPerson" :rules="registerRules.companyLegalPerson">
           <el-input type="text" v-model="registerForm.company.legalPerson" autoComplete="on" placeholder=""/>
           <span class="svg-container"><icon-svg iconClass="wrong"/></span>
         </el-form-item>
@@ -227,7 +227,7 @@
         <span class="input-label">法人身份证：</span>
       </el-col>
       <el-col :span="10">
-        <el-form-item prop="companyLegalPersonCard">
+        <el-form-item prop="company.legalPersonCard" :rules="registerRules.companyLegalPersonCard">
           <el-input type="text" v-model="registerForm.company.legalPersonCard" autoComplete="on" placeholder=""/>
           <span class="svg-container"><icon-svg iconClass="wrong"/></span>
         </el-form-item>
@@ -241,7 +241,7 @@
         <span class="input-label">企业注册地址：</span>
       </el-col>
       <el-col :span="10">
-        <el-form-item prop="companyAddress">
+        <el-form-item prop="company.address" :rules="registerRules.companyAddress">
           <el-input type="text" v-model="registerForm.company.address" autoComplete="on" placeholder=""/>
           <span class="svg-container"><icon-svg iconClass="wrong"/></span>
         </el-form-item>
@@ -336,6 +336,12 @@
           callback()
         }
       }
+      const validateNotEmpty = (rule, value, callback) => {
+        if (this.registerForm.type == 2 && !value.trim()) {
+          callback(new Error(rule.message))
+        }
+        callback()
+      }
       return {
         sendBtn: {
           text: '获取验证码',
@@ -398,6 +404,21 @@
           ],
           email: [
             {validator: validateEmail, trigger: 'blur'}
+          ],
+          companyName: [
+            {validator: validateNotEmpty, message: '公司名称不能为空', trigger: 'blur'}
+          ],
+          companyUnifyCode: [
+            {validator: validateNotEmpty, message: '统一社会信用代码不能为空', trigger: 'blur'}
+          ],
+          companyLegalPerson: [
+            {validator: validateNotEmpty, message: '企业法人不能为空', trigger: 'blur'}
+          ],
+          companyLegalPersonCard: [
+            {validator: validateNotEmpty, message: '法人身份证不能为空', trigger: 'blur'}
+          ],
+          companyAddress: [
+            {validator: validateNotEmpty, message: '企业注册地址不能为空', trigger: 'blur'}
           ]
         }
       }

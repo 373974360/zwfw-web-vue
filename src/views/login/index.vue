@@ -120,7 +120,7 @@
         this.imgUrl = process.env.ZWFW_API + '/web/common/getVerifyCode?' + Math.random()
       }
     },
-    mounted() {
+    created() {
       this.changeVerifyCode();
     }
   }

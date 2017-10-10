@@ -43,12 +43,12 @@
           <div class="table-title">{{item.name}}</div>
           <table>
             <tr>
-              <th>企业名称：</th><td><!--{{user.company.name}}--></td>
-              <th>企业工商注册号：</th><td><!--{{user.company.unifyCode}}--></td>
+              <th>企业名称：</th><td><template v-if="user.company">{{user.company.name}}</template></td>
+              <th>企业工商注册号：</th><td><template v-if="user.company">{{user.company.unifyCode}}</template></td>
             </tr>
             <tr>
-              <th>企业法人：</th><td><!--{{user.company.legalPerson}}--></td>
-              <th>法人身份证号：</th><td><!--{{user.company.legalPersonCard}}--></td>
+              <th>企业法人：</th><td><template v-if="user.company">{{user.company.legalPerson}}</template></td>
+              <th>法人身份证号：</th><td><template v-if="user.company">{{user.company.legalPersonCard}}</template></td>
             </tr>
             <tr>
               <th>联系人姓名：</th><td>{{user.name}}</td>

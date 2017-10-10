@@ -15,7 +15,6 @@
       <div class="itemList">
         <ul>
           <li v-for="item in itemList">
-            <!--<p>{{item.serviceName}}</p>-->
             <div class="itemContent">
               <p class="p1">
                 <router-link :to="{path: `/guide/detail/${item.id}`}">{{item.name}}</router-link>

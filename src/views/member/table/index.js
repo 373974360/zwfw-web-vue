@@ -1,4 +1,4 @@
-export { default as processTable } from './processTable'
+export { default as ProcessTable } from './processTable'
 
 export { default as PretrialTable } from './pretrialTable'
 

@@ -6,7 +6,7 @@
         <div class="more"><router-link :to="{path: '/member/process'}">更多></router-link></div>
       </div>
       <div class="data-bg">
-        <process-table :data="processTable"></process-table>
+        <process-table :data="processData"></process-table>
       </div>
     </div>
     <div class="data-box">
@@ -31,14 +31,14 @@
 </template>
 
 <script>
-  import { processTable, PretrialTable, CollectionTable } from './table'
+  import { ProcessTable, PretrialTable, CollectionTable } from './table'
   import { mapGetters } from 'vuex'
   import { getMyItem } from '../../api/member/member'
   import { delFavorite } from '../../api/member/favorite'
 
   export default {
     components: {
-      processTable, PretrialTable, CollectionTable
+      ProcessTable, PretrialTable, CollectionTable
     },
     data() {
       return {

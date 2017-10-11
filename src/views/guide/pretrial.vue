@@ -100,16 +100,17 @@
               <icon-svg iconClass="star_fill" v-if="material.isPretrialSubmit == 1"></icon-svg>
               <icon-svg iconClass="star" v-else></icon-svg>
               {{material.name}}
-              <a v-if="material.originalUrl" :href="resourceUrl + material.originalUrl" :download="material.name" :title="material.name">（点击下载）</a>
+              <a v-if="material.eform" :href="material.eform" :download="material.name" :title="material.name">（点击下载）</a>
             </p>
             <p>
-              <template v-if="material.form"><span>材料形式：</span>{{material.form}}</template>&nbsp;&nbsp;&nbsp;
+              <!--<template v-if="material.form"><span>材料形式：</span>{{material.form}}</template>&nbsp;&nbsp;&nbsp;
               <template v-if="material.number"><span>需要份数：</span>{{material.number}}</template>&nbsp;&nbsp;&nbsp;
-              <template v-if="material.pretrialDescription"><span>上传说明：</span>{{material.pretrialDescription}}</template>
+              <template v-if="material.pretrialDescription"><span>上传说明：</span>{{material.pretrialDescription}}</template>-->
+              <template v-if="material.paperDescription"><span>材料说明：</span>{{material.paperDescription}}</template>
             </p>
-            <p v-if="material.detailRequirement">
+            <!--<p v-if="material.detailRequirement">
               <span>详细要求：</span>{{material.detailRequirement}}
-            </p>
+            </p>-->
             <p>
               <file-upload :ref='"upload"+index' name="uploadFile" :action="uploadUrl" :multiple="true" :auto-upload="false"
                            :uploadId="index" :file-list="uploadFileList[index]"
@@ -132,6 +133,7 @@
 <script>
   import FileUpload from '../../components/FileUpload'
   import { mapGetters } from 'vuex'
+  import { copyProperties } from '../../utils'
   import { getItemDetail, /*getItemConditions,*/ getItemMaterials } from '../../api/item'
   import { getPretrialInfo, submitPretrial } from '../../api/member/pretrial'
 
@@ -203,11 +205,11 @@
         this.secondForm = true
         getPretrialInfo(this.pretrialId).then(response => {
           if (response.httpCode == 200) {
-            this.itemPretrial = response.data
+            copyProperties(response.data, this.itemPretrial)
             this.itemId = response.data.itemId
             this.initItemDetail()
             this.initMaterials()
-            this.initUploadFileList()
+            this.initUploadFileList(response.data.itemPretrialMaterialVoList)
           } else {
             this.$message.error('初始化信息失败，请刷新页面！')
           }
@@ -256,8 +258,16 @@
           })
         }
       },
-      initUploadFileList() {
-        for (let filesInfo of this.itemPretrial.itemPretrialMaterialVoList) {
+      initUploadFileList(itemPretrialMaterialVoList) {
+        this.itemPretrial.itemPretrialMaterialVoList = []
+        for (let filesInfo of itemPretrialMaterialVoList) {
+          this.itemPretrial.itemPretrialMaterialVoList.push({
+            itemMaterialId: filesInfo.itemMaterialId,
+            itemMaterialName: filesInfo.itemMaterialName,
+            itemMaterialUrl: filesInfo.itemMaterialUrl,
+            fileName: filesInfo.fileName,
+            fileType: filesInfo.fileType
+          })
           let urlArr = filesInfo.itemMaterialUrl.split('|')
           let nameArr = filesInfo.fileName.split('|')
           let fileList = []
@@ -348,7 +358,7 @@
             this.$message.success('申请提交成功，请耐心等待审核！')
             this.$router.push({path: '/member'})
           } else {
-            this.$message.error('申请提交失败，请重新提交！')
+            this.$message.error(response.msg)
             this.loading = false
           }
         }).catch(error => {

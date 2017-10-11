@@ -26,7 +26,7 @@
         </el-button>
         <div class="downloadList" v-show="exampleShow">
             <p v-for="(material, index) in exampleMaterials">
-              <a>{{index + 1}}、{{material.name}}</a>
+              <a :href="material.example" :download="material.name">{{index + 1}}、{{material.name}}</a>
             </p>
         </div>
         <el-button type="primary" @click="originalShow = !originalShow">
@@ -35,7 +35,7 @@
         </el-button>
         <div class="downloadList" v-show="originalShow">
             <p v-for="(material, index) in originalMaterials">
-              <a>{{index + 1}}、{{material.name}}</a>
+              <a :href="material.eform" :download="material.name">{{index + 1}}、{{material.name}}</a>
             </p>
         </div>
         <el-button v-if="isFavorite()" type="primary" @click="removeFavorite">
@@ -165,18 +165,17 @@
         this.conditions = response.data
       })*/
       getItemMaterials(this.itemId).then(response => {
-        console.log('itemMaterials', response)
         this.materials = response.data
         let originalIndex = 0;
         let originalMaterials = [];
         let exampleIndex = 0;
         let exampleMaterials = [];
         for (let i = 0; i < response.data.length; i++) {
-          if (response.data[i].example != '') {
+          if (response.data[i].example) {
             exampleMaterials[exampleIndex] = response.data[i];
             exampleIndex++;
           }
-          if (response.data[i].eform != '') {
+          if (response.data[i].eform) {
             originalMaterials[originalIndex] = response.data[i];
             originalIndex++;
           }

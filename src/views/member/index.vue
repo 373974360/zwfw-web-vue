@@ -58,7 +58,6 @@
     methods: {
       init() {
         getMyItem(this.id).then(response => {
-          console.log('myItems:', response)
           if (response.httpCode == 200) {
             this.pretrialData = response.data.pretrialList
             this.collectionData = response.data.favoriteList

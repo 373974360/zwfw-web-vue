@@ -118,6 +118,7 @@
 
 <script>
   import { mapGetters } from 'vuex'
+  import { copyProperties } from '../../utils'
   import { isIdCardNo } from '../../utils/validate'
   import { getPhoneVerifyCode, validatePhoneVerifyCode } from '../../api/login'
   import { updateCompanyInfo } from '../../api/member/member'
@@ -192,16 +193,7 @@
       ])
     },
     created() {
-      this.companyInfoForm.id = this.user.id
-      this.companyInfoForm.mobilephone = this.user.mobilephone
-      if (this.user.company) {
-        this.companyInfoForm.company.id = this.user.company.id
-        this.companyInfoForm.company.name = this.user.company.name
-        this.companyInfoForm.company.unifyCode = this.user.company.unifyCode
-        this.companyInfoForm.company.legalPerson = this.user.company.legalPerson
-        this.companyInfoForm.company.legalPersonCard = this.user.company.legalPersonCard
-        this.companyInfoForm.company.address = this.user.company.address
-      }
+      copyProperties(this.user, this.companyInfoForm)
     },
     methods: {
       handleSubmit() {

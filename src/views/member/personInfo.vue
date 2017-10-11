@@ -159,6 +159,7 @@
 
 <script>
   import { mapGetters } from 'vuex'
+  import { copyProperties } from '../../utils'
   import { isChinese, validEmail, validMobiles } from '../../utils/validate'
   import { getPhoneVerifyCode, validatePhoneVerifyCode } from '../../api/login'
   import { updatePersonInfo } from '../../api/member/member'
@@ -247,17 +248,7 @@
       ])
     },
     created() {
-      this.personInfoForm.id = this.user.id
-      this.personInfoForm.type = this.user.type
-      this.personInfoForm.name = this.user.name
-      this.personInfoForm.loginName = this.user.loginName
-      this.personInfoForm.gender = this.user.gender
-      this.personInfoForm.mobilephone = this.user.mobilephone
-      this.personInfoForm.address = this.user.address
-      this.personInfoForm.email = this.user.email
-      this.personInfoForm.qq = this.user.qq
-      this.personInfoForm.wechat = this.user.wechat
-      this.personInfoForm.tellphone = this.user.tellphone
+      copyProperties(this.user, this.personInfoForm)
     },
     methods: {
       handleSubmit() {

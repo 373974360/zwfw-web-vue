@@ -20,7 +20,7 @@
                 <router-link :to="{path: `/guide/detail/${item.id}`}">{{item.name}}</router-link>
               </p>
               <p class="p2">
-                办理机构：{{item.departmentName}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;咨询电话：{{item.tellphone}}
+                办理机构：{{item.implAgency}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;咨询电话：{{item.askPhone}}
               </p>
               <p class="p3">
                 <el-button v-if="isFavorite(item.id)" type="primary" @click="removeFavorite(item.id)">取消收藏</el-button>
@@ -70,12 +70,10 @@
     },
     created() {
       getItemCategory(this.deptCategoryId).then(response => {
-        console.log('itemCategory: ', response)
         this.deptList = response.data
         this.loadItemList(response.data[0].id)
       })
       getAllFavorites().then(response => {
-        console.log('favorite: ', response)
         this.favoriteList = response.data
       })
     },
@@ -88,7 +86,6 @@
       },
       loadPage() {
         getItemPageByCategories(this.page, this.pageSize, this.currentDeptId).then(response => {
-          console.log('item_page: ', response)
           this.itemList = response.data.list
           this.total = response.data.total
         })
@@ -115,7 +112,6 @@
       appendFavorite(itemId) {
         if (this.token) {
           addFavorite(itemId).then(response => {
-            console.log('addFavorite: ', response)
             if (response.httpCode == 200) {
               this.favoriteList.push(response.data)
             }

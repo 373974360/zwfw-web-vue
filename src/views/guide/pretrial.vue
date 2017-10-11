@@ -11,8 +11,11 @@
           <p><el-checkbox :indeterminate="indeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
           <b>办理该项业务，需满足以下申请条件才能进行业务的办理，请自检是否满足，符合请打勾</b></p>
           <el-checkbox-group v-model="checkedConditions">
-            <p v-for="(condition, index) in conditions">
+            <!--<p v-for="(condition, index) in conditions">
               <el-checkbox :label="condition" @change="handleCheckOneChange">{{index + 1}}、{{condition.content}}</el-checkbox>
+            </p>-->
+            <p v-for="condition in conditions">
+              <el-checkbox :label="condition" @change="handleCheckOneChange">{{condition}}</el-checkbox>
             </p>
           </el-checkbox-group>
         </div>
@@ -129,7 +132,7 @@
 <script>
   import FileUpload from '../../components/FileUpload'
   import { mapGetters } from 'vuex'
-  import { getItemDetail, getItemConditions, getItemMaterials } from '../../api/item'
+  import { getItemDetail, /*getItemConditions,*/ getItemMaterials } from '../../api/item'
   import { getPretrialInfo, submitPretrial } from '../../api/member/pretrial'
 
   export default {
@@ -187,7 +190,7 @@
     },
     methods: {
       init1() {
-        this.initConditions()
+        /*this.initConditions()*/
         this.initMaterials()
         this.initItemDetail()
         this.itemPretrial.memberId = this.user.id
@@ -211,19 +214,17 @@
         })
         this.notify2()
       },
-      initConditions() {
+      /*initConditions() {
         getItemConditions(this.itemId).then(response => {
-          console.log('itemConditions:', response)
           if (response.httpCode == 200) {
             this.conditions = response.data
           } else {
             this.$message.error('初始化信息失败，请刷新页面！')
           }
         })
-      },
+      },*/
       initMaterials() {
         getItemMaterials(this.itemId).then(response => {
-          console.log('itemMaterials:', response)
           if (response.httpCode == 200) {
             this.materials = response.data
             if (!this.pretrialId) {
@@ -236,9 +237,9 @@
       },
       initItemDetail() {
         getItemDetail(this.itemId).then(response => {
-          console.log('itemDetail:', response)
           if (response.httpCode == 200) {
             this.item = response.data
+            this.conditions = this.$options.filters.splitLines(response.data.acceptCondition).split('<br />')
           } else {
             this.$message.error('初始化信息失败，请刷新页面！')
           }
@@ -295,14 +296,7 @@
         this.$refs[uploader][0].submit()
       },
       handlePreview(file) {
-        console.log(file.response)
-//        window.open('E:\\deya\\zwfw' + file.response.url)
-        var aLink = document.createElement('a');
-        var evt = document.createEvent("HTMLEvents");
-        evt.initEvent("click", false, false);
-        aLink.download = file.response.title;
-        aLink.href = 'E:\\deya\\zwfw' + file.response.url;
-        aLink.dispatchEvent(evt);
+        //todo download
       },
       handleSuccess(response, file, fileList, index) {
         this.itemPretrial.itemPretrialMaterialVoList[index].itemMaterialUrl += `|${response.url}`

@@ -8,18 +8,14 @@
           <p class="p1">办理主体</p>
           <p class="p2">{{basicInfo.implAgency}}</p>
           <p class="p1">办理类型</p>
-          <p class="p2">
-            <!--<template v-if="basicInfo.processType == 'bjlx_jbj'">即办件</template>
-            <template v-if="basicInfo.processType == 'bjlx_cnj'">承诺件</template>-->
-            {{basicInfo.processType | dicts('bjlx')}}
-          </p>
+          <p class="p2">{{basicInfo.processType | dicts('bjlx')}}</p>
         </div>
         <el-button type="primary" :disabled="basicInfo.handleType == 'blxs_ckbl'" @click="linkToPretrial">
           <div class="svg-container"><icon-svg iconClass="online"/></div>
           <p v-if="basicInfo.handleType == 'blxs_ckbl'">不支持预审</p>
           <p v-if="basicInfo.handleType == 'blxs_wsbl'">在线预审</p>
         </el-button>
-        <el-button type="primary" :disabled="!basicInfo.orderable">
+        <el-button type="primary" :disabled="!basicInfo.orderable" @click="linkToPreorder">
           <div class="svg-container"><icon-svg iconClass="online"/></div>
           <p v-if="basicInfo.orderable">现在预约</p>
           <p v-else>不支持预约</p>
@@ -78,17 +74,21 @@
             </tr>
           </table>
         </div>
-        <div class="message" v-show="basicInfo.setBasis != '-'">
+        <div class="message" v-show="basicInfo.setBasis">
           <span>办理依据</span>
           <div class="msg-content" v-html="$options.filters.splitLines(basicInfo.setBasis)"></div>
         </div>
-        <div class="message" v-cloak v-show="conditions.length">
+        <!--<div class="message" v-cloak v-show="conditions.length">
           <span>办理条件</span>
           <div class="msg-content">
             <p v-for="(condition, index) in conditions">
               {{index+1}}、{{condition.content}}
             </p>
           </div>
+        </div>-->
+        <div class="message" v-show="basicInfo.acceptCondition">
+          <span>办理条件</span>
+          <div class="msg-content" v-html="$options.filters.splitLines(basicInfo.acceptCondition)"></div>
         </div>
         <div class="message" v-show="materials.length">
           <span>提交材料</span>
@@ -96,10 +96,13 @@
             <el-table :data="materials" border>
               <el-table-column type="index" label="序号" width="80" align="center"></el-table-column>
               <el-table-column prop="name" label="材料名称" min-width="320" align="center"></el-table-column>
-              <el-table-column prop="number" label="份数" min-width="80" align="center"></el-table-column>
+              <!--<el-table-column prop="number" label="份数" min-width="80" align="center"></el-table-column>
               <el-table-column prop="form" label="材料形式" min-width="160" align="center"></el-table-column>
               <el-table-column v-if="basicInfo.handleType == 'blxs_wsbl'" prop="pretrialDescription" label="网上预审环节"
-                               min-width="160" align="center"></el-table-column>
+                               min-width="160" align="center"></el-table-column>-->
+              <el-table-column prop="paperDescription" label="纸质材料说明" min-width="180" align="center"></el-table-column>
+              <el-table-column prop="acceptStandard" label="受理标准" min-width="150" align="center"></el-table-column>
+              <el-table-column prop="notice" label="填表须知" min-width="150" align="center"></el-table-column>
             </el-table>
           </div>
         </div>
@@ -116,7 +119,7 @@
             <img :src="basicInfo.handleWorkflow"/>
           </div>
         </div>
-        <div class="message" v-show="basicInfo.chargeStandard != '-' || basicInfo.chargeBasis != '-'">
+        <div class="message" v-show="basicInfo.chargeStandard || basicInfo.chargeBasis">
           <span>收费情况</span>
           <div class="msg-content">
             <p><b>收费标准：</b>{{basicInfo.chargeStandard}}</p>
@@ -130,7 +133,7 @@
 
 <script>
   import { mapGetters } from 'vuex'
-  import { getItemDetail, getItemConditions, getItemMaterials, getItemPreorderConfig } from '../../api/item'
+  import { getItemDetail, /*getItemConditions,*/ getItemMaterials, getItemPreorderConfig } from '../../api/item'
   import { getAllFavorites, addFavorite, delFavorite } from '../../api/member/favorite'
 
   export default {
@@ -138,7 +141,7 @@
       return {
         itemId: '',
         basicInfo: {},
-        conditions: [],
+        /*conditions: [],*/
         materials: [],
         exampleMaterials: [],
         originalMaterials: [],
@@ -156,15 +159,13 @@
     created() {
       this.itemId = this.$route.params.itemId
       getItemDetail(this.itemId).then(response => {
-        console.log('itemDetail: ', response)
         this.basicInfo = response.data
       })
-      getItemConditions(this.itemId).then(response => {
-        console.log('itemConditions: ', response)
+      /*getItemConditions(this.itemId).then(response => {
         this.conditions = response.data
-      })
+      })*/
       getItemMaterials(this.itemId).then(response => {
-        console.log('itemMaterials: ', response)
+        console.log('itemMaterials', response)
         this.materials = response.data
         let originalIndex = 0;
         let originalMaterials = [];
@@ -184,7 +185,6 @@
         this.exampleMaterials = exampleMaterials;
       })
       getAllFavorites().then(response => {
-        console.log('favorite: ', response)
         this.favoriteList = response.data
       })
     },
@@ -228,6 +228,9 @@
       },
       linkToPretrial() {
         this.$router.push({path: `/guide/pretrial/itemId/${this.itemId}`})
+      },
+      linkToPreorder() {
+        this.$router.push({path: `/guide/preorder/${this.itemId}`})
       }
     }
   }

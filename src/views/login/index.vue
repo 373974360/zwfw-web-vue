@@ -64,7 +64,6 @@
       }
       const validateCaptcha = (rule, value, callback) => {
         validateVerifyCode(value).then(response => {
-          console.log('validateVerifyCode: ', response)
           if (response.httpCode !== 200) {
             callback(new Error(response.msg))
           }
@@ -110,7 +109,7 @@
             }).catch(err => {
               this.loading = false
               this.$message.error(err)
-              this.loginForm.verifyCode = ''
+              this.loginForm.captcha = ''
               this.changeVerifyCode();
             })
           }

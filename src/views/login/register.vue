@@ -13,83 +13,210 @@
       </el-col>
       <el-col :span="8"></el-col>
     </el-row>
-    <el-row>
-      <el-col :span="6">
-        <span class="input-label">姓名：</span>
-      </el-col>
-      <el-col :span="10">
-        <el-form-item prop="name">
-          <el-input type="text" v-model="registerForm.name" autoComplete="on" placeholder=""/>
-          <span class="svg-container"><icon-svg iconClass="wrong"/></span>
-        </el-form-item>
-      </el-col>
-      <el-col :span="8">
-        <span class="input-tip"><span>*</span>请输入姓名</span>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="6">
-        <span class="input-label">身份证号：</span>
-      </el-col>
-      <el-col :span="10">
-        <el-form-item prop="loginName">
-          <el-input type="text" v-model="registerForm.loginName" autoComplete="on" placeholder=""/>
-          <span class="svg-container"><icon-svg iconClass="wrong"/></span>
-        </el-form-item>
-      </el-col>
-      <el-col :span="8">
-        <span class="input-tip"><span>*</span>请填写本人身份证号作为登录账号</span>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="6">
-        <span class="input-label">性别：</span>
-      </el-col>
-      <el-col :span="10">
-        <div class="el-form-item-radio">
-          <el-radio class="radio" v-model="registerForm.gender" label="1">男</el-radio>
-          <el-radio class="radio" v-model="registerForm.gender" label="0">女</el-radio>
-        </div>
-      </el-col>
-      <el-col :span="8">
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="6">
-        <span class="input-label">登录密码：</span>
-      </el-col>
-      <el-col :span="10">
-        <el-form-item prop="password">
-          <el-input type="password" v-model="registerForm.password" autoComplete="on" placeholder=""/>
-          <span class="svg-container"><icon-svg iconClass="wrong"/></span>
-        </el-form-item>
-      </el-col>
-      <el-col :span="8">
-        <span class="input-tip"><span>*</span>密码可由数字或字母组成，6-16个字符，区分大小写</span>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="6">
-        <span class="input-label">确认密码：</span>
-      </el-col>
-      <el-col :span="10">
-        <el-form-item prop="password2">
-          <el-input type="password" v-model="registerForm.password2" autoComplete="on" placeholder=""/>
-          <span class="svg-container"><icon-svg iconClass="wrong"/></span>
-        </el-form-item>
-      </el-col>
-      <el-col :span="8">
-        <span class="input-tip"><span>*</span>确认密码</span>
-      </el-col>
-    </el-row>
+    <!-- 个人会员信息 -->
+    <div v-show="registerForm.type == 1">
+      <el-row>
+        <el-col :span="6">
+          <span class="input-label">姓名：</span>
+        </el-col>
+        <el-col :span="10">
+          <el-form-item prop="naturePerson.name" :rules="registerRules.name">
+            <el-input type="text" v-model="registerForm.naturePerson.name" autoComplete="on"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <span class="input-tip"><span>*</span>请输入姓名</span>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="6">
+          <span class="input-label">身份证号：</span>
+        </el-col>
+        <el-col :span="10">
+          <el-form-item prop="naturePerson.idcard" :rules="registerRules.idCard">
+            <el-input type="text" v-model="registerForm.naturePerson.idcard" autoComplete="on"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <span class="input-tip"><span>*</span>请填写本人身份证号</span>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="6">
+          <span class="input-label">性别：</span>
+        </el-col>
+        <el-col :span="10">
+          <div class="el-form-item-radio">
+            <el-radio class="radio" v-model="registerForm.naturePerson.gender" label="1">男</el-radio>
+            <el-radio class="radio" v-model="registerForm.naturePerson.gender" label="0">女</el-radio>
+          </div>
+        </el-col>
+        <el-col :span="8"></el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="6">
+          <span class="input-label">出生日期：</span>
+        </el-col>
+        <el-col :span="10">
+          <el-form-item prop="naturePerson.birthday">
+            <el-date-picker v-model="registerForm.naturePerson.birthday" type="date" placeholder="请选择日期"></el-date-picker>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8"></el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="6">
+          <span class="input-label">照片：</span>
+        </el-col>
+        <el-col :span="10">
+          <el-form-item prop="naturePerson.photo">
+            <el-input type="text" v-model="registerForm.naturePerson.photo" autoComplete="on"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8"></el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="6">
+          <span class="input-label">民族：</span>
+        </el-col>
+        <el-col :span="10">
+          <el-form-item prop="naturePerson.nation" :rules="registerRules.nation">
+            <el-input type="text" v-model="registerForm.naturePerson.nation" autoComplete="on"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <span class="input-tip"><span>*</span>请填写民族</span>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="6">
+          <span class="input-label">联系地址：</span>
+        </el-col>
+        <el-col :span="10">
+          <el-form-item prop="naturePerson.address" :rules="registerRules.address">
+            <el-input type="text" v-model="registerForm.naturePerson.address" autoComplete="on"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <span class="input-tip"><span>*</span>请填写联系地址</span>
+        </el-col>
+      </el-row>
+    </div>
+    <!-- 企业会员信息 -->
+    <div v-show="registerForm.type == 2">
+      <el-row>
+        <el-col :span="6">
+          <span class="input-label">机构名称：</span>
+        </el-col>
+        <el-col :span="10">
+          <el-form-item prop="legalPerson.companyName" :rules="registerRules.companyName">
+            <el-input type="text" v-model="registerForm.legalPerson.companyName" autoComplete="on"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <span class="input-tip"><span>*</span>请填写机构名称</span>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="6">
+          <span class="input-label">机构代码：</span>
+        </el-col>
+        <el-col :span="10">
+          <el-form-item prop="legalPerson.agencyCode" :rules="registerRules.agencyCode">
+            <el-input type="text" v-model="registerForm.legalPerson.agencyCode" autoComplete="on"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <span class="input-tip"><span>*</span>请填写机构代码</span>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="6">
+          <span class="input-label">机构类型：</span>
+        </el-col>
+        <el-col :span="10">
+          <el-form-item prop="legalPerson.companyType">
+            <el-input type="text" v-model="registerForm.legalPerson.companyType" autoComplete="on"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <span class="input-tip"><span>*</span>请填写机构类型</span>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="6">
+          <span class="input-label">统一社会信用代码：</span>
+        </el-col>
+        <el-col :span="10">
+          <el-form-item prop="legalPerson.companyCode" :rules="registerRules.companyCode">
+            <el-input type="text" v-model="registerForm.legalPerson.companyCode" autoComplete="on"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <span class="input-tip"><span>*</span>请填写统一社会信用代码</span>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="6">
+          <span class="input-label">法定代表人：</span>
+        </el-col>
+        <el-col :span="10">
+          <el-form-item prop="legalPerson.legalPerson" :rules="registerRules.legalPerson">
+            <el-input type="text" v-model="registerForm.legalPerson.legalPerson" autoComplete="on"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <span class="input-tip"><span>*</span>请填写法定代表人姓名</span>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="6">
+          <span class="input-label">法人身份证：</span>
+        </el-col>
+        <el-col :span="10">
+          <el-form-item prop="legalPerson.idcard" :rules="registerRules.legalPersonCard">
+            <el-input type="text" v-model="registerForm.legalPerson.idcard" autoComplete="on"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <span class="input-tip"><span>*</span>请填写法人身份证号</span>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="6">
+          <span class="input-label">注册地址：</span>
+        </el-col>
+        <el-col :span="10">
+          <el-form-item prop="legalPerson.registerPlace" :rules="registerRules.registerPlace">
+            <el-input type="text" v-model="registerForm.legalPerson.registerPlace" autoComplete="on"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <span class="input-tip"><span>*</span>请填写企业注册地址</span>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="6">
+          <span class="input-label">注册日期：</span>
+        </el-col>
+        <el-col :span="10">
+          <el-form-item prop="legalPerson.registerDate" >
+            <el-date-picker v-model="registerForm.legalPerson.registerDate" type="date" placeholder="请选择日期"></el-date-picker>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <span class="input-tip"><span>*</span>请选择企业注册日期</span>
+        </el-col>
+      </el-row>
+    </div>
+
     <el-row>
       <el-col :span="6">
         <span class="input-label">手机号码：</span>
       </el-col>
       <el-col :span="10">
         <el-form-item prop="mobilephone">
-          <el-input type="text" v-model="registerForm.mobilephone" autoComplete="on" placeholder=""/>
-          <span class="svg-container"><icon-svg iconClass="wrong"/></span>
+          <el-input type="text" v-model="registerForm.mobilephone" autoComplete="on"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="8">
@@ -102,8 +229,7 @@
       </el-col>
       <el-col :span="10">
         <el-form-item prop="verifyCode">
-          <el-input type="text" v-model="registerForm.verifyCode" autoComplete="on" placeholder=""/>
-          <span class="svg-container"><icon-svg iconClass="wrong"/></span>
+          <el-input type="text" v-model="registerForm.verifyCode" autoComplete="on"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="8">
@@ -112,144 +238,31 @@
     </el-row>
     <el-row>
       <el-col :span="6">
-        <span class="input-label">联系地址：</span>
+        <span class="input-label">登录密码：</span>
       </el-col>
       <el-col :span="10">
-        <el-form-item prop="address">
-          <el-input type="text" v-model="registerForm.address" autoComplete="on" placeholder=""/>
-          <span class="svg-container"><icon-svg iconClass="wrong"/></span>
+        <el-form-item prop="password">
+          <el-input type="password" v-model="registerForm.password" autoComplete="on"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="8">
-        <span class="input-tip"><span>*</span>请填写联系地址</span>
+        <span class="input-tip"><span>*</span>密码可由数字或字母组成，6-16个字符，区分大小写</span>
       </el-col>
     </el-row>
     <el-row>
       <el-col :span="6">
-        <span class="input-label">电子邮箱：</span>
+        <span class="input-label">确认密码：</span>
       </el-col>
       <el-col :span="10">
-        <el-form-item prop="email">
-          <el-input type="text" v-model="registerForm.email" autoComplete="on" placeholder=""/>
-          <span class="svg-container"><icon-svg iconClass="wrong"/></span>
+        <el-form-item prop="confirmPass">
+          <el-input type="password" v-model="registerForm.confirmPass" autoComplete="on"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="8">
-        <span class="input-tip">请输入有效的电子邮箱</span>
+        <span class="input-tip"><span>*</span>确认密码</span>
       </el-col>
     </el-row>
-    <el-row v-show="registerForm.type == 1">
-      <el-col :span="6">
-        <span class="input-label">QQ号码：</span>
-      </el-col>
-      <el-col :span="10">
-        <el-form-item prop="qq">
-          <el-input type="text" v-model="registerForm.qq" autoComplete="on" placeholder=""/>
-          <span class="svg-container"><icon-svg iconClass="wrong"/></span>
-        </el-form-item>
-      </el-col>
-      <el-col :span="8">
-        <span class="input-tip">请填写QQ号码</span>
-      </el-col>
-    </el-row>
-    <el-row v-show="registerForm.type == 1">
-      <el-col :span="6">
-        <span class="input-label">微信号码：</span>
-      </el-col>
-      <el-col :span="10">
-        <el-form-item prop="wechat">
-          <el-input type="text" v-model="registerForm.wechat" autoComplete="on" placeholder=""/>
-          <span class="svg-container"><icon-svg iconClass="wrong"/></span>
-        </el-form-item>
-      </el-col>
-      <el-col :span="8">
-        <span class="input-tip">请填写微信号码</span>
-      </el-col>
-    </el-row>
-    <el-row v-show="registerForm.type == 1">
-      <el-col :span="6">
-        <span class="input-label">固定电话：</span>
-      </el-col>
-      <el-col :span="10">
-        <el-form-item prop="tellphone">
-          <el-input type="text" v-model="registerForm.tellphone" autoComplete="on" placeholder=""/>
-          <span class="svg-container"><icon-svg iconClass="wrong"/></span>
-        </el-form-item>
-      </el-col>
-      <el-col :span="8">
-        <span class="input-tip">请填写固定电话</span>
-      </el-col>
-    </el-row>
-    <el-row v-show="registerForm.type == 2">
-      <el-col :span="6">
-        <span class="input-label">企业名称：</span>
-      </el-col>
-      <el-col :span="10">
-        <el-form-item prop="company.name" :rules="registerRules.companyName">
-          <el-input type="text" v-model="registerForm.company.name" autoComplete="on" placeholder=""/>
-          <span class="svg-container"><icon-svg iconClass="wrong"/></span>
-        </el-form-item>
-      </el-col>
-      <el-col :span="8">
-        <span class="input-tip"><span>*</span>请填写企业名称</span>
-      </el-col>
-    </el-row>
-    <el-row v-show="registerForm.type == 2">
-      <el-col :span="6">
-        <span class="input-label">统一社会信用代码：</span>
-      </el-col>
-      <el-col :span="10">
-        <el-form-item prop="company.unifyCode" :rules="registerRules.companyUnifyCode">
-          <el-input type="text" v-model="registerForm.company.unifyCode" autoComplete="on" placeholder=""/>
-          <span class="svg-container"><icon-svg iconClass="wrong"/></span>
-        </el-form-item>
-      </el-col>
-      <el-col :span="8">
-        <span class="input-tip"><span>*</span>请填写统一社会信用代码</span>
-      </el-col>
-    </el-row>
-    <el-row v-show="registerForm.type == 2">
-      <el-col :span="6">
-        <span class="input-label">企业法人：</span>
-      </el-col>
-      <el-col :span="10">
-        <el-form-item prop="company.legalPerson" :rules="registerRules.companyLegalPerson">
-          <el-input type="text" v-model="registerForm.company.legalPerson" autoComplete="on" placeholder=""/>
-          <span class="svg-container"><icon-svg iconClass="wrong"/></span>
-        </el-form-item>
-      </el-col>
-      <el-col :span="8">
-        <span class="input-tip"><span>*</span>请填写企业法人姓名</span>
-      </el-col>
-    </el-row>
-    <el-row v-show="registerForm.type == 2">
-      <el-col :span="6">
-        <span class="input-label">法人身份证：</span>
-      </el-col>
-      <el-col :span="10">
-        <el-form-item prop="company.legalPersonCard" :rules="registerRules.companyLegalPersonCard">
-          <el-input type="text" v-model="registerForm.company.legalPersonCard" autoComplete="on" placeholder=""/>
-          <span class="svg-container"><icon-svg iconClass="wrong"/></span>
-        </el-form-item>
-      </el-col>
-      <el-col :span="8">
-        <span class="input-tip"><span>*</span>请输入有效证件号码</span>
-      </el-col>
-    </el-row>
-    <el-row v-show="registerForm.type == 2">
-      <el-col :span="6">
-        <span class="input-label">企业注册地址：</span>
-      </el-col>
-      <el-col :span="10">
-        <el-form-item prop="company.address" :rules="registerRules.companyAddress">
-          <el-input type="text" v-model="registerForm.company.address" autoComplete="on" placeholder=""/>
-          <span class="svg-container"><icon-svg iconClass="wrong"/></span>
-        </el-form-item>
-      </el-col>
-      <el-col :span="8">
-        <span class="input-tip"><span>*</span>请填写企业注册地址</span>
-      </el-col>
-    </el-row>
+
     <el-row>
       <el-col :span="6"></el-col>
       <el-col :span="10" align="center">
@@ -276,37 +289,55 @@
     name: 'register',
     data() {
       const validateName = (rule, value, callback) => {
-        if (!isChinese(value)) {
-          callback(new Error('姓名必须为中文'))
+        if (this.registerForm.type == 1) {
+          if (!value.trim()) {
+            callback(new Error('姓名不能为空'))
+          } else if (!isChinese(value)) {
+            callback(new Error('姓名必须为中文'))
+          }
+        }
+        callback()
+      }
+      const validateNatureIdCard = (rule, value, callback) => {
+        if (this.registerForm.type == 1) {
+          validateIdCard(rule, value, callback)
+        } else {
+          callback()
+        }
+
+      }
+      const validateLagalIdCard = (rule, value, callback) => {
+        if (this.registerForm.type == 2) {
+          validateIdCard(rule, value, callback)
         } else {
           callback()
         }
       }
       const validateIdCard = (rule, value, callback) => {
-        if (!isIdCardNo(value)) {
+        if (!value.trim()) {
+          callback(new Error('身份证号码不能为空'))
+        } else if (!isIdCardNo(value)) {
           callback(new Error('身份证格式不正确，请重新输入'))
         } else {
           isUserExist(value).then(response => {
-            console.log('isUserExist:', response)
             if (response.httpCode == 200 && response.data) {
               callback(new Error('身份证号码已存在，请重新输入'))
             }
             callback()
           }).catch(error => {
-            console.log(error)
             callback(new Error(error))
           })
         }
       }
       const validatePassword = (rule, value, callback) => {
-        if (this.registerForm.password2) {
-          this.$refs.registerForm.validateField('password2')
+        if (this.registerForm.confirmPass) {
+          this.$refs.registerForm.validateField('confirmPass')
         }
         callback()
       }
-      const validatePassword2 = (rule, value, callback) => {
-        if (this.registerForm.password && this.registerForm.password2
-          && this.registerForm.password != this.registerForm.password2) {
+      const validateConfirmPass = (rule, value, callback) => {
+        if (this.registerForm.password && this.registerForm.confirmPass
+          && this.registerForm.password != this.registerForm.confirmPass) {
           callback(new Error('两次密码输入不同，请重新输入'))
         }
         callback()
@@ -314,13 +345,11 @@
       const validateMobiles = (rule, value, callback) => {
         if (!validMobiles(value)) {
           callback(new Error('手机号码不正确，请重新填写'))
-        } else {
-          callback()
         }
+        callback()
       }
       const validatePhoneCaptcha = (rule, value, callback) => {
         validatePhoneVerifyCode(value).then(response => {
-          console.log('validatePhoneVerifyCode:', response)
           if (response.httpCode != 200) {
             callback(new Error('验证码不正确'))
           }
@@ -329,14 +358,13 @@
           callback(new Error(error))
         })
       }
-      const validateEmail = (rule, value, callback) => {
-        if (value && !validEmail(value)) {
-          callback(new Error('电子邮箱格式不正确，请重新输入'))
-        } else {
-          callback()
+      const validateNatureNotEmpty = (rule, value, callback) => {
+        if (this.registerForm.type == 1 && !value.trim()) {
+          callback(new Error(rule.message))
         }
+        callback()
       }
-      const validateNotEmpty = (rule, value, callback) => {
+      const validateLegalNotEmpty = (rule, value, callback) => {
         if (this.registerForm.type == 2 && !value.trim()) {
           callback(new Error(rule.message))
         }
@@ -352,44 +380,74 @@
         loading: false,
         registerForm: {
           type: '1',
-          name: undefined,
-          loginName: undefined,
-          gender: '1',
-          password: undefined,
-          password2: undefined,
-          mobilephone: undefined,
-          verifyCode: undefined,
-          address: undefined,
-          email: undefined,
-          qq: undefined,
-          wechat: undefined,
-          tellphone: undefined,
+          password: '',
+          confirmPass: '',
+          mobilephone: '',
+          verifyCode: '',
           agree: false,
-          company: {
-            name: undefined,
-            unifyCode: undefined,
-            legalPerson: undefined,
-            legalPersonCard: undefined,
-            address: undefined
+          naturePerson: {
+            name: '',
+            idcard: '',
+            gender: '1',
+            nation: '',
+            birthday: '',
+            address: '',
+            photo: '',
+            phone: ''
+          },
+          legalPerson: {
+            companyCode: '',
+            agencyCode: '',
+            companyName: '',
+            companyType: '',
+            legalPerson: '',
+            idcard: '',
+            registerPlace: '',
+            registerDate: ''
           }
         },
         registerRules: {
           name: [
-            {required: true, message: '姓名不能为空', trigger: 'blur'},
             {validator: validateName, trigger: 'blur'}
           ],
-          loginName: [
-            {required: true, message: '身份证号不能为空', trigger: 'blur'},
-            {validator: validateIdCard, trigger: 'blur'}
+          idCard: [
+            {validator: validateNatureIdCard, trigger: 'blur'}
           ],
+          nation: [
+            {validator: validateNatureNotEmpty, message: '民族不能为空', trigger: 'blur'}
+          ],
+          address: [
+            {validator: validateNatureNotEmpty, message: '联系地址不能为空', trigger: 'blur'}
+          ],
+          companyName: [
+            {validator: validateLegalNotEmpty, message: '机构名称不能为空', trigger: 'blur'}
+          ],
+          agencyCode: [
+            {validator: validateLegalNotEmpty, message: '机构代码不能为空', trigger: 'blur'}
+          ],
+          companyCode: [
+            {validator: validateLegalNotEmpty, message: '统一社会信用代码不能为空', trigger: 'blur'}
+          ],
+          legalPerson: [
+            {validator: validateLegalNotEmpty, message: '法定代表人不能为空', trigger: 'blur'}
+          ],
+          legalPersonCard: [
+            {validator: validateLagalIdCard, trigger: 'blur'}
+          ],
+          registerPlace: [
+            {validator: validateLegalNotEmpty, message: '注册地址不能为空', trigger: 'blur'}
+          ],
+          /*registerDate: [
+            {validator: validateLegalNotEmpty, message: '注册日期不能为空', trigger: 'blur'}
+          ],*/
           password: [
             {required: true, message: '登录密码不能为空', trigger: 'blur'},
             {min: 6, max: 16, message: '密码只能6-16位', trigger: 'blur'},
             {validator: validatePassword, trigger: 'blur'}
           ],
-          password2: [
+          confirmPass: [
             {required: true, message: '确认密码不能为空', trigger: 'blur'},
-            {validator: validatePassword2, trigger: 'blur'}
+            {validator: validateConfirmPass, trigger: 'blur'}
           ],
           mobilephone: [
             {required: true, message: '手机号码不能为空', trigger: 'blur'},
@@ -398,27 +456,6 @@
           verifyCode: [
             {required: true, message: '验证码不能为空', trigger: 'blur'},
             {validator: validatePhoneCaptcha, trigger: 'blur'}
-          ],
-          address: [
-            {required: true, message: '联系地址不能为空', trigger: 'blur'}
-          ],
-          email: [
-            {validator: validateEmail, trigger: 'blur'}
-          ],
-          companyName: [
-            {validator: validateNotEmpty, message: '公司名称不能为空', trigger: 'blur'}
-          ],
-          companyUnifyCode: [
-            {validator: validateNotEmpty, message: '统一社会信用代码不能为空', trigger: 'blur'}
-          ],
-          companyLegalPerson: [
-            {validator: validateNotEmpty, message: '企业法人不能为空', trigger: 'blur'}
-          ],
-          companyLegalPersonCard: [
-            {validator: validateNotEmpty, message: '法人身份证不能为空', trigger: 'blur'}
-          ],
-          companyAddress: [
-            {validator: validateNotEmpty, message: '企业注册地址不能为空', trigger: 'blur'}
           ]
         }
       }
@@ -430,7 +467,6 @@
             if (this.registerForm.agree) {
               this.loading = true
               doRegister(this.registerForm).then(response => {
-                console.log('doRegister:', response)
                 this.loading = false
                 if (response.httpCode != 200) {
                   this.$message.error('注册失败')
@@ -457,7 +493,6 @@
           if (!error) {
             _this.sendBtn.disabled = true
             getPhoneVerifyCode(_this.registerForm.mobilephone).then(response => {
-              console.log('getPhoneVerifyCode:', response)
               _this.sendBtn.second = 60
               _this.sendBtn.text = `重新发送(${_this.sendBtn.second})`
               _this.resendFun = setInterval(_this.changeSendBtn, 1000)

@@ -36,13 +36,6 @@ export function doLogin(loginInfo) {
   })
 }
 
-export function getInfo() {
-  return fetchZwfw({
-    url: '/web/member/getMyProfile',
-    method: 'get'
-  })
-}
-
 export function doLogout() {
   return fetchZwfw({
     url: '/web/doLogout',
@@ -53,7 +46,7 @@ export function doLogout() {
 export function isUserExist(loginName) {
   const data = {loginName}
   return fetchZwfw({
-    url: '/web/member/isExist',
+    url: '/web/isExist',
     method: 'post',
     data
   })

@@ -5,6 +5,8 @@ const app = {
     page: 1,
     rows: 10,
     pageSize: [5, 10, 15, 20, 30, 50],
+    memberType: { nature: 1, legal: 2 },
+    gender: { male: 1, female: 0 },
     enums: [],
     dicts: [],
     deptCategoryId: 6988072072579072,

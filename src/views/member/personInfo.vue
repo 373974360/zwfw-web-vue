@@ -1,7 +1,7 @@
 <template>
   <div class="data-box">
     <div class="label-bg">
-      <div class="label">修改个人信息</div>
+      <div class="label">修改资料</div>
     </div>
     <div class="data-bg">
       <el-form class="personInfo-form" ref="personInfoForm" :model="personInfoForm" :rules="personInfoRules"
@@ -11,9 +11,8 @@
             <span class="input-label">姓名：</span>
           </el-col>
           <el-col :span="10">
-            <el-form-item prop="name">
-              <el-input type="text" v-model="personInfoForm.name" autoComplete="on" placeholder=""/>
-              <span class="svg-container"><icon-svg iconClass="wrong"/></span>
+            <el-form-item prop="naturePerson.name" :rules="personInfoRules.name">
+              <el-input type="text" v-model="personInfoForm.naturePerson.name" autoComplete="on"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -25,9 +24,8 @@
             <span class="input-label">身份证号：</span>
           </el-col>
           <el-col :span="10">
-            <el-form-item prop="loginName">
-              <el-input type="text" :disabled="true" v-model="personInfoForm.loginName" autoComplete="on" placeholder=""/>
-              <span class="svg-container"><icon-svg iconClass="wrong"/></span>
+            <el-form-item prop="naturePerson.idcard">
+              <el-input disabled type="text" v-model="personInfoForm.naturePerson.idcard" autoComplete="on"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -40,11 +38,59 @@
           </el-col>
           <el-col :span="10">
             <div class="el-form-item-radio">
-              <el-radio class="radio" v-model="personInfoForm.gender" label="1">男</el-radio>
-              <el-radio class="radio" v-model="personInfoForm.gender" label="0">女</el-radio>
+              <el-radio class="radio" disabled v-model="personInfoForm.naturePerson.gender" :label="gender.male">男</el-radio>
+              <el-radio class="radio" disabled v-model="personInfoForm.naturePerson.gender" :label="gender.female">女</el-radio>
             </div>
           </el-col>
+          <el-col :span="8"></el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="6">
+            <span class="input-label">出生日期：</span>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item prop="naturePerson.birthday">
+              <el-date-picker disabled v-model="personInfoForm.naturePerson.birthday" type="date" placeholder="请选择日期"></el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8"></el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="6">
+            <span class="input-label">照片：</span>
+          </el-col>
+          <el-col :span="10">
+            <el-upload class="avatar-uploader" action="" :on-preview="handlePreview" :on-remove="handleRemove" list-type="picture">
+              <img v-if="personInfoForm.naturePerson.photo" :src="personInfoForm.naturePerson.photo" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </el-col>
+          <el-col :span="8"></el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="6">
+            <span class="input-label">民族：</span>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item prop="naturePerson.nation" :rules="personInfoRules.nation">
+              <el-input type="text" v-model="personInfoForm.naturePerson.nation" autoComplete="on"></el-input>
+            </el-form-item>
+          </el-col>
           <el-col :span="8">
+            <span class="input-tip"><span>*</span>请填写民族</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="6">
+            <span class="input-label">联系地址：</span>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item prop="naturePerson.address" :rules="personInfoRules.address">
+              <el-input type="text" v-model="personInfoForm.naturePerson.address" autoComplete="on"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <span class="input-tip"><span>*</span>请填写联系地址</span>
           </el-col>
         </el-row>
         <el-row>
@@ -52,9 +98,8 @@
             <span class="input-label">手机号码：</span>
           </el-col>
           <el-col :span="10">
-            <el-form-item prop="mobilephone">
-              <el-input type="text" v-model="personInfoForm.mobilephone" autoComplete="on" placeholder=""/>
-              <span class="svg-container"><icon-svg iconClass="wrong"/></span>
+            <el-form-item prop="naturePerson.phone" :rules="personInfoRules.phone">
+              <el-input type="text" v-model="personInfoForm.naturePerson.phone" autoComplete="on"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -67,82 +112,11 @@
           </el-col>
           <el-col :span="10">
             <el-form-item prop="verifyCode">
-              <el-input type="text" v-model="personInfoForm.verifyCode" autoComplete="on" placeholder=""/>
-              <span class="svg-container"><icon-svg iconClass="wrong"/></span>
+              <el-input type="text" v-model="personInfoForm.verifyCode" autoComplete="on"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-button type="primary" :disabled="sendBtn.disabled" @click.native.prevent="getVerifyCode">{{sendBtn.text}}</el-button>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="6">
-            <span class="input-label">联系地址：</span>
-          </el-col>
-          <el-col :span="10">
-            <el-form-item prop="address">
-              <el-input type="text" v-model="personInfoForm.address" autoComplete="on" placeholder=""/>
-              <span class="svg-container"><icon-svg iconClass="wrong"/></span>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <span class="input-tip"><span>*</span>请填写联系地址</span>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="6">
-            <span class="input-label">电子邮箱：</span>
-          </el-col>
-          <el-col :span="10">
-            <el-form-item prop="email">
-              <el-input type="text" v-model="personInfoForm.email" autoComplete="on" placeholder=""/>
-              <span class="svg-container"><icon-svg iconClass="wrong"/></span>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <span class="input-tip">请输入有效的电子邮箱</span>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="6">
-            <span class="input-label">QQ号码：</span>
-          </el-col>
-          <el-col :span="10">
-            <el-form-item prop="qq">
-              <el-input type="text" v-model="personInfoForm.qq" autoComplete="on" placeholder=""/>
-              <span class="svg-container"><icon-svg iconClass="wrong"/></span>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <span class="input-tip">请填写QQ号码</span>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="6">
-            <span class="input-label">微信号码：</span>
-          </el-col>
-          <el-col :span="10">
-            <el-form-item prop="wechat">
-              <el-input type="text" v-model="personInfoForm.wechat" autoComplete="on" placeholder=""/>
-              <span class="svg-container"><icon-svg iconClass="wrong"/></span>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <span class="input-tip">请填写微信号码</span>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="6">
-            <span class="input-label">固定电话：</span>
-          </el-col>
-          <el-col :span="10">
-            <el-form-item prop="tellphone">
-              <el-input type="text" v-model="personInfoForm.tellphone" autoComplete="on" placeholder=""/>
-              <span class="svg-container"><icon-svg iconClass="wrong"/></span>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <span class="input-tip">请填写固定电话</span>
           </el-col>
         </el-row>
         <el-row>
@@ -162,7 +136,7 @@
   import { copyProperties } from '../../utils'
   import { isChinese, validEmail, validMobiles } from '../../utils/validate'
   import { getPhoneVerifyCode, validatePhoneVerifyCode } from '../../api/login'
-  import { updatePersonInfo } from '../../api/member/member'
+  import { getDetailInfo, updatePersonInfo } from '../../api/member/member'
 
   export default {
     data() {
@@ -175,28 +149,20 @@
       }
       const validateMobiles = (rule, value, callback) => {
         if (!validMobiles(value)) {
-          callback(new Error('手机号码不正确，请重新填写'))
+          callback(new Error('手机号码格式不正确，请重新填写'))
         } else {
           callback()
         }
       }
       const validatePhoneCaptcha = (rule, value, callback) => {
         validatePhoneVerifyCode(value).then(response => {
-          console.log('validatePhoneVerifyCode:', response)
-          if (response.httpCode != 200) {
+          if (response.httpCode !== 200) {
             callback(new Error('验证码不正确'))
           }
           callback()
         }).catch(error => {
           callback(new Error(error))
         })
-      }
-      const validateEmail = (rule, value, callback) => {
-        if (value && !validEmail(value)) {
-          callback(new Error('电子邮箱格式不正确，请重新输入'))
-        } else {
-          callback()
-        }
       }
       return {
         sendBtn: {
@@ -205,60 +171,65 @@
           disabled: false
         },
         resendFun: undefined,
+        gender: this.$store.state.app.gender,
         loading: false,
         personInfoForm: {
           id: undefined,
-          type: undefined,
-          name: undefined,
-          loginName: undefined,
-          gender: undefined,
-          mobilephone: undefined,
           verifyCode: undefined,
-          address: undefined,
-          email: undefined,
-          qq: undefined,
-          wechat: undefined,
-          tellphone: undefined,
+          naturePerson: {
+            id: undefined,
+            name: undefined,
+            idcard: undefined,
+            gender: undefined,
+            nation: undefined,
+            birthday: undefined,
+            address: undefined,
+            photo: undefined,
+            phone: undefined
+          }
         },
         personInfoRules: {
           name: [
             {required: true, message: '姓名不能为空', trigger: 'blur'},
             {validator: validateName, trigger: 'blur'}
           ],
-          mobilephone: [
-            {required: true, message: '手机号码不能为空', trigger: 'blur'},
+          nation: [
+            {required: true, message: '民族不能为空', trigger: 'blur'}
+          ],
+          address: [
+            {required: true, message: '联系地址不能为空', trigger: 'blur'}
+          ],
+          phone: [
+            {required: true, message: '联系电话不能为空', trigger: 'blur'},
             {validator: validateMobiles, trigger: 'blur'}
           ],
           verifyCode: [
             {required: true, message: '验证码不能为空', trigger: 'blur'},
             {validator: validatePhoneCaptcha, trigger: 'blur'}
-          ],
-          address: [
-            {required: true, message: '联系地址不能为空', trigger: 'blur'}
-          ],
-          email: [
-            {validator: validateEmail, trigger: 'blur'}
           ]
         }
       }
     },
     computed: {
       ...mapGetters([
-        'user'
+        'type'
       ])
     },
     created() {
-      copyProperties(this.user, this.personInfoForm)
+      getDetailInfo().then(response => {
+        copyProperties(response.data, this.personInfoForm)
+      })
     },
     methods: {
+      handlePreview() {},
+      handleRemove() {},
       handleSubmit() {
         this.$refs.personInfoForm.validate(valid => {
           if (valid) {
             this.loading = true
             updatePersonInfo(this.personInfoForm).then(response => {
-              console.log('updatePersonInfo:', response)
               this.loading = false
-              if (response.httpCode != 200) {
+              if (response.httpCode !== 200) {
                 this.$message.error('信息修改失败！')
               } else {
                 this.$message.success('信息修改成功！')
@@ -273,15 +244,14 @@
       },
       getVerifyCode() {
         let _this = this
-        this.$refs.personInfoForm.validateField('mobilephone', function (error) {
+        this.$refs.personInfoForm.validateField('naturePerson.phone', function (error) {
           if (!error) {
             _this.sendBtn.disabled = true
-            getPhoneVerifyCode(_this.personInfoForm.mobilephone).then(response => {
-              console.log('getPhoneVerifyCode:', response)
+            getPhoneVerifyCode(_this.personInfoForm.naturePerson.phone).then(response => {
               _this.sendBtn.second = 60
               _this.sendBtn.text = `重新发送(${_this.sendBtn.second})`
               _this.resendFun = setInterval(_this.changeSendBtn, 1000)
-              if (response.httpCode == 200) {
+              if (response.httpCode === 200) {
                 _this.$message.success('短信已发送，请注意查看')
               } else {
                 _this.$message.error('短信发送失败，请重新获取')
@@ -333,6 +303,30 @@
           margin-bottom: 15px;
           .el-col {
             min-height: 1px;
+            .avatar-uploader .el-upload {
+              border: 1px dashed #d9d9d9;
+              border-radius: 6px;
+              cursor: pointer;
+              position: relative;
+              left: 25px;
+              overflow: hidden;
+            }
+            .avatar-uploader .el-upload:hover {
+              border-color: #20a0ff;
+            }
+            .avatar-uploader-icon {
+              font-size: 28px;
+              color: #8c939d;
+              width: 178px;
+              height: 178px;
+              line-height: 178px;
+              text-align: center;
+            }
+            .avatar {
+              width: 178px;
+              height: 178px;
+              display: block;
+            }
           }
         }
         input {

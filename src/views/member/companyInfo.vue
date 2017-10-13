@@ -1,23 +1,126 @@
 <template>
   <div class="data-box">
     <div class="label-bg">
-      <div class="label">修改企业信息</div>
+      <div class="label">修改资料</div>
     </div>
     <div class="data-bg">
       <el-form class="companyInfo-form" ref="companyInfoForm" :model="companyInfoForm" :rules="companyInfoRules"
                autoComplete="on" label-position="left">
         <el-row>
           <el-col :span="6">
-            <span class="input-label">手机号码：</span>
+            <span class="input-label">机构名称：</span>
           </el-col>
           <el-col :span="10">
-            <el-form-item prop="mobilephone">
-              <el-input type="text" :disabled="true" v-model="companyInfoForm.mobilephone"/>
-              <span class="svg-container"><icon-svg iconClass="wrong"/></span>
+            <el-form-item prop="legalPerson.companyName" :rules="companyInfoRules.companyName">
+              <el-input type="text" v-model="companyInfoForm.legalPerson.companyName" autoComplete="on"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <span class="input-tip"><span>*</span>注册时的手机号码</span>
+            <span class="input-tip"><span>*</span>请填写机构名称</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="6">
+            <span class="input-label">统一社会信用代码：</span>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item prop="legalPerson.companyCode" :rules="companyInfoRules.companyCode">
+              <el-input disabled type="text" v-model="companyInfoForm.legalPerson.companyCode" autoComplete="on"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <span class="input-tip"><span>*</span>统一社会信用代码不可修改</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="6">
+            <span class="input-label">机构代码：</span>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item prop="legalPerson.agencyCode" :rules="companyInfoRules.agencyCode">
+              <el-input type="text" v-model="companyInfoForm.legalPerson.agencyCode" autoComplete="on"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <span class="input-tip"><span>*</span>请填写机构代码</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="6">
+            <span class="input-label">机构类型：</span>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item prop="legalPerson.companyType">
+              <el-input type="text" v-model="companyInfoForm.legalPerson.companyType" autoComplete="on"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <span class="input-tip"><span>*</span>请填写机构类型</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="6">
+            <span class="input-label">法定代表人：</span>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item prop="legalPerson.legalPerson" :rules="companyInfoRules.legalPerson">
+              <el-input type="text" v-model="companyInfoForm.legalPerson.legalPerson" autoComplete="on"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <span class="input-tip"><span>*</span>请填写法定代表人姓名</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="6">
+            <span class="input-label">法人身份证：</span>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item prop="legalPerson.idcard" :rules="companyInfoRules.legalPersonCard">
+              <el-input type="text" v-model="companyInfoForm.legalPerson.idcard" autoComplete="on"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <span class="input-tip"><span>*</span>请填写法人身份证号</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="6">
+            <span class="input-label">注册地址：</span>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item prop="legalPerson.registerPlace" :rules="companyInfoRules.registerPlace">
+              <el-input type="text" v-model="companyInfoForm.legalPerson.registerPlace" autoComplete="on"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <span class="input-tip"><span>*</span>请填写企业注册地址</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="6">
+            <span class="input-label">注册日期：</span>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item prop="legalPerson.registerDate" :rules="companyInfoRules.registerDate">
+              <el-date-picker v-model="companyInfoForm.legalPerson.registerDate" type="date" placeholder="请选择日期" @change="formatDate"></el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <span class="input-tip"><span>*</span>请选择企业注册日期</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="6">
+            <span class="input-label">联系电话：</span>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item prop="legalPerson.phone" :rules="companyInfoRules.phone">
+              <el-input type="text" v-model="companyInfoForm.legalPerson.phone"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <span class="input-tip"><span>*</span>请输入有效的手机号码</span>
           </el-col>
         </el-row>
         <el-row>
@@ -26,82 +129,11 @@
           </el-col>
           <el-col :span="10">
             <el-form-item prop="verifyCode">
-              <el-input type="text" v-model="companyInfoForm.verifyCode" autoComplete="on"/>
-              <span class="svg-container"><icon-svg iconClass="wrong"/></span>
+              <el-input type="text" v-model="companyInfoForm.verifyCode" autoComplete="on"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-button type="primary" :disabled="sendBtn.disabled" @click.native.prevent="getVerifyCode">{{sendBtn.text}}</el-button>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="6">
-            <span class="input-label">企业名称：</span>
-          </el-col>
-          <el-col :span="10">
-            <el-form-item prop="company.name" :rules="companyInfoRules.companyName">
-              <el-input type="text" v-model="companyInfoForm.company.name" autoComplete="on"/>
-              <span class="svg-container"><icon-svg iconClass="wrong"/></span>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <span class="input-tip"><span>*</span>请填写企业名称</span>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="6">
-            <span class="input-label">统一社会信用代码：</span>
-          </el-col>
-          <el-col :span="10">
-            <el-form-item prop="company.unifyCode" :rules="companyInfoRules.companyUnifyCode">
-              <el-input type="text" v-model="companyInfoForm.company.unifyCode" autoComplete="on" placeholder=""/>
-              <span class="svg-container"><icon-svg iconClass="wrong"/></span>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <span class="input-tip"><span>*</span>请填写统一社会信用代码</span>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="6">
-            <span class="input-label">企业法人：</span>
-          </el-col>
-          <el-col :span="10">
-            <el-form-item prop="company.legalPerson" :rules="companyInfoRules.companyLegalPerson">
-              <el-input type="text" v-model="companyInfoForm.company.legalPerson" autoComplete="on" placeholder=""/>
-              <span class="svg-container"><icon-svg iconClass="wrong"/></span>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <span class="input-tip"><span>*</span>请填写企业法人姓名</span>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="6">
-            <span class="input-label">法人身份证：</span>
-          </el-col>
-          <el-col :span="10">
-            <el-form-item prop="company.legalPersonCard" :rules="companyInfoRules.companyLegalPersonCard">
-              <el-input type="text" v-model="companyInfoForm.company.legalPersonCard" autoComplete="on" placeholder=""/>
-              <span class="svg-container"><icon-svg iconClass="wrong"/></span>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <span class="input-tip"><span>*</span>请输入有效证件号码</span>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="6">
-            <span class="input-label">企业注册地址：</span>
-          </el-col>
-          <el-col :span="10">
-            <el-form-item prop="company.address" :rules="companyInfoRules.companyAddress">
-              <el-input type="text" v-model="companyInfoForm.company.address" autoComplete="on" placeholder=""/>
-              <span class="svg-container"><icon-svg iconClass="wrong"/></span>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <span class="input-tip"><span>*</span>请填写企业注册地址</span>
           </el-col>
         </el-row>
         <el-row>
@@ -119,15 +151,15 @@
 <script>
   import { mapGetters } from 'vuex'
   import { copyProperties } from '../../utils'
-  import { isIdCardNo } from '../../utils/validate'
+  import { date } from '../../filters'
+  import { isIdCardNo, validMobiles } from '../../utils/validate'
   import { getPhoneVerifyCode, validatePhoneVerifyCode } from '../../api/login'
-  import { updateCompanyInfo } from '../../api/member/member'
+  import { getDetailInfo, updateCompanyInfo } from '../../api/member/member'
 
   export default {
     data() {
       const validatePhoneCaptcha = (rule, value, callback) => {
         validatePhoneVerifyCode(value).then(response => {
-          console.log('validatePhoneVerifyCode:', response)
           if (response.httpCode != 200) {
             callback(new Error('验证码不正确'))
           }
@@ -142,6 +174,12 @@
         }
         callback()
       }
+      const validateMobiles = (rule, value, callback) => {
+        if (!validMobiles(value)) {
+          callback(new Error('手机号码格式不正确，请重新填写'))
+        }
+        callback()
+      }
       return {
         sendBtn: {
           text: '获取验证码',
@@ -152,56 +190,68 @@
         loading: false,
         companyInfoForm: {
           id: undefined,
-          mobilephone: undefined,
           verifyCode: undefined,
-          company: {
+          legalPerson: {
             id: undefined,
-            name: undefined,
-            unifyCode: undefined,
+            companyCode: undefined,
+            agencyCode: undefined,
+            companyName: undefined,
+            companyType: undefined,
             legalPerson: undefined,
-            legalPersonCard: undefined,
-            address: undefined
+            idcard: undefined,
+            phone: undefined,
+            registerPlace: undefined,
+            registerDate: undefined
           }
         },
         companyInfoRules: {
+          companyName: [
+            {required: true, message: '机构名称不能为空', trigger: 'blur'}
+          ],
+          agencyCode: [
+            {required: true, message: '机构代码不能为空', trigger: 'blur'}
+          ],
+          legalPerson: [
+            {required: true, message: '法定代表人不能为空', trigger: 'blur'}
+          ],
+          legalPersonCard: [
+            {required: true, message: '法人身份证不能为空', trigger: 'blur'},
+            {validator: validateIdCard, trigger: 'blur'}
+          ],
+          registerPlace: [
+            {required: true, message: '注册地址不能为空', trigger: 'blur'}
+          ],
+          registerDate: [
+            {required: true, message: '注册日期不能为空', trigger: 'blur'}
+          ],
+          phone: [
+            {required: true, message: '联系电话不能为空', trigger: 'blur'},
+            {validator: validateMobiles, trigger: 'blur'}
+          ],
           verifyCode: [
             {required: true, message: '验证码不能为空', trigger: 'blur'},
             {validator: validatePhoneCaptcha, trigger: 'blur'}
-          ],
-          companyName: [
-            {required: true, message: '企业名称不能为空', trigger: 'blur'}
-          ],
-          companyUnifyCode: [
-            {required: true, message: '统一社会信用代码不能为空', trigger: 'blur'}
-          ],
-          companyLegalPerson: [
-            {required: true, message: '企业法人不能为空', trigger: 'blur'}
-          ],
-          companyLegalPersonCard: [
-            {required: true, message: '法人身份证号不能为空', trigger: 'blur'},
-            {validator: validateIdCard, trigger: 'blur'}
-          ],
-          companyAddress: [
-            {required: true, message: '企业地址不能为空', trigger: 'blur'}
           ]
         },
       }
     },
     computed: {
-      ...mapGetters([
-        'user'
-      ])
+      ...mapGetters([])
     },
     created() {
-      copyProperties(this.user, this.companyInfoForm)
+      getDetailInfo().then(response => {
+        copyProperties(response.data, this.companyInfoForm)
+      })
     },
     methods: {
+      formatDate() {
+        this.companyInfoForm.legalPerson.registerDate = date(this.companyInfoForm.legalPerson.registerDate, 'YYYY-MM-DD')
+      },
       handleSubmit() {
         this.$refs.companyInfoForm.validate(valid => {
           if (valid) {
             this.loading = true
             updateCompanyInfo(this.companyInfoForm).then(response => {
-              console.log('updateCompanyInfo:', response)
               this.loading = false
               if (response.httpCode != 200) {
                 this.$message.error('信息修改失败！')
@@ -217,21 +267,25 @@
         })
       },
       getVerifyCode() {
-        this.sendBtn.disabled = true
-        getPhoneVerifyCode(this.companyInfoForm.mobilephone).then(response => {
-          console.log('getPhoneVerifyCode:', response)
-          this.sendBtn.second = 60
-          this.sendBtn.text = `重新发送(${this.sendBtn.second})`
-          this.resendFun = setInterval(this.changeSendBtn, 1000)
-          if (response.httpCode == 200) {
-            this.$message.success('短信已发送，请注意查看')
-          } else {
-            this.$message.error('短信发送失败，请重新获取')
+        let _this = this
+        this.$refs.companyInfoForm.validateField('legalPerson.phone', function (error) {
+          if (!error) {
+            _this.sendBtn.disabled = true
+            getPhoneVerifyCode(_this.companyInfoForm.legalPerson.phone).then(response => {
+              _this.sendBtn.second = 60
+              _this.sendBtn.text = `重新发送(${_this.sendBtn.second})`
+              _this.resendFun = setInterval(_this.changeSendBtn, 1000)
+              if (response.httpCode == 200) {
+                _this.$message.success('短信已发送，请注意查看')
+              } else {
+                _this.$message.error('短信发送失败，请重新获取')
+              }
+            }).catch(err => {
+              this.sendBtn.disabled = false
+              _this.$message.error(err)
+            })
           }
-        }).catch(err => {
-          this.sendBtn.disabled = false
-          this.$message.error(err)
-        })
+        });
       },
       changeSendBtn() {
         this.sendBtn.second -= 1

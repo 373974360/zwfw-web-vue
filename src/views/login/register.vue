@@ -7,14 +7,14 @@
       </el-col>
       <el-col :span="10">
         <div class="el-form-item-radio">
-          <el-radio class="radio" v-model="registerForm.type" label="1">个人会员</el-radio>
-          <el-radio class="radio" v-model="registerForm.type" label="2">企业会员</el-radio>
+          <el-radio class="radio" v-model="registerForm.type" :label="memberType.nature">个人会员</el-radio>
+          <el-radio class="radio" v-model="registerForm.type" :label="memberType.legal">企业会员</el-radio>
         </div>
       </el-col>
       <el-col :span="8"></el-col>
     </el-row>
     <!-- 个人会员信息 -->
-    <div v-show="registerForm.type == 1">
+    <div v-show="registerForm.type === memberType.nature">
       <el-row>
         <el-col :span="6">
           <span class="input-label">姓名：</span>
@@ -34,7 +34,7 @@
         </el-col>
         <el-col :span="10">
           <el-form-item prop="naturePerson.idcard" :rules="registerRules.idCard">
-            <el-input type="text" v-model="registerForm.naturePerson.idcard" autoComplete="on"></el-input>
+            <el-input type="text" v-model="registerForm.naturePerson.idcard" autoComplete="on" @blur="handleIdCard"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -47,8 +47,8 @@
         </el-col>
         <el-col :span="10">
           <div class="el-form-item-radio">
-            <el-radio class="radio" v-model="registerForm.naturePerson.gender" label="1">男</el-radio>
-            <el-radio class="radio" v-model="registerForm.naturePerson.gender" label="0">女</el-radio>
+            <el-radio class="radio" disabled v-model="registerForm.naturePerson.gender" :label="gender.male">男</el-radio>
+            <el-radio class="radio" disabled v-model="registerForm.naturePerson.gender" :label="gender.female">女</el-radio>
           </div>
         </el-col>
         <el-col :span="8"></el-col>
@@ -59,7 +59,7 @@
         </el-col>
         <el-col :span="10">
           <el-form-item prop="naturePerson.birthday">
-            <el-date-picker v-model="registerForm.naturePerson.birthday" type="date" placeholder="请选择日期"></el-date-picker>
+            <el-date-picker disabled v-model="registerForm.naturePerson.birthday" type="date" placeholder="请选择日期"></el-date-picker>
           </el-form-item>
         </el-col>
         <el-col :span="8"></el-col>
@@ -69,9 +69,10 @@
           <span class="input-label">照片：</span>
         </el-col>
         <el-col :span="10">
-          <el-form-item prop="naturePerson.photo">
-            <el-input type="text" v-model="registerForm.naturePerson.photo" autoComplete="on"></el-input>
-          </el-form-item>
+          <el-upload class="avatar-uploader" action="" :on-preview="handlePreview" :on-remove="handleRemove" list-type="picture">
+            <img v-if="registerForm.naturePerson.photo" :src="registerForm.naturePerson.photo" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
         </el-col>
         <el-col :span="8"></el-col>
       </el-row>
@@ -103,7 +104,7 @@
       </el-row>
     </div>
     <!-- 企业会员信息 -->
-    <div v-show="registerForm.type == 2">
+    <div v-show="registerForm.type === memberType.legal">
       <el-row>
         <el-col :span="6">
           <span class="input-label">机构名称：</span>
@@ -115,6 +116,19 @@
         </el-col>
         <el-col :span="8">
           <span class="input-tip"><span>*</span>请填写机构名称</span>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="6">
+          <span class="input-label">统一社会信用代码：</span>
+        </el-col>
+        <el-col :span="10">
+          <el-form-item prop="legalPerson.companyCode" :rules="registerRules.companyCode">
+            <el-input type="text" v-model="registerForm.legalPerson.companyCode" autoComplete="on"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <span class="input-tip"><span>*</span>请填写统一社会信用代码</span>
         </el-col>
       </el-row>
       <el-row>
@@ -141,19 +155,6 @@
         </el-col>
         <el-col :span="8">
           <span class="input-tip"><span>*</span>请填写机构类型</span>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="6">
-          <span class="input-label">统一社会信用代码：</span>
-        </el-col>
-        <el-col :span="10">
-          <el-form-item prop="legalPerson.companyCode" :rules="registerRules.companyCode">
-            <el-input type="text" v-model="registerForm.legalPerson.companyCode" autoComplete="on"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <span class="input-tip"><span>*</span>请填写统一社会信用代码</span>
         </el-col>
       </el-row>
       <el-row>
@@ -200,8 +201,8 @@
           <span class="input-label">注册日期：</span>
         </el-col>
         <el-col :span="10">
-          <el-form-item prop="legalPerson.registerDate" >
-            <el-date-picker v-model="registerForm.legalPerson.registerDate" type="date" placeholder="请选择日期"></el-date-picker>
+          <el-form-item prop="legalPerson.registerDate" :rules="registerRules.registerDate">
+            <el-date-picker v-model="registerForm.legalPerson.registerDate" type="date" placeholder="请选择日期" @change="formatDate"></el-date-picker>
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -212,7 +213,7 @@
 
     <el-row>
       <el-col :span="6">
-        <span class="input-label">手机号码：</span>
+        <span class="input-label">联系电话：</span>
       </el-col>
       <el-col :span="10">
         <el-form-item prop="mobilephone">
@@ -282,6 +283,7 @@
 </template>
 
 <script>
+  import { date } from '../../filters'
   import { isChinese, isIdCardNo, validEmail, validMobiles } from '../../utils/validate'
   import { isUserExist, getPhoneVerifyCode, validatePhoneVerifyCode, doRegister } from '../../api/login'
 
@@ -289,7 +291,7 @@
     name: 'register',
     data() {
       const validateName = (rule, value, callback) => {
-        if (this.registerForm.type == 1) {
+        if (this.registerForm.type === this.memberType.nature) {
           if (!value.trim()) {
             callback(new Error('姓名不能为空'))
           } else if (!isChinese(value)) {
@@ -299,34 +301,51 @@
         callback()
       }
       const validateNatureIdCard = (rule, value, callback) => {
-        if (this.registerForm.type == 1) {
-          validateIdCard(rule, value, callback)
+        if (this.registerForm.type === this.memberType.nature) {
+          if (!value.trim()) {
+            callback(new Error('身份证号码不能为空'))
+          } else if (!isIdCardNo(value)) {
+            callback(new Error('身份证格式不正确，请重新输入'))
+          } else {
+            isUserExist(value).then(response => {
+              if (response.httpCode === 200 && response.data) {
+                callback(new Error('身份证号码已存在，请重新输入'))
+              }
+              callback()
+            }).catch(error => {
+              callback(new Error(error))
+            })
+          }
         } else {
           callback()
         }
-
       }
       const validateLagalIdCard = (rule, value, callback) => {
-        if (this.registerForm.type == 2) {
-          validateIdCard(rule, value, callback)
+        if (this.registerForm.type === this.memberType.legal) {
+          if (!value.trim()) {
+            callback(new Error('法人身份证不能为空'))
+          } else if (!isIdCardNo(value)) {
+            callback(new Error('身份证格式不正确，请重新输入'))
+          }
+        }
+        callback()
+      }
+      const validatecompanyCode = (rule, value, callback) => {
+        if (this.registerForm.type === this.memberType.legal) {
+          if (!value.trim()) {
+            callback(new Error('统一社会信用代码不能为空'))
+          } else {
+            isUserExist(value).then(response => {
+              if (response.httpCode === 200 && response.data) {
+                callback(new Error('统一社会信用代码已存在，请重新输入'))
+              }
+              callback()
+            }).catch(error => {
+              callback(new Error(error))
+            })
+          }
         } else {
           callback()
-        }
-      }
-      const validateIdCard = (rule, value, callback) => {
-        if (!value.trim()) {
-          callback(new Error('身份证号码不能为空'))
-        } else if (!isIdCardNo(value)) {
-          callback(new Error('身份证格式不正确，请重新输入'))
-        } else {
-          isUserExist(value).then(response => {
-            if (response.httpCode == 200 && response.data) {
-              callback(new Error('身份证号码已存在，请重新输入'))
-            }
-            callback()
-          }).catch(error => {
-            callback(new Error(error))
-          })
         }
       }
       const validatePassword = (rule, value, callback) => {
@@ -350,7 +369,7 @@
       }
       const validatePhoneCaptcha = (rule, value, callback) => {
         validatePhoneVerifyCode(value).then(response => {
-          if (response.httpCode != 200) {
+          if (response.httpCode !== 200) {
             callback(new Error('验证码不正确'))
           }
           callback()
@@ -359,13 +378,19 @@
         })
       }
       const validateNatureNotEmpty = (rule, value, callback) => {
-        if (this.registerForm.type == 1 && !value.trim()) {
+        if (this.registerForm.type === this.memberType.nature && !value.trim()) {
           callback(new Error(rule.message))
         }
         callback()
       }
       const validateLegalNotEmpty = (rule, value, callback) => {
-        if (this.registerForm.type == 2 && !value.trim()) {
+        if (this.registerForm.type === this.memberType.legal && !value.trim()) {
+          callback(new Error(rule.message))
+        }
+        callback()
+      }
+      const validateDate = (rule, value, callback) => {
+        if (this.registerForm.type === this.memberType.legal && !value) {
           callback(new Error(rule.message))
         }
         callback()
@@ -377,9 +402,11 @@
           disabled: false
         },
         resendFun: undefined,
+        memberType: this.$store.state.app.memberType,
+        gender: this.$store.state.app.gender,
         loading: false,
         registerForm: {
-          type: '1',
+          type: this.$store.state.app.memberType.nature,
           password: '',
           confirmPass: '',
           mobilephone: '',
@@ -388,12 +415,11 @@
           naturePerson: {
             name: '',
             idcard: '',
-            gender: '1',
+            gender: this.$store.state.app.gender.male,
             nation: '',
             birthday: '',
             address: '',
-            photo: '',
-            phone: ''
+            photo: ''
           },
           legalPerson: {
             companyCode: '',
@@ -426,7 +452,7 @@
             {validator: validateLegalNotEmpty, message: '机构代码不能为空', trigger: 'blur'}
           ],
           companyCode: [
-            {validator: validateLegalNotEmpty, message: '统一社会信用代码不能为空', trigger: 'blur'}
+            {validator: validatecompanyCode, trigger: 'blur'}
           ],
           legalPerson: [
             {validator: validateLegalNotEmpty, message: '法定代表人不能为空', trigger: 'blur'}
@@ -437,9 +463,9 @@
           registerPlace: [
             {validator: validateLegalNotEmpty, message: '注册地址不能为空', trigger: 'blur'}
           ],
-          /*registerDate: [
-            {validator: validateLegalNotEmpty, message: '注册日期不能为空', trigger: 'blur'}
-          ],*/
+          registerDate: [
+            {validator: validateDate, message: '注册日期不能为空', trigger: 'blur'}
+          ],
           password: [
             {required: true, message: '登录密码不能为空', trigger: 'blur'},
             {min: 6, max: 16, message: '密码只能6-16位', trigger: 'blur'},
@@ -461,6 +487,20 @@
       }
     },
     methods: {
+      handleIdCard() {
+        let idCard = this.registerForm.naturePerson.idcard
+        this.registerForm.naturePerson.birthday = `${idCard.substring(6, 10)}-${idCard.substring(10, 12)}-${idCard.substring(12, 14)}`;
+        if (parseInt(idCard.substr(16, 1)) % 2 === 1) {
+          this.registerForm.naturePerson.gender = this.gender.male
+        } else {
+          this.registerForm.naturePerson.gender = this.gender.female
+        }
+      },
+      handlePreview() {},
+      handleRemove() {},
+      formatDate() {
+        this.registerForm.legalPerson.registerDate = date(this.registerForm.legalPerson.registerDate, 'YYYY-MM-DD')
+      },
       handleRegister() {
         this.$refs.registerForm.validate(valid => {
           if (valid) {
@@ -528,6 +568,30 @@
       margin-bottom: 15px;
       .el-col {
         min-height: 1px;
+        .avatar-uploader .el-upload {
+          border: 1px dashed #d9d9d9;
+          border-radius: 6px;
+          cursor: pointer;
+          position: relative;
+          left: 25px;
+          overflow: hidden;
+        }
+        .avatar-uploader .el-upload:hover {
+          border-color: #20a0ff;
+        }
+        .avatar-uploader-icon {
+          font-size: 28px;
+          color: #8c939d;
+          width: 178px;
+          height: 178px;
+          line-height: 178px;
+          text-align: center;
+        }
+        .avatar {
+          width: 178px;
+          height: 178px;
+          display: block;
+        }
       }
     }
     input {

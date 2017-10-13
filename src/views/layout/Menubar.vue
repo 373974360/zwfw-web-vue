@@ -5,14 +5,23 @@
       <div class="svg-text">个人中心</div>
     </div>
     <el-menu class="category" mode="vertical" router>
-      <template v-for="item in menuList">
+      <!--<template v-for="item in menuList">
         <el-menu-item :index="item.menuRouter">{{item.menuName}}</el-menu-item>
-      </template>
+      </template>-->
+      <el-menu-item index="/member/process">我的办件</el-menu-item>
+      <el-menu-item index="/member/pretrial">我的预审</el-menu-item>
+      <el-menu-item index="/member/collection">我的收藏</el-menu-item>
+      <el-menu-item index="/member/message">我的消息</el-menu-item>
+      <el-menu-item v-if="type === memberType.nature" index="/member/personInfo">修改资料</el-menu-item>
+      <el-menu-item v-if="type === memberType.legal" index="/member/companyInfo">修改资料</el-menu-item>
+      <el-menu-item index="/member/changePw">修改密码</el-menu-item>
     </el-menu>
   </div>
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
+
   export default {
     data() {
       return {
@@ -21,11 +30,17 @@
           {menuId: 2, menuName: '我的预审', menuRouter: '/member/pretrial'},
           {menuId: 3, menuName: '我的收藏', menuRouter: '/member/collection'},
           {menuId: 4, menuName: '我的消息', menuRouter: '/member/message'},
-          {menuId: 5, menuName: '个人信息', menuRouter: '/member/personInfo'},
-          {menuId: 6, menuName: '企业信息', menuRouter: '/member/companyInfo'},
+          /*{menuId: 5, menuName: '个人信息', menuRouter: '/member/personInfo'},
+          {menuId: 6, menuName: '企业信息', menuRouter: '/member/companyInfo'},*/
+          {menuId: 8, menuName: '修改资料', menuRouter: '/member/updateInfo'},
           {menuId: 7, menuName: '修改密码', menuRouter: '/member/changePw'}
         ]
       }
+    },
+    computed: {
+      ...mapGetters([
+        'type', 'memberType'
+      ])
     }
   }
 </script>

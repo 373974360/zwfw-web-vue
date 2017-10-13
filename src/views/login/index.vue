@@ -9,7 +9,7 @@
             <div class="title">用户登录</div>
             <el-form-item prop="account">
               <span class="svg-container"><icon-svg iconClass="user"/></span>
-              <el-input type="text" v-model="loginForm.account" autoComplete="on" placeholder="身份证号"/>
+              <el-input type="text" v-model="loginForm.account" autoComplete="on" placeholder="请输入用户名"/>
             </el-form-item>
             <el-form-item prop="password">
               <span class="svg-container"><icon-svg iconClass="password"/></span>
@@ -74,15 +74,15 @@
       }
       return {
         loginForm: {
-          account: '342601199311014355',
+          account: '',
           password: undefined,
           captcha: undefined,
           autoLogin: false,
         },
         loginRules: {
           account: [
-            {required: true, message: '用户名不能为空', trigger: 'blur'},
-            {validator: validateIdCard, trigger: 'blur'}
+            {required: true, message: '用户名不能为空', trigger: 'blur'}
+            /*{validator: validateIdCard, trigger: 'blur'}*/
           ],
           password: [
             {required: true, message: '密码不能为空', trigger: 'blur'}

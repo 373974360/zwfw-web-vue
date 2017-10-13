@@ -1,21 +1,25 @@
-import { doLogin, getInfo, doLogout } from "../../api/login"
+import { doLogin, doLogout } from "../../api/login"
+import { getMyProfile } from "../../api/member/member"
 import { getToken, setToken, removeToken } from "../../utils/auth"
 
 const user = {
   state: {
     token: getToken(),
-    user: '',
+    user: {
+      id: '',
+      type: '',
+      name: '',
+      personId: ''
+    },
     id: '',
     type: '',
     name: '',
-    companyId: ''
+    personId: '',
+    /*companyId: ''*/
   },
   mutations: {
     SET_TOKEN: (state, token) => {
       state.token = token
-    },
-    SET_USER: (state, user) => {
-      state.user = user
     },
     SET_ID: (state, id) => {
       state.id = id
@@ -26,9 +30,12 @@ const user = {
     SET_NAME: (state, name) => {
       state.name = name
     },
-    SET_COMPANYID: (state, companyId) => {
+    SET_PERSON_ID: (state, personId) => {
+      state.personId = personId
+    },
+    /*SET_COMPANY_ID: (state, companyId) => {
       state.companyId = companyId
-    }
+    }*/
   },
   actions: {
     DoLogin({commit}, loginInfo) {
@@ -39,8 +46,8 @@ const user = {
             reject(response.msg)
           } else {
             const data = response.data
-            setToken(data.id)
-            commit('SET_TOKEN', data.id)
+            setToken(data)
+            commit('SET_TOKEN', data)
             resolve()
           }
         }).catch(error => {
@@ -51,15 +58,14 @@ const user = {
 
     GetInfo({commit}) {
       return new Promise((resolve, reject) => {
-        getInfo().then(response => {
-          console.log('getInfo: ', response)
+        getMyProfile().then(response => {
           if (response.httpCode == 200) {
             const data = response.data
-            commit('SET_USER', data)
             commit('SET_ID', data.id)
             commit('SET_TYPE', data.type)
             commit('SET_NAME', data.name)
-            commit('SET_COMPANYID', data.companyId)
+            commit('SET_PERSON_ID', data.personId)
+            /*commit('SET_COMPANY_ID', data.companyId)*/
             resolve()
           } else {
             removeToken()

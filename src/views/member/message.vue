@@ -26,7 +26,7 @@
 </template>
 
 <script>
-  import { getMyMessagePage } from '../../api/member/member'
+  import { getMyMessagePage } from '../../api/member/message'
   import { date } from '../../filters'
 
   export default {

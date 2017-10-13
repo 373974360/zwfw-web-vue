@@ -1,17 +1,23 @@
 import { fetchZwfw } from "../../utils/fetch"
 
-export function getMyItem() {
+export function getMyProfile() {
   return fetchZwfw({
-    url: '/web/member/getMyItem',
+    url: '/web/member/getMyProfile',
     method: 'get'
   })
 }
 
-export function getMyMessagePage(page, rows) {
+export function getDetailInfo() {
   return fetchZwfw({
-    url: '/web/member/message/list',
-    method: 'get',
-    params: {page, rows}
+    url: '/web/member/getDetailInfo',
+    method: 'get'
+  })
+}
+
+export function getMyItem() {
+  return fetchZwfw({
+    url: '/web/member/getMyItem',
+    method: 'get'
   })
 }
 

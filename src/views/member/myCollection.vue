@@ -47,7 +47,6 @@
     methods: {
       loadPage() {
         getFavoritePage(this.page, this.pageSize).then(response => {
-          console.log('favoritePage:', response)
           if (response.httpCode == 200) {
             this.collectionData = response.data.list
             this.total = response.data.total

@@ -45,25 +45,31 @@
         <div class="msg-content">
           <div class="table-title">{{item.name}}</div>
           <table>
-            <tr>
-              <th>企业名称：</th><td><template v-if="user.company">{{user.company.name}}</template></td>
-              <th>企业工商注册号：</th><td><template v-if="user.company">{{user.company.unifyCode}}</template></td>
-            </tr>
-            <tr>
-              <th>企业法人：</th><td><template v-if="user.company">{{user.company.legalPerson}}</template></td>
-              <th>法人身份证号：</th><td><template v-if="user.company">{{user.company.legalPersonCard}}</template></td>
-            </tr>
-            <tr>
-              <th>联系人姓名：</th><td>{{user.name}}</td>
-              <th>联系人身份证号：</th><td>{{user.loginName}}</td>
-            </tr>
-            <tr>
-              <th>联系人电话：</th><td>{{user.mobilephone}}</td>
-              <th>电子邮箱：</th><td>{{user.email}}</td>
-            </tr>
-            <tr>
-              <th>通讯地址：</th><td colspan="3">{{user.address}}</td>
-            </tr>
+            <template v-if="member.type == memberType.nature">
+              <tr>
+                <th>姓名：</th><td>{{member.naturePerson.name}}</td>
+                <th>身份证号：</th><td>{{member.naturePerson.idcard}}</td>
+              </tr>
+              <tr>
+                <th>联系电话：</th><td>{{member.naturePerson.phone}}</td>
+              </tr>
+              <tr>
+                <th>通讯地址：</th><td colspan="3">{{member.naturePerson.address}}</td>
+              </tr>
+            </template>
+            <template v-if="member.type == memberType.legal">
+              <tr>
+                <th>企业名称：</th><td>{{member.legalPerson.companyName}}</td>
+                <th>企业工商注册号：</th><td>{{member.legalPerson.companyCode}}</td>
+              </tr>
+              <tr>
+                <th>企业法人：</th><td>{{member.legalPerson.legalPerson}}</td>
+                <th>法人身份证号：</th><td>{{member.legalPerson.idcard}}</td>
+              </tr>
+              <tr>
+                <th>通讯地址：</th><td colspan="3">{{member.legalPerson.registerPlace}}</td>
+              </tr>
+            </template>
             <tr v-if="item.onlineHandleMode == 2">
               <th>取件方式：</th>
               <td colspan="3">
@@ -136,6 +142,7 @@
   import { copyProperties } from '../../utils'
   import { getItemDetail, /*getItemConditions,*/ getItemMaterials } from '../../api/item'
   import { getPretrialInfo, submitPretrial } from '../../api/member/pretrial'
+  import { getDetailInfo } from '../../api/member/member'
 
   export default {
     components: {
@@ -151,11 +158,12 @@
         checkedConditions: [],
         indeterminate: false,
         secondForm: false,
+        member: {},
+        memberType: this.$store.state.app.memberType,
         item: {},
         itemPretrial: {
           id: '',
           memberId: '',
-          companyId: '',
           itemId: '',
           takeType: '1',
           itemPostInfo: {
@@ -175,7 +183,7 @@
     },
     computed: {
       ...mapGetters([
-        'user', 'resourceUrl'
+        'resourceUrl', 'id'
       ])
     },
     created() {
@@ -187,18 +195,19 @@
         this.pretrialId = this.$route.params.value
         this.init2()
       }
+      getDetailInfo().then(response => {
+        this.member = response.data
+      })
       this.uploadUrl = `${process.env.ZWFW_API}/web/pretrial/upload`
-
     },
     methods: {
       init1() {
         /*this.initConditions()*/
         this.initMaterials()
         this.initItemDetail()
-        this.itemPretrial.memberId = this.user.id
-        this.itemPretrial.companyId = this.user.companyId
+        this.itemPretrial.memberId = this.id
         this.itemPretrial.itemId = this.itemId
-        this.itemPretrial.itemPostInfo.memberId = this.user.id
+        this.itemPretrial.itemPostInfo.memberId = this.id
         this.notify1()
       },
       init2() {

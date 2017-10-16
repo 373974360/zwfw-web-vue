@@ -44,7 +44,6 @@
     methods: {
       loadPage() {
         getMyMessagePage(this.page, this.pageSize).then(response => {
-          console.log('MessagePage:', response)
           if (response.httpCode == 200) {
             this.messageData = response.data.list
             this.total = response.data.total

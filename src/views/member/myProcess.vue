@@ -59,7 +59,6 @@
     methods: {
       loadPage() {
         getMyProcessPage(this.page, this.pageSize, this.keywords, this.checkList).then(response => {
-          console.log('processPage:', response)
           if (response.httpCode == 200) {
             this.processData = response.data.list
             this.total = response.data.total

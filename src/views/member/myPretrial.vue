@@ -61,7 +61,6 @@
     methods: {
       loadPage() {
         getPretrialPage(this.page, this.pageSize, this.keywords, this.checkList).then(response => {
-          console.log('pretrialPage:', response)
           if (response.httpCode == 200) {
             this.pretrialData = response.data.list
             this.total = response.data.total

@@ -25,7 +25,7 @@
           </el-col>
           <el-col :span="10">
             <el-form-item prop="legalPerson.companyCode" :rules="companyInfoRules.companyCode">
-              <el-input disabled type="text" v-model="companyInfoForm.legalPerson.companyCode" autoComplete="on"></el-input>
+              <el-input readonly type="text" v-model="companyInfoForm.legalPerson.companyCode" autoComplete="on"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -329,36 +329,25 @@
             min-height: 1px;
           }
         }
-        input {
-          border: 0px;
-          background: transparent;
-          height: 34px;
-          padding: 3px 12px;
-        }
         .el-form-item {
-          border: 1px solid #cccccc;
-          background: #ffffff;
-          border-radius: 4px;
           margin: 0 25px;
-          .el-form-item__content {
-            line-height: 34px;
+          input {
+            border: 1px solid #cccccc;
+            background: #ffffff;
+            border-radius: 4px;
+            height: 34px;
+            padding: 3px 12px;
           }
-        }
-        .el-input {
-          display: inline-block;
-          width: 70%;
+          input[readonly] {
+            background: #eef1f6;
+            opacity: 1;
+          }
         }
         .title {
           font-size: 25px;
           color: #4bb2fc;
           text-align: center;
           margin: 20px auto;
-        }
-        .svg-container {
-          color: #c03639;
-          display: inline-block;
-          float: right;
-          padding: 0 12px;
         }
         .input-label {
           display: block;

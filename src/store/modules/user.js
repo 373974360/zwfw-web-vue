@@ -5,17 +5,10 @@ import { getToken, setToken, removeToken } from "../../utils/auth"
 const user = {
   state: {
     token: getToken(),
-    user: {
-      id: '',
-      type: '',
-      name: '',
-      personId: ''
-    },
     id: '',
     type: '',
     name: '',
-    personId: '',
-    /*companyId: ''*/
+    personId: ''
   },
   mutations: {
     SET_TOKEN: (state, token) => {
@@ -32,10 +25,7 @@ const user = {
     },
     SET_PERSON_ID: (state, personId) => {
       state.personId = personId
-    },
-    /*SET_COMPANY_ID: (state, companyId) => {
-      state.companyId = companyId
-    }*/
+    }
   },
   actions: {
     DoLogin({commit}, loginInfo) {
@@ -65,7 +55,6 @@ const user = {
             commit('SET_TYPE', data.type)
             commit('SET_NAME', data.name)
             commit('SET_PERSON_ID', data.personId)
-            /*commit('SET_COMPANY_ID', data.companyId)*/
             resolve()
           } else {
             removeToken()

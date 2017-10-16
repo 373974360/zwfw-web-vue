@@ -6,10 +6,10 @@
         <span class="input-label">会员类型：</span>
       </el-col>
       <el-col :span="10">
-        <div class="el-form-item-radio">
+        <el-form-item prop="type">
           <el-radio class="radio" v-model="registerForm.type" :label="memberType.nature">个人会员</el-radio>
           <el-radio class="radio" v-model="registerForm.type" :label="memberType.legal">企业会员</el-radio>
-        </div>
+        </el-form-item>
       </el-col>
       <el-col :span="8"></el-col>
     </el-row>
@@ -46,10 +46,10 @@
           <span class="input-label">性别：</span>
         </el-col>
         <el-col :span="10">
-          <div class="el-form-item-radio">
+          <el-form-item prop="naturePerson.gender">
             <el-radio class="radio" disabled v-model="registerForm.naturePerson.gender" :label="gender.male">男</el-radio>
             <el-radio class="radio" disabled v-model="registerForm.naturePerson.gender" :label="gender.female">女</el-radio>
-          </div>
+          </el-form-item>
         </el-col>
         <el-col :span="8"></el-col>
       </el-row>
@@ -69,10 +69,12 @@
           <span class="input-label">照片：</span>
         </el-col>
         <el-col :span="10">
-          <el-upload class="avatar-uploader" action="" :on-preview="handlePreview" :on-remove="handleRemove" list-type="picture">
-            <img v-if="registerForm.naturePerson.photo" :src="registerForm.naturePerson.photo" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-          </el-upload>
+          <el-form-item prop="naturePerson.photo">
+            <el-upload class="avatar-uploader" action="" :on-preview="handlePreview" :on-remove="handleRemove" list-type="picture">
+              <img v-if="registerForm.naturePerson.photo" :src="registerForm.naturePerson.photo" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </el-form-item>
         </el-col>
         <el-col :span="8"></el-col>
       </el-row>
@@ -568,15 +570,26 @@
       margin-bottom: 15px;
       .el-col {
         min-height: 1px;
-        .avatar-uploader .el-upload {
+      }
+    }
+    .el-form-item {
+      margin: 0 25px;
+      input {
+        border: 1px solid #cccccc;
+        border-radius: 4px;
+        background: #ffffff;
+        height: 34px;
+        padding: 6px 12px;
+      }
+      .avatar-uploader {
+        .el-upload {
           border: 1px dashed #d9d9d9;
           border-radius: 6px;
           cursor: pointer;
           position: relative;
-          left: 25px;
           overflow: hidden;
         }
-        .avatar-uploader .el-upload:hover {
+        .el-upload:hover {
           border-color: #20a0ff;
         }
         .avatar-uploader-icon {
@@ -594,40 +607,11 @@
         }
       }
     }
-    input {
-      border: 0px;
-      background: transparent;
-      height: 34px;
-      padding: 3px 12px;
-    }
-    .el-form-item {
-      border: 1px solid #cccccc;
-      background: #ffffff;
-      border-radius: 4px;
-      margin: 0 25px;
-      .el-form-item__content {
-        line-height: 34px;
-      }
-    }
-    .el-form-item-radio {
-      margin: 0 25px;
-      line-height: 36px;
-    }
-    .el-input {
-      display: inline-block;
-      width: 50%;
-    }
     .title {
       font-size: 25px;
       color: #4bb2fc;
       text-align: center;
       margin: 20px auto;
-    }
-    .svg-container {
-      color: #c03639;
-      display: inline-block;
-      float: right;
-      padding: 0 12px;
     }
     .input-label {
       display: block;

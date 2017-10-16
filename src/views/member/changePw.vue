@@ -12,8 +12,7 @@
           </el-col>
           <el-col :span="10">
             <el-form-item prop="mobilephone">
-              <el-input type="text" :disabled="true" v-model="changePwForm.mobilephone"/>
-              <span class="svg-container"><icon-svg iconClass="wrong"/></span>
+              <el-input type="text" readonly v-model="changePwForm.mobilephone"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -26,8 +25,7 @@
           </el-col>
           <el-col :span="10">
             <el-form-item prop="verifyCode">
-              <el-input type="text" v-model="changePwForm.verifyCode" autoComplete="on"/>
-              <span class="svg-container"><icon-svg iconClass="wrong"/></span>
+              <el-input type="text" v-model="changePwForm.verifyCode" autoComplete="on"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -40,8 +38,7 @@
           </el-col>
           <el-col :span="10">
             <el-form-item prop="password">
-              <el-input type="password" v-model="changePwForm.password" autoComplete="on" placeholder=""/>
-              <span class="svg-container"><icon-svg iconClass="wrong"/></span>
+              <el-input type="password" v-model="changePwForm.password" autoComplete="on"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -54,8 +51,7 @@
           </el-col>
           <el-col :span="10">
             <el-form-item prop="confirmPass">
-              <el-input type="password" v-model="changePwForm.confirmPass" autoComplete="on" placeholder=""/>
-              <span class="svg-container"><icon-svg iconClass="wrong"/></span>
+              <el-input type="password" v-model="changePwForm.confirmPass" autoComplete="on"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -77,7 +73,7 @@
 <script>
   import { mapGetters } from 'vuex'
   import { getPhoneVerifyCode, validatePhoneVerifyCode } from '../../api/login'
-  import { updatePassword } from '../../api/member/member'
+  import { getDetailInfo, updatePassword } from '../../api/member/member'
 
   export default {
     data() {
@@ -137,12 +133,12 @@
       }
     },
     computed: {
-      ...mapGetters([
-        'user'
-      ])
+      ...mapGetters([])
     },
     created() {
-      this.changePwForm.mobilephone = this.user.mobilephone
+      getDetailInfo().then(response => {
+        this.changePwForm.mobilephone = response.data.mobilephone
+      })
     },
     methods: {
       handleSubmit() {
@@ -230,6 +226,10 @@
           height: 34px;
           padding: 3px 12px;
         }
+        input[readonly] {
+          background: #eef1f6;
+          opacity: 1;
+        }
         .el-form-item {
           border: 1px solid #cccccc;
           background: #ffffff;
@@ -238,10 +238,6 @@
           .el-form-item__content {
             line-height: 34px;
           }
-        }
-        .el-input {
-          display: inline-block;
-          width: 70%;
         }
         .title {
           font-size: 25px;

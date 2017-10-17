@@ -66,7 +66,7 @@ const user = {
       return new Promise((resolve, reject) => {
         doLogout().then(() => {
           removeToken()
-          commit('SET_Token', '')
+          commit('SET_Token', undefined)
           resolve()
         }).catch(error => {
           reject(error)

@@ -254,7 +254,7 @@
             updateCompanyInfo(this.companyInfoForm).then(response => {
               this.loading = false
               if (response.httpCode != 200) {
-                this.$message.error('信息修改失败！')
+                this.$message.error(response.msg)
               } else {
                 this.$message.success('信息修改成功！')
                 location.reload()
@@ -278,7 +278,7 @@
               if (response.httpCode == 200) {
                 _this.$message.success('短信已发送，请注意查看')
               } else {
-                _this.$message.error('短信发送失败，请重新获取')
+                _this.$message.error(response.msg)
               }
             }).catch(err => {
               this.sendBtn.disabled = false

@@ -2,16 +2,15 @@
   <el-form class="retrieve-form" ref="retrieveForm" :model="retrieveForm" :rules="retrieveRules" autoComplete="on" label-position="left">
     <el-row>
       <el-col :span="6">
-        <span class="input-label">身份证号：</span>
+        <span class="input-label">用户名：</span>
       </el-col>
       <el-col :span="10">
         <el-form-item prop="account">
-          <el-input type="text" v-model="retrieveForm.account" autoComplete="on" placeholder=""/>
-          <span class="svg-container"><icon-svg iconClass="wrong"/></span>
+          <el-input type="text" v-model="retrieveForm.account" autoComplete="on"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="8">
-        <span class="input-tip"><span class="remind">*</span>请填写注册时填写的身份证号</span>
+        <span class="input-tip"><span>*</span>请填写身份证号或统一社会信用代码</span>
       </el-col>
     </el-row>
     <el-row>
@@ -20,8 +19,7 @@
       </el-col>
       <el-col :span="10">
         <el-form-item prop="captcha">
-          <el-input type="text" v-model="retrieveForm.captcha" autoComplete="on" placeholder=""/>
-          <span class="svg-container"><icon-svg iconClass="wrong"/></span>
+          <el-input type="text" v-model="retrieveForm.captcha" autoComplete="on"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="8">
@@ -34,12 +32,11 @@
       </el-col>
       <el-col :span="10">
         <el-form-item prop="password">
-          <el-input type="password" v-model="retrieveForm.password" autoComplete="on" placeholder=""/>
-          <span class="svg-container"><icon-svg iconClass="wrong"/></span>
+          <el-input type="password" v-model="retrieveForm.password" autoComplete="on"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="8">
-        <span class="input-tip"><span class="remind">*</span>密码可由数字或字母组成，6-16个字符，区分大小写</span>
+        <span class="input-tip"><span>*</span>密码可由数字或字母组成，6-16个字符，区分大小写</span>
       </el-col>
     </el-row>
     <el-row>
@@ -48,12 +45,11 @@
       </el-col>
       <el-col :span="10">
         <el-form-item prop="confirmPass">
-          <el-input type="password" v-model="retrieveForm.confirmPass" autoComplete="on" placeholder=""/>
-          <span class="svg-container"><icon-svg iconClass="wrong"/></span>
+          <el-input type="password" v-model="retrieveForm.confirmPass" autoComplete="on"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="8">
-        <span class="input-tip"><span class="remind">*</span>确认密码</span>
+        <span class="input-tip"><span>*</span>确认密码</span>
       </el-col>
     </el-row>
     <el-row>
@@ -68,31 +64,23 @@
 </template>
 
 <script>
-  import { isIdCardNo } from '../../utils/validate'
   import { isUserExist, validatePhoneVerifyCode, getPwVerifyCode, retrievePw } from '../../api/login'
 
   export default {
     name: 'retrieve',
     data() {
       const validateIdCard = (rule, value, callback) => {
-        if (!isIdCardNo(value)) {
-          callback(new Error('身份证格式不正确，请重新输入'))
-        } else {
-          isUserExist(value).then(response => {
-            console.log('isUserExist:', response)
-            if (response.httpCode == 200 && !response.data) {
-              callback(new Error('用户不存在'))
-            }
-            callback()
-          }).catch(error => {
-            console.log(error)
-            callback(new Error(error))
-          })
-        }
+        isUserExist(value).then(response => {
+          if (response.httpCode === 200 && !response.data) {
+            callback(new Error('用户不存在'))
+          }
+          callback()
+        }).catch(error => {
+          callback(new Error(error))
+        })
       }
       const validatePhoneCaptcha = (rule, value, callback) => {
         validatePhoneVerifyCode(value).then(response => {
-          console.log('validatePhoneVerifyCode:', response)
           if (response.httpCode != 200) {
             callback(new Error('验证码不正确'))
           }
@@ -131,7 +119,7 @@
         },
         retrieveRules: {
           account: [
-            {required: true, message: '身份证号不能为空', trigger: 'blur'},
+            {required: true, message: '用户名不能为空', trigger: 'blur'},
             {validator: validateIdCard, trigger: 'blur'}
           ],
           captcha: [
@@ -156,10 +144,9 @@
           if (valid) {
             this.loading = true
             retrievePw(this.retrieveForm).then(response => {
-              console.log('retrievePw:', response)
               this.loading = false
               if (response.httpCode != 200) {
-                this.$message.error('密码修改失败！')
+                this.$message.error(response.msg)
               } else {
                 this.$message.success('密码修改成功！')
                 this.$router.push({path: '/login'})
@@ -180,14 +167,13 @@
           if (!error) {
             _this.sendBtn.disabled = true
             getPwVerifyCode(_this.retrieveForm.account).then(response => {
-              console.log('getPwVerifyCode:', response)
               _this.sendBtn.second = 60
               _this.sendBtn.text = `重新发送(${_this.sendBtn.second})`
               _this.resendFun = setInterval(_this.changeSendBtn, 1000)
               if (response.httpCode == 200) {
                 _this.$message.success('短信已发送，请注意查看')
               } else {
-                _this.$message.error('短信发送失败，请重新获取')
+                _this.$message.error(response.msg)
               }
             }).catch(err => {
               this.sendBtn.disabled = false
@@ -219,30 +205,15 @@
         min-height: 1px;
       }
     }
-    input {
-      border: 0px;
-      background: transparent;
-      height: 34px;
-      padding: 3px 12px;
-    }
     .el-form-item {
-      border: 1px solid #cccccc;
-      background: #ffffff;
-      border-radius: 4px;
       margin: 0 25px;
-      .el-form-item__content {
-        line-height: 34px;
+      input {
+        border: 1px solid #cccccc;
+        background: #ffffff;
+        border-radius: 4px;
+        height: 34px;
+        padding: 3px 12px;
       }
-    }
-    .el-input {
-      display: inline-block;
-      width: 50%;
-    }
-    .svg-container {
-      color: #c03639;
-      display: inline-block;
-      float: right;
-      padding: 0 12px;
     }
     .input-label {
       display: block;

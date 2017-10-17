@@ -9,7 +9,8 @@
     :onRemove="handleRemove"
     :accept="accept"
     :fileList="fileList"
-    :autoUpload="autoUpload">
+    :autoUpload="autoUpload"
+    :withCredentials="true">
     <slot></slot>
   </el-upload>
 </template>
@@ -38,7 +39,8 @@
         type: Boolean,
         default: false
       },
-      uploadId: Number
+      uploadId: Number,
+      withCredentials:Boolean
     },
     methods: {
       submit() {

@@ -119,7 +119,7 @@
             </p>-->
             <p>
               <file-upload :ref='"upload"+index' name="uploadFile" :action="uploadUrl" :multiple="true" :auto-upload="false"
-                           :uploadId="index" :file-list="uploadFileList[index]"
+                           :uploadId="index" :file-list="uploadFileList[index]" :with-credentials="true"
                            :on-preview="handlePreview" :on-success="handleSuccess" :on-remove="handleRemove">
                 <el-button size="small" type="primary">选取文件</el-button>
                 <el-button size="small" type="success" @click.stop="submitUpload(index)">上传到服务器</el-button>
@@ -178,6 +178,9 @@
         },
         uploadUrl: '',
         uploadFileList: [],
+        uploadFileHeaders:{
+          'uploadFileHeaders':'1233'
+        },
         loading: false
       }
     },

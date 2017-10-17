@@ -204,7 +204,7 @@
         </el-col>
         <el-col :span="10">
           <el-form-item prop="legalPerson.registerDate" :rules="registerRules.registerDate">
-            <el-date-picker v-model="registerForm.legalPerson.registerDate" type="date" placeholder="请选择日期" @change="formatDate"></el-date-picker>
+            <el-date-picker :editable="false" v-model="registerForm.legalPerson.registerDate" type="date" placeholder="请选择日期" @change="formatDate"></el-date-picker>
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -286,7 +286,7 @@
 
 <script>
   import { date } from '../../filters'
-  import { isChinese, isIdCardNo, validEmail, validMobiles } from '../../utils/validate'
+  import { isChinese, isIdCardNo, validEmail, validMobiles, checkSocialCreditCode } from '../../utils/validate'
   import { isUserExist, getPhoneVerifyCode, validatePhoneVerifyCode, doRegister } from '../../api/login'
 
   export default {
@@ -322,7 +322,7 @@
           callback()
         }
       }
-      const validateLagalIdCard = (rule, value, callback) => {
+      const validateLegalIdCard = (rule, value, callback) => {
         if (this.registerForm.type === this.memberType.legal) {
           if (!value.trim()) {
             callback(new Error('法人身份证不能为空'))
@@ -332,10 +332,12 @@
         }
         callback()
       }
-      const validatecompanyCode = (rule, value, callback) => {
+      const validateCompanyCode = (rule, value, callback) => {
         if (this.registerForm.type === this.memberType.legal) {
           if (!value.trim()) {
             callback(new Error('统一社会信用代码不能为空'))
+          } else if (!checkSocialCreditCode(value)) {
+            callback(new Error('不是有效的统一社会信用代码，请重新输入'))
           } else {
             isUserExist(value).then(response => {
               if (response.httpCode === 200 && response.data) {
@@ -454,13 +456,13 @@
             {validator: validateLegalNotEmpty, message: '机构代码不能为空', trigger: 'blur'}
           ],
           companyCode: [
-            {validator: validatecompanyCode, trigger: 'blur'}
+            {validator: validateCompanyCode, trigger: 'blur'}
           ],
           legalPerson: [
             {validator: validateLegalNotEmpty, message: '法定代表人不能为空', trigger: 'blur'}
           ],
           legalPersonCard: [
-            {validator: validateLagalIdCard, trigger: 'blur'}
+            {validator: validateLegalIdCard, trigger: 'blur'}
           ],
           registerPlace: [
             {validator: validateLegalNotEmpty, message: '注册地址不能为空', trigger: 'blur'}

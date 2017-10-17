@@ -9,18 +9,18 @@
             <div class="title">用户登录</div>
             <el-form-item prop="account">
               <span class="svg-container"><icon-svg iconClass="user"/></span>
-              <el-input type="text" v-model="loginForm.account" autoComplete="on" placeholder="请输入用户名"/>
+              <el-input type="text" v-model="loginForm.account" autoComplete="on" placeholder="请输入用户名"></el-input>
             </el-form-item>
             <el-form-item prop="password">
               <span class="svg-container"><icon-svg iconClass="password"/></span>
               <el-input type="password" @keyup.enter.native="handleLogin" v-model="loginForm.password" autoComplete="on"
-                        placeholder="请输入密码"/>
+                        placeholder="请输入密码"></el-input>
             </el-form-item>
             <el-row>
               <el-col :span="12">
                 <el-form-item prop="captcha">
                   <span class="svg-container"><icon-svg iconClass="captcha"/></span>
-                  <el-input type="text" @keyup.enter.native="handleLogin" v-model="loginForm.captcha" placeholder="验证码"/>
+                  <el-input type="text" @keyup.enter.native="handleLogin" v-model="loginForm.captcha" placeholder="验证码"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="12">

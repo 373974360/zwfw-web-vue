@@ -31,7 +31,6 @@ const user = {
     DoLogin({commit}, loginInfo) {
       return new Promise((resolve, reject) => {
         doLogin(loginInfo).then(response => {
-          console.log('doLogin: ', response)
           if (response.httpCode != 200) {
             reject(response.msg)
           } else {
@@ -56,14 +55,8 @@ const user = {
             commit('SET_NAME', data.name)
             commit('SET_PERSON_ID', data.personId)
             resolve()
-          } else {
-            removeToken()
-            commit('SET_Token', '')
-            resolve()
           }
         }).catch(error => {
-          removeToken()
-          commit('SET_Token', '')
           reject(error)
         })
       })

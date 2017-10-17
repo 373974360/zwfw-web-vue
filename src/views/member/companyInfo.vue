@@ -103,7 +103,7 @@
           </el-col>
           <el-col :span="10">
             <el-form-item prop="legalPerson.registerDate" :rules="companyInfoRules.registerDate">
-              <el-date-picker v-model="companyInfoForm.legalPerson.registerDate" type="date" placeholder="请选择日期" @change="formatDate"></el-date-picker>
+              <el-date-picker :editable="false" v-model="companyInfoForm.legalPerson.registerDate" type="date" placeholder="请选择日期" @change="formatDate"></el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="8">

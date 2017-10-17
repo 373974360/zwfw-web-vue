@@ -1,7 +1,8 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
 import Qs from 'qs'
-// import store from '../store'
+import store from '../store'
+import router from '../router';
 
 let baseURL = ''
 
@@ -50,33 +51,33 @@ function fetch(object) {
        * 如通过xmlhttprequest 状态码标识 逻辑可写在下面error中
        */
       if (code !== 200) {
-        if(code === 207){
+        if (code === 207) {
           Message({
             message: "短时间内请求太过频繁，请重新刷新页面",
             type: 'error',
             duration: 5 * 1000
           })
-        }else{
+        } else {
           Message({
             message: response.data.msg,
             type: 'error',
             duration: 5 * 1000
           })
         }
-      }else{
+      } else {
         code = response.data.httpCode;
-        if(code === 401){
+        if (code === 401) {
           Message({
             message: "登录超时，请重新登录",
             type: 'error',
             duration: 5 * 1000
           })
           // 登出
-          store.dispatch('LogOut').then(() => {
+          store.dispatch('DoLogout').then(() => {
             router.push({ path: '/login' })
           })
         }
-        if(code === 403){
+        if (code === 403) {
           Message({
             message: "当前登录用户没有此权限",
             type: 'error',

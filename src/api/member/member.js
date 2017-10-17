@@ -39,8 +39,8 @@ export function updateCompanyInfo(companyInfo) {
   })
 }
 
-export function updatePassword(password) {
-  const data = {password}
+export function updatePassword(pwInfo) {
+  const data = pwInfo
   return fetchZwfw({
     url: '/web/member/updatePassword',
     method: 'post',

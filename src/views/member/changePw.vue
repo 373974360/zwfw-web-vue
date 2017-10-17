@@ -79,7 +79,6 @@
     data() {
       const validatePhoneCaptcha = (rule, value, callback) => {
         validatePhoneVerifyCode(value).then(response => {
-          console.log('validatePhoneVerifyCode:', response)
           if (response.httpCode != 200) {
             callback(new Error('验证码不正确'))
           }
@@ -145,11 +144,10 @@
         this.$refs.changePwForm.validate(valid => {
           if (valid) {
             this.loading = true
-            updatePassword(this.changePwForm.password).then(response => {
-              console.log('updatePassword:', response)
+            updatePassword(this.changePwForm).then(response => {
               this.loading = false
               if (response.httpCode != 200) {
-                this.$message.error('密码修改失败！')
+                this.$message.error(response.msg)
               } else {
                 this.$message.success('密码修改成功！')
                 this.$router.push({path: '/member'})
@@ -164,14 +162,13 @@
       getVerifyCode() {
         this.sendBtn.disabled = true
         getPhoneVerifyCode(this.changePwForm.mobilephone).then(response => {
-          console.log('getPwVerifyCode:', response)
           this.sendBtn.second = 60
           this.sendBtn.text = `重新发送(${this.sendBtn.second})`
           this.resendFun = setInterval(this.changeSendBtn, 1000)
           if (response.httpCode == 200) {
             this.$message.success('短信已发送，请注意查看')
           } else {
-            this.$message.error('短信发送失败，请重新获取')
+            this.$message.error(response.msg)
           }
         }).catch(err => {
           this.sendBtn.disabled = false

@@ -183,9 +183,11 @@
         this.originalMaterials = originalMaterials;
         this.exampleMaterials = exampleMaterials;
       })
-      getAllFavorites().then(response => {
-        this.favoriteList = response.data
-      })
+      if (this.token) {
+        getAllFavorites().then(response => {
+          this.favoriteList = response.data
+        })
+      }
     },
     methods: {
       isFavorite() {

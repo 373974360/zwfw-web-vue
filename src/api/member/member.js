@@ -1,30 +1,30 @@
-import { fetchZwfw } from "../../utils/fetch"
+import fetch from '../../utils/fetch'
 
 export function getMyProfile() {
-  return fetchZwfw({
-    url: '/web/member/getMyProfile',
+  return fetch({
+    url: '/api/zwfw/web/member/getMyProfile',
     method: 'get'
   })
 }
 
 export function getDetailInfo() {
-  return fetchZwfw({
-    url: '/web/member/getDetailInfo',
+  return fetch({
+    url: '/api/zwfw/web/member/getDetailInfo',
     method: 'get'
   })
 }
 
 export function getMyItem() {
-  return fetchZwfw({
-    url: '/web/member/getMyItem',
+  return fetch({
+    url: '/api/zwfw/web/member/getMyItem',
     method: 'get'
   })
 }
 
 export function updatePersonInfo(personInfo) {
   const data = personInfo
-  return fetchZwfw({
-    url: '/web/member/updatePersonInfo',
+  return fetch({
+    url: '/api/zwfw/web/member/updatePersonInfo',
     method: 'post',
     data
   })
@@ -32,8 +32,8 @@ export function updatePersonInfo(personInfo) {
 
 export function updateCompanyInfo(companyInfo) {
   const data = companyInfo
-  return fetchZwfw({
-    url: '/web/member/updateCompanyInfo',
+  return fetch({
+    url: '/api/zwfw/web/member/updateCompanyInfo',
     method: 'post',
     data
   })
@@ -41,8 +41,8 @@ export function updateCompanyInfo(companyInfo) {
 
 export function updatePassword(pwInfo) {
   const data = pwInfo
-  return fetchZwfw({
-    url: '/web/member/updatePassword',
+  return fetch({
+    url: '/api/zwfw/web/member/updatePassword',
     method: 'post',
     data
   })

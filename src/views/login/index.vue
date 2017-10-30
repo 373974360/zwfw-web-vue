@@ -74,7 +74,7 @@
       }
       return {
         loginForm: {
-          account: '',
+          account: '9A350100M000100Y47',
           password: undefined,
           captcha: undefined,
           autoLogin: false,
@@ -116,7 +116,7 @@
         })
       },
       changeVerifyCode() {
-        this.imgUrl = process.env.ZWFW_API + '/web/common/getVerifyCode?' + Math.random()
+        this.imgUrl = process.env.ZWFW_API + '/api/zwfw/web/common/getVerifyCode?' + Math.random()
       }
     },
     created() {

@@ -1,16 +1,16 @@
-import { fetchZwfw } from "../utils/fetch"
+import fetch from "../utils/fetch"
 
 export function getItemCategory(parentId) {
-  return fetchZwfw({
-    url: '/web/category/getItemCategory',
+  return fetch({
+    url: '/api/zwfw/web/category/getItemCategory',
     method: 'get',
     params: {parentId}
   })
 }
 
 export function getItemPageByCategories(page, rows, itemCategories) {
-  return fetchZwfw({
-    url: '/web/item/list',
+  return fetch({
+    url: '/api/zwfw/web/item/list',
     method: 'get',
     params: {page, rows, itemCategories}
   })

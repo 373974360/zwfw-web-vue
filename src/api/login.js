@@ -1,9 +1,9 @@
-import { fetchZwfw } from '../utils/fetch'
+import fetch from '../utils/fetch'
 
 export function validateVerifyCode(verifyCode) {
   const data = {verifyCode}
-  return fetchZwfw({
-    url: '/web/common/validateVerifyCode',
+  return fetch({
+    url: '/api/zwfw/web/common/validateVerifyCode',
     method: 'post',
     data
   })
@@ -11,8 +11,8 @@ export function validateVerifyCode(verifyCode) {
 
 export function getPhoneVerifyCode(phone) {
   const data = {phone}
-  return fetchZwfw({
-    url: '/web/common/getPhoneVerifyCode',
+  return fetch({
+    url: '/api/zwfw/web/common/getPhoneVerifyCode',
     method: 'post',
     data
   })
@@ -20,8 +20,8 @@ export function getPhoneVerifyCode(phone) {
 
 export function validatePhoneVerifyCode(verifyCode) {
   const data = {verifyCode}
-  return fetchZwfw({
-    url: '/web/common/validatePhoneVerifyCode',
+  return fetch({
+    url: '/api/zwfw/web/common/validatePhoneVerifyCode',
     method: 'post',
     data
   })
@@ -29,24 +29,24 @@ export function validatePhoneVerifyCode(verifyCode) {
 
 export function doLogin(loginInfo) {
   const data = loginInfo
-  return fetchZwfw({
-    url: '/web/doLogin',
+  return fetch({
+    url: '/api/zwfw/web/doLogin',
     method: 'post',
     data
   })
 }
 
 export function doLogout() {
-  return fetchZwfw({
-    url: '/web/doLogout',
+  return fetch({
+    url: '/api/zwfw/web/doLogout',
     method: 'post'
   })
 }
 
 export function isUserExist(loginName) {
   const data = {loginName}
-  return fetchZwfw({
-    url: '/web/isExist',
+  return fetch({
+    url: '/api/zwfw/web/isExist',
     method: 'post',
     data
   })
@@ -54,8 +54,8 @@ export function isUserExist(loginName) {
 
 export function doRegister(userInfo) {
   const data = userInfo
-  return fetchZwfw({
-    url: '/web/doRegister',
+  return fetch({
+    url: '/api/zwfw/web/doRegister',
     method: 'post',
     data
   })
@@ -63,8 +63,8 @@ export function doRegister(userInfo) {
 
 export function getPwVerifyCode(loginName) {
   const data = {loginName}
-  return fetchZwfw({
-    url: '/web/getPwVerifyCode',
+  return fetch({
+    url: '/api/zwfw/web/getPwVerifyCode',
     method: 'post',
     data
   })
@@ -72,8 +72,8 @@ export function getPwVerifyCode(loginName) {
 
 export function retrievePw(pwInfo) {
   const data = pwInfo
-  return fetchZwfw({
-    url: '/web/retrievePw',
+  return fetch({
+    url: '/api/zwfw/web/retrievePw',
     method: 'post',
     data
   })

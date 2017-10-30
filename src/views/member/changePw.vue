@@ -217,23 +217,18 @@
             min-height: 1px;
           }
         }
-        input {
-          border: 0px;
-          background: transparent;
-          height: 34px;
-          padding: 3px 12px;
-        }
-        input[readonly] {
-          background: #eef1f6;
-          opacity: 1;
-        }
         .el-form-item {
-          border: 1px solid #cccccc;
-          background: #ffffff;
-          border-radius: 4px;
           margin: 0 25px;
-          .el-form-item__content {
-            line-height: 34px;
+          input {
+            border: 1px solid #cccccc;
+            background: #ffffff;
+            border-radius: 4px;
+            height: 34px;
+            padding: 3px 12px;
+          }
+          input[readonly] {
+            background: #eef1f6;
+            opacity: 1;
           }
         }
         .title {
@@ -241,12 +236,6 @@
           color: #4bb2fc;
           text-align: center;
           margin: 20px auto;
-        }
-        .svg-container {
-          color: #c03639;
-          display: inline-block;
-          float: right;
-          padding: 0 12px;
         }
         .input-label {
           display: block;

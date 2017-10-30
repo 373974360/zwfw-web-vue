@@ -1,15 +1,15 @@
-import { fetchSys } from "../utils/fetch"
+import fetch from "../utils/fetch"
 
 export function getEnums() {
-  return fetchSys({
-    url: '/base/enums',
+  return fetch({
+    url: '/api/admin/base/enums',
     method: 'get'
   });
 }
 
 export function getDicts() {
-  return fetchSys({
-    url: '/base/dicts',
+  return fetch({
+    url: '/api/admin/base/dicts',
     method: 'get'
   });
 }

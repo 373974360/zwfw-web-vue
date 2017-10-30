@@ -368,8 +368,14 @@
       const validateMobiles = (rule, value, callback) => {
         if (!validMobiles(value)) {
           callback(new Error('手机号码不正确，请重新填写'))
+        } else {
+          if (this.registerForm.type === this.memberType.nature) {
+            this.registerForm.naturePerson.phone = value
+          } else {
+            this.registerForm.legalPerson.phone = value
+          }
+          callback()
         }
-        callback()
       }
       const validatePhoneCaptcha = (rule, value, callback) => {
         validatePhoneVerifyCode(value).then(response => {
@@ -423,7 +429,8 @@
             nation: '',
             birthday: '',
             address: '',
-            photo: ''
+            photo: '',
+            phone: ''
           },
           legalPerson: {
             companyCode: '',
@@ -432,6 +439,7 @@
             companyType: '',
             legalPerson: '',
             idcard: '',
+            phone: '',
             registerPlace: '',
             registerDate: ''
           }

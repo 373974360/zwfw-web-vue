@@ -233,7 +233,7 @@
                 this.$message.error(response.msg)
               } else {
                 this.$message.success('信息修改成功！')
-                location.reload()
+                this.$router.push({path: '/member'})
               }
             }).catch(error => {
               this.loading = false

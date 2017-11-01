@@ -176,11 +176,8 @@
           },
           itemPretrialMaterialVoList: []
         },
-        uploadUrl: '',
+        uploadUrl: '/api/zwfw/web/pretrial/upload',
         uploadFileList: [],
-        uploadFileHeaders:{
-          'uploadFileHeaders':'1233'
-        },
         loading: false
       }
     },
@@ -201,7 +198,6 @@
       getDetailInfo().then(response => {
         this.member = response.data
       })
-      this.uploadUrl = `${process.env.ZWFW_API}/web/pretrial/upload`
     },
     methods: {
       init1() {

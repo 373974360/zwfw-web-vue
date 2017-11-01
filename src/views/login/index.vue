@@ -116,7 +116,7 @@
         })
       },
       changeVerifyCode() {
-        this.imgUrl = process.env.ZWFW_API + '/api/zwfw/web/common/getVerifyCode?' + Math.random()
+        this.imgUrl = '/api/zwfw/web/common/getVerifyCode?' + Math.random()
       }
     },
     created() {

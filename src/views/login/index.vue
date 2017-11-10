@@ -89,8 +89,8 @@
           ],
           captcha: [
             {required: true, message: '验证码不能为空', trigger: 'blur'},
-            {min: 4, max: 4, message: '验证码为4位', trigger: 'blur'},
-            {validator: validateCaptcha, trigger: 'blur'}
+            {min: 4, max: 4, message: '验证码为4位', trigger: 'blur'}/*,
+            {validator: validateCaptcha, trigger: 'blur'}*/
           ]
         },
         imgUrl: '',
@@ -116,7 +116,7 @@
         })
       },
       changeVerifyCode() {
-        this.imgUrl = '/api/zwfw/web/common/getVerifyCode?' + Math.random()
+        this.imgUrl = '/api/zwfw-web/common/getVerifyCode?' + Math.random()
       }
     },
     created() {

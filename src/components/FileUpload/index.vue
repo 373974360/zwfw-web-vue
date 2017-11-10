@@ -47,12 +47,12 @@
         this.$refs.upload.submit()
       },
       handleSuccess() {
-        var arg = [].slice.call(arguments)
+        let arg = [].slice.call(arguments)
         arg.push(this.uploadId)
         this.onSuccess.apply(this, arg)
       },
       handleRemove() {
-        var arg = [].slice.call(arguments)
+        let arg = [].slice.call(arguments)
         arg.push(this.uploadId)
         this.onRemove.apply(this, arg)
       }

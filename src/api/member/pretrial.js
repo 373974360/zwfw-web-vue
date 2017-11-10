@@ -3,7 +3,7 @@ import fetch from '../../utils/fetch'
 export function submitPretrial(pretrialInfo) {
   const data = pretrialInfo
   return fetch({
-    url: '/api/zwfw/web/pretrial/submit',
+    url: '/api/zwfw-web/pretrial/submit',
     method: 'post',
     data
   })
@@ -11,7 +11,7 @@ export function submitPretrial(pretrialInfo) {
 
 export function getPretrialInfo(id) {
   return fetch({
-    url: '/api/zwfw/web/pretrial/getById',
+    url: '/api/zwfw-web/pretrial/getById',
     method: 'get',
     params: {id}
   })
@@ -19,7 +19,7 @@ export function getPretrialInfo(id) {
 
 export function getPretrialPage(page, rows, itemName, statusList) {
   return fetch({
-    url: '/api/zwfw/web/pretrial/list',
+    url: '/api/zwfw-web/pretrial/list',
     method: 'get',
     params: {page, rows, itemName, statusList}
   })

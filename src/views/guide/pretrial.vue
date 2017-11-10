@@ -176,7 +176,7 @@
           },
           itemPretrialMaterialVoList: []
         },
-        uploadUrl: '/api/zwfw/web/pretrial/upload',
+        uploadUrl: '/api/zwfw-web/pretrial/upload',
         uploadFileList: [],
         loading: false
       }

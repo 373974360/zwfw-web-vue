@@ -29,7 +29,7 @@ export function doLogin(loginInfo) {
 
 export function doLogout() {
   return fetch({
-    url: '/api/zwfw-web/doLogout',
+    url: '/api/auth/memberJwt/invalid',
     method: 'post'
   })
 }
@@ -52,10 +52,10 @@ export function doRegister(userInfo) {
   })
 }
 
-export function getPwVerifyCode(loginName, random) {
-  const data = {loginName, random}
+export function getPhoneByLoginName(loginName) {
+  const data = {loginName}
   return fetch({
-    url: '/api/zwfw-web/getPwVerifyCode',
+    url: '/api/zwfw-web/getPhoneByLoginName',
     method: 'post',
     data
   })
@@ -67,5 +67,12 @@ export function retrievePw(pwInfo) {
     url: '/api/zwfw-web/retrievePw',
     method: 'post',
     data
+  })
+}
+
+export function refreshToken() {
+  return fetch({
+    url: '/api/auth/memberJwt/refresh',
+    method: 'get'
   })
 }

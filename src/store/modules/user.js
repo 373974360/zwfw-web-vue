@@ -1,4 +1,4 @@
-import { doLogin, doLogout } from "../../api/login"
+import { doLogin, doLogout, refreshToken } from "../../api/login"
 import { getMyProfile } from "../../api/member/member"
 import { getToken, setToken, removeToken } from "../../utils/auth"
 
@@ -62,15 +62,29 @@ const user = {
       })
     },
 
+    //刷新token
+    RefreshToken({commit}){
+      return new Promise((resolve, reject) => {
+        refreshToken().then(response => {
+          const data = response.data;
+          setToken(data);
+          commit('SET_TOKEN', data);
+          resolve();
+        }).catch(error => {
+          reject(error);
+        });
+      });
+    },
+
     DoLogout({commit}) {
       return new Promise((resolve, reject) => {
-        /*doLogout().then(() => {*/
+        doLogout().then(() => {
           removeToken()
-          commit('SET_Token', undefined)
+          commit('SET_TOKEN', undefined)
           resolve()
-        /*}).catch(error => {
+        }).catch(error => {
           reject(error)
-        })*/
+        })
       })
     }
   }

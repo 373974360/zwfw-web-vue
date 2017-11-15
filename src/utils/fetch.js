@@ -72,6 +72,13 @@ service.interceptors.response.use(
           duration: 5 * 1000
         })
       }
+      const refreshToken = response.headers.refresh_token;
+      if (refreshToken) {
+        // 刷新token
+        store.dispatch('RefreshToken').then(() => {
+          console.dir("刷新token成功");
+        });
+      }
     }
     return response.data
   },

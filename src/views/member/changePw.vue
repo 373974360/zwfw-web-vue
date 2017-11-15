@@ -72,13 +72,13 @@
 
 <script>
   import { mapGetters } from 'vuex'
-  import { getPhoneVerifyCode, validatePhoneVerifyCode } from '../../api/login'
+  import { getPhoneVerifyCode, validateVerifyCode } from '../../api/login'
   import { getDetailInfo, updatePassword } from '../../api/member/member'
 
   export default {
     data() {
       const validatePhoneCaptcha = (rule, value, callback) => {
-        validatePhoneVerifyCode(value).then(response => {
+        validateVerifyCode(value, this.changePwForm.random).then(response => {
           if (response.httpCode != 200) {
             callback(new Error('验证码不正确'))
           }
@@ -112,7 +112,8 @@
           mobilephone: undefined,
           verifyCode: undefined,
           password: undefined,
-          confirmPass: undefined
+          confirmPass: undefined,
+          random: undefined
         },
         changePwRules: {
           verifyCode: [
@@ -160,8 +161,9 @@
         })
       },
       getVerifyCode() {
+        this.changePwForm.random = Math.random()
         this.sendBtn.disabled = true
-        getPhoneVerifyCode(this.changePwForm.mobilephone).then(response => {
+        getPhoneVerifyCode(this.changePwForm.mobilephone, this.changePwForm.random).then(response => {
           this.sendBtn.second = 60
           this.sendBtn.text = `重新发送(${this.sendBtn.second})`
           this.resendFun = setInterval(this.changeSendBtn, 1000)

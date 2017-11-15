@@ -10,7 +10,10 @@ const app = {
     enums: [],
     dicts: [],
     deptCategoryId: 6988072072579072,
-    resourceUrl: 'http://zwfw.itl.gov.cn:8080'
+    resourceUrl: 'http://zwfw.itl.gov.cn:8080',
+    tokenErrorMsg: [
+      'Member token expired!', 'Member token signature error!', 'Member token is null or empty!'
+    ]
   },
   mutations: {
     SET_ENUMS: (state, enums) => {

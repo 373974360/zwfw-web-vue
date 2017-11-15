@@ -153,13 +153,13 @@
   import { copyProperties } from '../../utils'
   import { date } from '../../filters'
   import { isIdCardNo, validMobiles } from '../../utils/validate'
-  import { getPhoneVerifyCode, validatePhoneVerifyCode } from '../../api/login'
+  import { getPhoneVerifyCode, validateVerifyCode } from '../../api/login'
   import { getDetailInfo, updateCompanyInfo } from '../../api/member/member'
 
   export default {
     data() {
       const validatePhoneCaptcha = (rule, value, callback) => {
-        validatePhoneVerifyCode(value).then(response => {
+        validateVerifyCode(value, this.companyInfoForm.random).then(response => {
           if (response.httpCode != 200) {
             callback(new Error('验证码不正确'))
           }
@@ -191,6 +191,7 @@
         companyInfoForm: {
           id: undefined,
           verifyCode: undefined,
+          random: undefined,
           legalPerson: {
             id: undefined,
             companyCode: undefined,
@@ -267,11 +268,12 @@
         })
       },
       getVerifyCode() {
+        this.companyInfoForm.random = Math.random()
         let _this = this
         this.$refs.companyInfoForm.validateField('legalPerson.phone', function (error) {
           if (!error) {
             _this.sendBtn.disabled = true
-            getPhoneVerifyCode(_this.companyInfoForm.legalPerson.phone).then(response => {
+            getPhoneVerifyCode(_this.companyInfoForm.legalPerson.phone, _this.companyInfoForm.random).then(response => {
               _this.sendBtn.second = 60
               _this.sendBtn.text = `重新发送(${_this.sendBtn.second})`
               _this.resendFun = setInterval(_this.changeSendBtn, 1000)

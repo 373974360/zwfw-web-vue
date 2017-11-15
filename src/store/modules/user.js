@@ -64,13 +64,13 @@ const user = {
 
     DoLogout({commit}) {
       return new Promise((resolve, reject) => {
-        doLogout().then(() => {
+        /*doLogout().then(() => {*/
           removeToken()
           commit('SET_Token', undefined)
           resolve()
-        }).catch(error => {
+        /*}).catch(error => {
           reject(error)
-        })
+        })*/
       })
     }
   }

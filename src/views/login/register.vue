@@ -287,7 +287,7 @@
 <script>
   import { date } from '../../filters'
   import { isChinese, isIdCardNo, validEmail, validMobiles, checkSocialCreditCode } from '../../utils/validate'
-  import { isUserExist, getPhoneVerifyCode, validatePhoneVerifyCode, doRegister } from '../../api/login'
+  import { isUserExist, getPhoneVerifyCode, validateVerifyCode, doRegister } from '../../api/login'
 
   export default {
     name: 'register',
@@ -378,7 +378,7 @@
         }
       }
       const validatePhoneCaptcha = (rule, value, callback) => {
-        validatePhoneVerifyCode(value).then(response => {
+        validateVerifyCode(value, this.registerForm.random).then(response => {
           if (response.httpCode !== 200) {
             callback(new Error('验证码不正确'))
           }
@@ -421,6 +421,7 @@
           confirmPass: '',
           mobilephone: '',
           verifyCode: '',
+          random: '',
           agree: false,
           naturePerson: {
             name: '',
@@ -540,11 +541,12 @@
         this.$refs.registerForm.resetFields()
       },
       getVerifyCode() {
+        this.registerForm.random = Math.random()
         let _this = this
         this.$refs.registerForm.validateField('mobilephone', function (error) {
           if (!error) {
             _this.sendBtn.disabled = true
-            getPhoneVerifyCode(_this.registerForm.mobilephone).then(response => {
+            getPhoneVerifyCode(_this.registerForm.mobilephone, _this.registerForm.random).then(response => {
               _this.sendBtn.second = 60
               _this.sendBtn.text = `重新发送(${_this.sendBtn.second})`
               _this.resendFun = setInterval(_this.changeSendBtn, 1000)

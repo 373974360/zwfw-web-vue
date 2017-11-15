@@ -20,7 +20,7 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     if (store.getters.token) {
-      config.headers['Web-Authorization'] = store.getters.token; // 让每个请求携带token--['X-Token']为自定义key 请根据实际情况自行修改
+      config.headers['Member-Authorization'] = store.getters.token; // 让每个请求携带token--['X-Token']为自定义key 请根据实际情况自行修改
     }
     return config
   },
@@ -52,7 +52,9 @@ service.interceptors.response.use(
       }
     } else {
       code = response.data.httpCode;
-      if (code === 401) {
+      let msg = response.data.msg;
+      // if (code === 401) {
+      if (code === 500 && store.state.app.tokenErrorMsg.includes(msg)) {
         Message({
           message: "登录超时，请重新登录",
           type: 'error',

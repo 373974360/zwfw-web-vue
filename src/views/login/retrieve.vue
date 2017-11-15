@@ -64,7 +64,7 @@
 </template>
 
 <script>
-  import { isUserExist, validatePhoneVerifyCode, getPwVerifyCode, retrievePw } from '../../api/login'
+  import { isUserExist, validateVerifyCode, getPwVerifyCode, retrievePw } from '../../api/login'
 
   export default {
     name: 'retrieve',
@@ -80,7 +80,7 @@
         })
       }
       const validatePhoneCaptcha = (rule, value, callback) => {
-        validatePhoneVerifyCode(value).then(response => {
+        validateVerifyCode(value, this.retrieveForm.random).then(response => {
           if (response.httpCode != 200) {
             callback(new Error('验证码不正确'))
           }
@@ -112,10 +112,10 @@
         loading: false,
         retrieveForm: {
           account: undefined,
-          captcha: undefined,
+          verifyCode: undefined,
           password: undefined,
-          confirmPass: undefined
-
+          confirmPass: undefined,
+          random: undefined
         },
         retrieveRules: {
           account: [
@@ -162,11 +162,12 @@
         this.$refs.retrieveForm.resetFields()
       },
       getVerifyCode() {
+        this.retrieveForm.random = Math.random()
         let _this = this
         this.$refs.retrieveForm.validateField('account', function (error) {
           if (!error) {
             _this.sendBtn.disabled = true
-            getPwVerifyCode(_this.retrieveForm.account).then(response => {
+            getPwVerifyCode(_this.retrieveForm.account, this.retrieveForm.random).then(response => {
               _this.sendBtn.second = 60
               _this.sendBtn.text = `重新发送(${_this.sendBtn.second})`
               _this.resendFun = setInterval(_this.changeSendBtn, 1000)

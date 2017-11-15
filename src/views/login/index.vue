@@ -18,9 +18,9 @@
             </el-form-item>
             <el-row>
               <el-col :span="12">
-                <el-form-item prop="captcha">
+                <el-form-item prop="verifyCode">
                   <span class="svg-container"><icon-svg iconClass="captcha"/></span>
-                  <el-input type="text" @keyup.enter.native="handleLogin" v-model="loginForm.captcha" placeholder="验证码"></el-input>
+                  <el-input type="text" @keyup.enter.native="handleLogin" v-model="loginForm.verifyCode" placeholder="验证码"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -63,7 +63,7 @@
         }
       }
       const validateCaptcha = (rule, value, callback) => {
-        validateVerifyCode(value).then(response => {
+        validateVerifyCode(value, this.loginForm.random).then(response => {
           if (response.httpCode !== 200) {
             callback(new Error(response.msg))
           }
@@ -76,7 +76,8 @@
         loginForm: {
           account: '9A350100M000100Y47',
           password: undefined,
-          captcha: undefined,
+          verifyCode: undefined,
+          random: undefined,
           autoLogin: false,
         },
         loginRules: {
@@ -87,10 +88,10 @@
           password: [
             {required: true, message: '密码不能为空', trigger: 'blur'}
           ],
-          captcha: [
+          verifyCode: [
             {required: true, message: '验证码不能为空', trigger: 'blur'},
-            {min: 4, max: 4, message: '验证码为4位', trigger: 'blur'}/*,
-            {validator: validateCaptcha, trigger: 'blur'}*/
+            {min: 4, max: 4, message: '验证码为4位', trigger: 'blur'},
+            {validator: validateCaptcha, trigger: 'blur'}
           ]
         },
         imgUrl: '',
@@ -109,14 +110,15 @@
             }).catch(err => {
               this.loading = false
               this.$message.error(err)
-              this.loginForm.captcha = ''
+              this.loginForm.verifyCode = ''
               this.changeVerifyCode();
             })
           }
         })
       },
       changeVerifyCode() {
-        this.imgUrl = '/api/zwfw-web/common/getVerifyCode?' + Math.random()
+        this.loginForm.random = Math.random();
+        this.imgUrl = '/api/common/getVerifyCode?random=' + this.loginForm.random
       }
     },
     created() {

@@ -1,27 +1,18 @@
 import fetch from '../utils/fetch'
 
-export function validateVerifyCode(verifyCode) {
-  const data = {verifyCode}
+export function validateVerifyCode(verifyCode, random) {
+  const data = {verifyCode, random}
   return fetch({
-    url: '/api/zwfw-web/common/validateVerifyCode',
+    url: '/api/common/validateVerifyCode',
     method: 'post',
     data
   })
 }
 
-export function getPhoneVerifyCode(phone) {
-  const data = {phone}
+export function getPhoneVerifyCode(phone, random) {
+  const data = {phone, random}
   return fetch({
-    url: '/api/zwfw-web/common/getPhoneVerifyCode',
-    method: 'post',
-    data
-  })
-}
-
-export function validatePhoneVerifyCode(verifyCode) {
-  const data = {verifyCode}
-  return fetch({
-    url: '/api/zwfw-web/common/validatePhoneVerifyCode',
+    url: '/api/common/getPhoneVerifyCode',
     method: 'post',
     data
   })
@@ -29,13 +20,8 @@ export function validatePhoneVerifyCode(verifyCode) {
 
 export function doLogin(loginInfo) {
   const data = loginInfo
-  /*return fetch({
-    url: '/api/zwfw-web/doLogin',
-    method: 'post',
-    data
-  })*/
   return fetch({
-    url: '/api/auth/webJwt/token',
+    url: '/api/auth/memberJwt/token',
     method: 'post',
     data
   })
@@ -66,8 +52,8 @@ export function doRegister(userInfo) {
   })
 }
 
-export function getPwVerifyCode(loginName) {
-  const data = {loginName}
+export function getPwVerifyCode(loginName, random) {
+  const data = {loginName, random}
   return fetch({
     url: '/api/zwfw-web/getPwVerifyCode',
     method: 'post',

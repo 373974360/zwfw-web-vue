@@ -137,7 +137,7 @@
   import { mapGetters } from 'vuex'
   import { copyProperties } from '../../utils'
   import { isChinese, validEmail, validMobiles } from '../../utils/validate'
-  import { getPhoneVerifyCode, validatePhoneVerifyCode } from '../../api/login'
+  import { getPhoneVerifyCode, validateVerifyCode } from '../../api/login'
   import { getDetailInfo, updatePersonInfo } from '../../api/member/member'
 
   export default {
@@ -157,7 +157,7 @@
         }
       }
       const validatePhoneCaptcha = (rule, value, callback) => {
-        validatePhoneVerifyCode(value).then(response => {
+        validateVerifyCode(value, this.personInfoForm.random).then(response => {
           if (response.httpCode !== 200) {
             callback(new Error('验证码不正确'))
           }
@@ -178,6 +178,7 @@
         personInfoForm: {
           id: undefined,
           verifyCode: undefined,
+          random: undefined,
           naturePerson: {
             id: undefined,
             name: undefined,
@@ -243,11 +244,12 @@
         })
       },
       getVerifyCode() {
+        this.personInfoForm.random = Math.random()
         let _this = this
         this.$refs.personInfoForm.validateField('naturePerson.phone', function (error) {
           if (!error) {
             _this.sendBtn.disabled = true
-            getPhoneVerifyCode(_this.personInfoForm.naturePerson.phone).then(response => {
+            getPhoneVerifyCode(_this.personInfoForm.naturePerson.phone, this.personInfoForm.random).then(response => {
               _this.sendBtn.second = 60
               _this.sendBtn.text = `重新发送(${_this.sendBtn.second})`
               _this.resendFun = setInterval(_this.changeSendBtn, 1000)

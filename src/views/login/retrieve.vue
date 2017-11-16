@@ -64,18 +64,16 @@
 </template>
 
 <script>
-  import { validateVerifyCode, getPhoneByLoginName, getPhoneVerifyCode, retrievePw } from '../../api/login'
+  import { isUserExist, validateVerifyCode, getPhoneVerifyCodeByLoginName, getPhoneVerifyCode, retrievePw } from '../../api/login'
 
   export default {
     name: 'retrieve',
     data() {
       const validateIdCard = (rule, value, callback) => {
-        let _this = this
-        getPhoneByLoginName(value).then(response => {
-          if (response.httpCode != 200) {
+        isUserExist(value).then(response => {
+          if (response.httpCode != 200 || !response.data) {
             callback(new Error('用户不存在'))
           }
-          _this.retrieveForm.phone = response.data
           callback()
         }).catch(error => {
           callback(new Error(error))
@@ -114,7 +112,6 @@
         loading: false,
         retrieveForm: {
           account: undefined,
-          phone: undefined,
           verifyCode: undefined,
           password: undefined,
           confirmPass: undefined,
@@ -170,7 +167,7 @@
         this.$refs.retrieveForm.validateField('account', function (error) {
           if (!error) {
             _this.sendBtn.disabled = true
-            getPhoneVerifyCode(_this.retrieveForm.phone, _this.retrieveForm.random).then(response => {
+            getPhoneVerifyCodeByLoginName(_this.retrieveForm.account, _this.retrieveForm.random).then(response => {
               _this.sendBtn.second = 60
               _this.sendBtn.text = `重新发送(${_this.sendBtn.second})`
               _this.resendFun = setInterval(_this.changeSendBtn, 1000)

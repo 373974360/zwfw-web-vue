@@ -17,10 +17,10 @@ export function getPretrialInfo(id) {
   })
 }
 
-export function getPretrialPage(page, rows, itemName, statusList) {
+export function getPretrialPage(page, rows, itemName, inStatus) {
   return fetch({
     url: '/api/zwfw-web/pretrial/list',
     method: 'get',
-    params: {page, rows, itemName, statusList}
+    params: {page, rows, itemName, inStatus}
   })
 }

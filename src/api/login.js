@@ -52,10 +52,10 @@ export function doRegister(userInfo) {
   })
 }
 
-export function getPhoneByLoginName(loginName) {
-  const data = {loginName}
+export function getPhoneVerifyCodeByLoginName(loginName, random) {
+  const data = {loginName, random}
   return fetch({
-    url: '/api/zwfw-web/getPhoneByLoginName',
+    url: '/api/zwfw-web/getPhoneVerifyCodeByLoginName',
     method: 'post',
     data
   })

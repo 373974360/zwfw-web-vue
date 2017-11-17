@@ -21,7 +21,7 @@
 </template>
 
 <script>
-  import { date, pretrialStatus } from '../../../filters'
+  import { date, enums } from '../../../filters'
 
   export default {
     props: {
@@ -32,7 +32,7 @@
         this.$router.push({path: `/guide/pretrial/id/${id}`})
       },
       formatStatus(row, column, cellValue) {
-        return pretrialStatus(cellValue)
+        return enums(cellValue, 'PretrialStatus')
       },
       formatDate(row, column, cellValue) {
         return date(cellValue, 'YYYY-MM-DD HH:mm')

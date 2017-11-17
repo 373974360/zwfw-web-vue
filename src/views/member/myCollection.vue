@@ -10,7 +10,7 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="page"
-          :page-sizes="[5, 10, 15, 20]"
+          :page-sizes="pageSizes"
           :page-size="pageSize"
           layout="prev, pager, next, total, sizes, jumper"
           :total="total">
@@ -32,15 +32,12 @@
       return {
         collectionData: [],
         page: this.$store.state.app.page,
-        pageSize: 10,
+        pageSize: this.$store.state.app.rows,
+        pageSizes: this.$store.state.app.pageSize,
         total: 0
       }
     },
-    computed: {
-      offset() {
-        return (this.page - 1) * this.pageSize
-      }
-    },
+    computed: {},
     created() {
       this.loadPage()
     },

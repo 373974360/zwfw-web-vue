@@ -12,8 +12,7 @@
         </div>
         <el-button type="primary" :disabled="basicInfo.handleType == 'blxs_ckbl'" @click="linkToPretrial">
           <div class="svg-container"><icon-svg iconClass="online"/></div>
-          <p v-if="basicInfo.handleType == 'blxs_ckbl'">不支持预审</p>
-          <p v-if="basicInfo.handleType == 'blxs_wsbl'">在线预审</p>
+          <p>{{basicInfo.handleType | dicts('blxs')}}</p>
         </el-button>
         <el-button type="primary" :disabled="!basicInfo.orderable" @click="linkToPreorder">
           <div class="svg-container"><icon-svg iconClass="online"/></div>

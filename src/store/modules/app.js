@@ -9,7 +9,7 @@ const app = {
     gender: { male: 1, female: 0 },
     enums: [],
     dicts: [],
-    deptCategoryId: 6988072072579072,
+    deptCategoryId: 1,
     resourceUrl: 'http://zwfw.itl.gov.cn:8080',
     tokenErrorMsg: [
       'Member token expired!', 'Member token signature error!', 'Member token is null or empty!'

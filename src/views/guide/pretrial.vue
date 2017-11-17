@@ -70,7 +70,7 @@
                 <th>通讯地址：</th><td colspan="3">{{member.legalPerson.registerPlace}}</td>
               </tr>
             </template>
-            <tr v-if="item.onlineHandleMode == 2">
+            <tr v-if="item.handleType == 'blxs_wsbl'">
               <th>取件方式：</th>
               <td colspan="3">
                 <el-radio class="radio" v-model="itemPretrial.takeType" label="1">大厅自取</el-radio>
@@ -78,7 +78,7 @@
               </td>
             </tr>
           </table>
-          <table v-if="item.onlineHandleMode == 2" v-show="itemPretrial.takeType == 2">
+          <table v-if="item.handleType == 'blxs_wsbl'" v-show="itemPretrial.takeType == 2">
             <tr><td colspan="4" style="text-align: center">确认邮寄信息</td></tr>
             <tr>
               <th>收件人姓名：</th>

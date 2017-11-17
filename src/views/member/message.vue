@@ -15,7 +15,7 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="page"
-          :page-sizes="[5, 10, 15, 20]"
+          :page-sizes="pageSizes"
           :page-size="pageSize"
           layout="prev, pager, next, total, sizes, jumper"
           :total="total">
@@ -33,8 +33,9 @@
     data() {
       return {
         messageData: [],
-        page: 1,
-        pageSize: 10,
+        page: this.$store.state.app.page,
+        pageSize: this.$store.state.app.rows,
+        pageSizes: this.$store.state.app.pageSize,
         total: 0
       }
     },

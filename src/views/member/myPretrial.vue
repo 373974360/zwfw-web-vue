@@ -11,7 +11,7 @@
         </div>
         <div class="checkbox-container">
           <el-checkbox-group v-model="checkList" @change="reloadPage">
-            <el-checkbox v-for="status in statusList" :key="status.code" :label="status.code">{{status.value}}</el-checkbox>
+            <el-checkbox v-for="status in statusList" :key="status.code" :label="status.var">{{status.value}}</el-checkbox>
           </el-checkbox-group>
         </div>
       </div>
@@ -21,7 +21,7 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="page"
-          :page-sizes="[5, 10, 15, 20]"
+          :page-sizes="pageSizes"
           :page-size="pageSize"
           layout="prev, pager, next, total, sizes, jumper"
           :total="total">
@@ -42,16 +42,12 @@
     data() {
       return {
         keywords: '',
-        statusList: [
-          {code: 1, value: '草稿'},
-          {code: 2, value: '待审'},
-          {code: 3, value: '未通过'},
-          {code: 4, value: '通过'}
-        ],
+        statusList: this.$store.state.app.enums['PretrialStatus'],
         checkList: [],
         pretrialData: [],
-        page: 1,
-        pageSize: 10,
+        page: this.$store.state.app.page,
+        pageSize: this.$store.state.app.rows,
+        pageSizes: this.$store.state.app.pageSize,
         total: 0
       }
     },
@@ -60,7 +56,7 @@
     },
     methods: {
       loadPage() {
-        getPretrialPage(this.page, this.pageSize, this.keywords, this.checkList).then(response => {
+        getPretrialPage(this.page, this.pageSize, this.keywords, this.checkList.join()).then(response => {
           if (response.httpCode == 200) {
             this.pretrialData = response.data.list
             this.total = response.data.total

@@ -11,9 +11,7 @@
         </div>
         <div class="checkbox-container">
           <el-checkbox-group v-model="checkList" @change="reloadPage">
-            <el-checkbox label="10">在办</el-checkbox>
-            <el-checkbox label="15">办结</el-checkbox>
-            <el-checkbox label="99">不予受理</el-checkbox>
+            <el-checkbox v-for="status in statusList" :key="status.code" :label="status.var">{{status.value}}</el-checkbox>
           </el-checkbox-group>
         </div>
       </div>
@@ -23,7 +21,7 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="page"
-          :page-sizes="[5, 10, 15, 20]"
+          :page-sizes="pageSizes"
           :page-size="pageSize"
           layout="prev, pager, next, total, sizes, jumper"
           :total="total">
@@ -44,10 +42,12 @@
     data() {
       return {
         keywords: '',
+        statusList: this.$store.getters.enums['ItemProcessStatus'],
         checkList: [],
         processData: [],
-        page: 1,
-        pageSize: 10,
+        page: this.$store.state.app.page,
+        pageSize: this.$store.state.app.rows,
+        pageSizes: this.$store.state.app.pageSize,
         total: 0
       }
     },
@@ -58,7 +58,7 @@
     },
     methods: {
       loadPage() {
-        getMyProcessPage(this.page, this.pageSize, this.keywords, this.checkList).then(response => {
+        getMyProcessPage(this.page, this.pageSize, this.keywords, this.checkList.join()).then(response => {
           if (response.httpCode == 200) {
             this.processData = response.data.list
             this.total = response.data.total

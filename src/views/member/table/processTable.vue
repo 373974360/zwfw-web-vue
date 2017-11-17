@@ -15,7 +15,7 @@
 </template>
 
 <script>
-  import { date, processStatus } from '../../../filters'
+  import { date, enums } from '../../../filters'
 
   export default {
     props: {
@@ -23,7 +23,7 @@
     },
     methods: {
       formatStatus(row, column, cellValue) {
-        return processStatus(cellValue)
+        return enums(cellValue, 'ItemProcessStatus')
       },
       formatDate(row, column, cellValue) {
         return date(cellValue, 'YYYY-MM-DD HH:mm')

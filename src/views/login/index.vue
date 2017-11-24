@@ -118,7 +118,7 @@
       },
       changeVerifyCode() {
         this.loginForm.random = Math.random();
-        this.imgUrl = '/api/common/getVerifyCode?random=' + this.loginForm.random
+        this.imgUrl = process.env.BASE_API + '/api/common/getVerifyCode?random=' + this.loginForm.random
       }
     },
     created() {

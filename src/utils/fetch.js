@@ -6,7 +6,7 @@ import router from '../router'
 
 //创建axios实例
 const service = axios.create({
-  // baseURL: baseURL,
+  baseURL: process.env.BASE_API,
   timeout: 1000 * 60 * 5,
   withCredentials: true,
   transformRequest: [function(data) {

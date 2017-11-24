@@ -3,7 +3,5 @@ var prodEnv = require('./prod.env')
 
 module.exports = merge(prodEnv, {
   NODE_ENV: '"development"',
-  BASE_API: '"https://api-dev"',
-  SYS_API: '"http://localhost:8765"',
-  ZWFW_API: '"http://localhost:8765"'
+  BASE_API: '"http://localhost:8765"'
 })

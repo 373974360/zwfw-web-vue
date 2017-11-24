@@ -77,7 +77,9 @@
           </el-col>
           <el-col :span="10">
             <el-form-item prop="naturePerson.nation" :rules="personInfoRules.nation">
-              <el-input type="text" v-model="personInfoForm.naturePerson.nation" autoComplete="on"></el-input>
+              <el-select v-model="personInfoForm.naturePerson.nation" placeholder="请选择">
+                <el-option v-for="item in dicts['mz']" :key="item.code" :value="item.code" :label="item.value"></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -200,7 +202,7 @@
             {validator: validateName, trigger: 'blur'}
           ],
           nation: [
-            {required: true, message: '民族不能为空', trigger: 'blur'}
+            {required: true, message: '民族不能为空', trigger: 'change'}
           ],
           address: [
             {required: true, message: '联系地址不能为空', trigger: 'blur'}
@@ -217,7 +219,9 @@
       }
     },
     computed: {
-      ...mapGetters([])
+      ...mapGetters([
+        'dicts'
+      ])
     },
     created() {
       getDetailInfo().then(response => {

@@ -1,9 +1,9 @@
 <template>
   <div class="top">
     <div class="topmn">
-      <div class="top_bx left">
+      <!--<div class="top_bx left">
         <span class="svg-container"><icon-svg iconClass="computer"/></span><a href="http://www.itl.gov.cn/" target="_blank">西安国际港务区门户网站</a>
-      </div>
+      </div>-->
       <div class="top_bx right">
         <template v-if="token">
           当前用户：{{name}} <em>|</em>

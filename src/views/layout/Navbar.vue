@@ -6,18 +6,18 @@
         <el-menu-item index="/login">
           <span>首页</span>
         </el-menu-item>
-        <el-menu-item index="/once">
+        <!--<el-menu-item index="/once">
           <span>最多跑一次</span>
         </el-menu-item>
         <el-menu-item index="/fta">
           <span>自贸区一站式服务</span>
-        </el-menu-item>
+        </el-menu-item>-->
         <el-menu-item index="/guide">
           <span>办事指南</span>
         </el-menu-item>
-        <el-menu-item index="/guide">
+        <!--<el-menu-item index="/guide">
           <span>办事大厅</span>
-        </el-menu-item>
+        </el-menu-item>-->
         <el-menu-item index="/guide">
           <span>云服务</span>
         </el-menu-item>
@@ -34,7 +34,7 @@
 <style rel="stylesheet/scss" lang="scss">
   .banner {
     height: 124px;
-    background: url(../../assets/img/banner.png) top center no-repeat;
+    background: url(../../assets/img/banner.eb62421.png) top center no-repeat;
   }
   .navbar-container {
     height: 45px;

@@ -50,8 +50,10 @@
             <span class="input-label">机构类型：</span>
           </el-col>
           <el-col :span="10">
-            <el-form-item prop="legalPerson.companyType">
-              <el-input type="text" v-model="companyInfoForm.legalPerson.companyType" autoComplete="on"></el-input>
+            <el-form-item prop="legalPerson.companyType" :rules="companyInfoRules.companyType">
+              <el-select v-model="companyInfoForm.legalPerson.companyType" placeholder="请选择">
+                <el-option v-for="item in dicts['gsxz']" :key="item.code" :value="item.code" :label="item.value"></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -212,6 +214,9 @@
           agencyCode: [
             {required: true, message: '机构代码不能为空', trigger: 'blur'}
           ],
+          companyType: [
+            {required: true, message: '机构类型不能为空', trigger: 'change'}
+          ],
           legalPerson: [
             {required: true, message: '法定代表人不能为空', trigger: 'blur'}
           ],
@@ -237,7 +242,9 @@
       }
     },
     computed: {
-      ...mapGetters([])
+      ...mapGetters([
+        'dicts'
+      ])
     },
     created() {
       getDetailInfo().then(response => {

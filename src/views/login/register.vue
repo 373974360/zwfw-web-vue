@@ -86,11 +86,13 @@
         </el-col>
         <el-col :span="10">
           <el-form-item prop="naturePerson.nation" :rules="registerRules.nation">
-            <el-input type="text" v-model="registerForm.naturePerson.nation" autoComplete="on"></el-input>
+            <el-select v-model="registerForm.naturePerson.nation" placeholder="请选择">
+              <el-option v-for="item in dicts['mz']" :key="item.code" :value="item.code" :label="item.value"></el-option>
+            </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <span class="input-tip"><span>*</span>请填写民族</span>
+          <span class="input-tip"><span>*</span>请选择民族</span>
         </el-col>
       </el-row>
       <el-row>
@@ -153,12 +155,14 @@
           <span class="input-label">机构类型：</span>
         </el-col>
         <el-col :span="10">
-          <el-form-item prop="legalPerson.companyType">
-            <el-input type="text" v-model="registerForm.legalPerson.companyType" autoComplete="on"></el-input>
+          <el-form-item prop="legalPerson.companyType" :rules="registerRules.companyType">
+            <el-select v-model="registerForm.legalPerson.companyType" placeholder="请选择">
+              <el-option v-for="item in dicts['gsxz']" :key="item.code" :value="item.code" :label="item.value"></el-option>
+            </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <span class="input-tip"><span>*</span>请填写机构类型</span>
+          <span class="input-tip"><span>*</span>请选择机构类型</span>
         </el-col>
       </el-row>
       <el-row>
@@ -287,6 +291,7 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
   import { date } from '../../filters'
   import { isChinese, isIdCardNo, validEmail, validMobiles, checkSocialCreditCode } from '../../utils/validate'
   import { isUserExist, getPhoneVerifyCode, validateVerifyCode, doRegister } from '../../api/login'
@@ -456,7 +461,7 @@
             {validator: validateNatureIdCard, trigger: 'blur'}
           ],
           nation: [
-            {validator: validateNatureNotEmpty, message: '民族不能为空', trigger: 'blur'}
+            {validator: validateNatureNotEmpty, message: '民族不能为空', trigger: 'change'}
           ],
           address: [
             {validator: validateNatureNotEmpty, message: '联系地址不能为空', trigger: 'blur'}
@@ -469,6 +474,9 @@
           ],
           companyCode: [
             {validator: validateCompanyCode, trigger: 'blur'}
+          ],
+          companyType: [
+            {required: true, message: '机构类型不能为空', trigger: 'change'}
           ],
           legalPerson: [
             {validator: validateLegalNotEmpty, message: '法定代表人不能为空', trigger: 'blur'}
@@ -501,6 +509,11 @@
           ]
         }
       }
+    },
+    computed: {
+      ...mapGetters([
+        'dicts'
+      ])
     },
     methods: {
       handleIdCard() {

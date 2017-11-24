@@ -34,7 +34,7 @@
 <style rel="stylesheet/scss" lang="scss">
   .banner {
     height: 124px;
-    background: url(../../assets/img/banner.eb62421.png) top center no-repeat;
+    background: url(../../assets/img/banner11.png) top center no-repeat;
   }
   .navbar-container {
     height: 45px;

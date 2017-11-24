@@ -61,10 +61,11 @@
           </el-col>
           <el-col :span="10">
             <el-form-item prop="naturePerson.photo">
-              <el-upload class="avatar-uploader" name="uploadFile" :action="uploadUrl"
-                         :on-success="handleSuccess" :show-file-list="false">
+              <el-upload class="avatar-uploader" name="uploadFile" :action="uploadUrl" :show-file-list="false"
+                         :on-success="handleSuccess" :before-upload="beforeUpload">
                 <img v-if="personInfoForm.naturePerson.photo" :src="personInfoForm.naturePerson.photo" class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                <div slot="tip" class="el-upload__tip">只能上传jpg文件，且不超过2MB</div>
               </el-upload>
             </el-form-item>
           </el-col>
@@ -226,6 +227,18 @@
     methods: {
       handleSuccess(response, file, fileList) {
         this.personInfoForm.naturePerson.photo = response.url
+      },
+      beforeUpload(file) {
+        const isJPG = file.type === 'image/jpeg';
+        const isLt2M = file.size / 1024 / 1024 < 2;
+
+        if (!isJPG) {
+          this.$message.error('上传头像图片只能是 JPG 格式!');
+        }
+        if (!isLt2M) {
+          this.$message.error('上传头像图片大小不能超过 2MB!');
+        }
+        return isJPG && isLt2M;
       },
       handleSubmit() {
         this.$refs.personInfoForm.validate(valid => {

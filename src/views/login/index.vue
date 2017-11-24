@@ -74,7 +74,7 @@
       }
       return {
         loginForm: {
-          account: '9A350100M000100Y47',
+          account: undefined,
           password: undefined,
           verifyCode: undefined,
           random: undefined,

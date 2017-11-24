@@ -103,7 +103,7 @@
           <div class="materials-item" v-for="(material, index) in materials">
             <p>
               <span>材料名称：</span>
-              <icon-svg iconClass="star_fill" v-if="material.isPretrialSubmit == 1"></icon-svg>
+              <icon-svg iconClass="star_fill" v-if="material.electronicMaterial"></icon-svg>
               <icon-svg iconClass="star" v-else></icon-svg>
               {{material.name}}
               <a v-if="material.eform" :href="material.eform" :download="material.name" :title="material.name">（点击下载）</a>
@@ -314,17 +314,14 @@
         this.$refs[uploader][0].submit()
       },
       handlePreview(file) {
-        //todo download
+//        console.log(file)
       },
       handleSuccess(response, file, fileList, index) {
         this.itemPretrial.itemPretrialMaterialVoList[index].itemMaterialUrl += `|${response.url}`
-        this.itemPretrial.itemPretrialMaterialVoList[index].fileName += `|${response.title}`
-        let fileType = this.resolveFileType(response.title)
+        let fileName = file.name.substring(0, file.name.lastIndexOf('.'))
+        let fileType = file.name.substring(file.name.lastIndexOf('.') + 1)
+        this.itemPretrial.itemPretrialMaterialVoList[index].fileName += `|${fileName}`
         this.itemPretrial.itemPretrialMaterialVoList[index].fileType += `|${fileType}`
-      },
-      resolveFileType(fileName) {
-        let arr = fileName.split('.')
-        return arr[arr.length - 1]
       },
       handleRemove(file, fileList, index) {
         let filesInfo = this.itemPretrial.itemPretrialMaterialVoList[index]
@@ -352,7 +349,7 @@
         }
         //判断所有预审材料是否均已上传
         for (let [index, val] of this.materials.entries()) {
-          if (val.isPretrialSubmit == 1 && !this.itemPretrial.itemPretrialMaterialVoList[index].itemMaterialUrl) {
+          if (val.electronicMaterial && !this.itemPretrial.itemPretrialMaterialVoList[index].itemMaterialUrl) {
             this.$message.warning('资料提交不全，请先上传资料！')
             this.loading = false
             return

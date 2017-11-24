@@ -28,7 +28,7 @@
 <style rel="stylesheet/scss" lang="scss">
   .banner2 {
     height: 135px;
-    background: url(../../assets/img/banner2.png) top center no-repeat;
+    background: url(../../assets/img/banner22.png) top center no-repeat;
     .navbar-container2 {
       width: 1156px;
       height: 135px;

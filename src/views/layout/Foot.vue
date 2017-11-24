@@ -23,16 +23,15 @@
         <a href="http://bszs.conac.cn/sitename?method=show&amp;id=0A9CA9CBC31744D1E053012819ACDD52">
           <img src="../../assets/img/ico_net.png" class="dz"></a>
       </div>-->
+      <div class="jiucuo">
+        <!--<script id="_jiucuo_" sitecode="6101040026" src="../../assets/file/jiucuo.js.下载"></script>-->
+        <a href="http://121.43.68.40/exposure/jiucuo.html?site_code=6101040026&amp;url=https%3A%2F%2Fzw.lianhu.gov.cn%2F" target="_blank">
+          <img  style="margin:0;border:0;cursor: pointer;" src="../../assets/img/jiucuo.png"></a>
+      </div>
       <div class="dzjg">
         <a href="http://bszs.conac.cn/sitename?method=show&amp;id=578F075A9B5D7FB8E053012819AC3391" target="_blank">
           <img src="../../assets/img/201708250519044.png"></a>
       </div>
-      <!--<div class="jiucuo">
-        <script id="_jiucuo_" sitecode="6101040026" src="./莲湖政务服务网_files/jiucuo.js.下载"></script>
-        <span id="_span_jiucuo">
-          <img onclick="Link(&#39;6101040026&#39;)" style="margin:0;border:0;cursor: pointer;" src="./莲湖政务服务网_files/jiucuo.png">
-        </span>
-      </div>-->
     </div>
   </div>
 </template>
@@ -71,6 +70,13 @@
           right: 0;
           top: 0;
         }
+      }
+      .jiucuo {
+        float: right;
+        height: 87px;
+        width: 156px;
+        line-height: 130px;
+        position: relative;
       }
     }
   }

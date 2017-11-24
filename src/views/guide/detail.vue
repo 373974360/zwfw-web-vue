@@ -213,7 +213,7 @@
       removeFavorite() {
         if (this.token) {
           for (let [index, favorite] of this.favoriteList.entries()) {
-            if (itemId == favorite.itemId) {
+            if (this.itemId == favorite.itemId) {
               delFavorite(favorite.id).then(response => {
                 if (response.httpCode == 200) {
                   this.favoriteList.splice(index, 1)

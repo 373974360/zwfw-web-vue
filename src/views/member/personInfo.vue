@@ -61,7 +61,8 @@
           </el-col>
           <el-col :span="10">
             <el-form-item prop="naturePerson.photo">
-              <el-upload class="avatar-uploader" action="" :on-preview="handlePreview" :on-remove="handleRemove" list-type="picture">
+              <el-upload class="avatar-uploader" name="uploadFile" :action="uploadUrl"
+                         :on-success="handleSuccess" :show-file-list="false">
                 <img v-if="personInfoForm.naturePerson.photo" :src="personInfoForm.naturePerson.photo" class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
@@ -175,6 +176,7 @@
         resendFun: undefined,
         gender: this.$store.state.app.gender,
         loading: false,
+        uploadUrl: '/api/common/upload',
         personInfoForm: {
           id: undefined,
           verifyCode: undefined,
@@ -222,8 +224,9 @@
       })
     },
     methods: {
-      handlePreview() {},
-      handleRemove() {},
+      handleSuccess(response, file, fileList) {
+        this.personInfoForm.naturePerson.photo = response.url
+      },
       handleSubmit() {
         this.$refs.personInfoForm.validate(valid => {
           if (valid) {
@@ -249,7 +252,7 @@
         this.$refs.personInfoForm.validateField('naturePerson.phone', function (error) {
           if (!error) {
             _this.sendBtn.disabled = true
-            getPhoneVerifyCode(_this.personInfoForm.naturePerson.phone, this.personInfoForm.random).then(response => {
+            getPhoneVerifyCode(_this.personInfoForm.naturePerson.phone, _this.personInfoForm.random).then(response => {
               _this.sendBtn.second = 60
               _this.sendBtn.text = `重新发送(${_this.sendBtn.second})`
               _this.resendFun = setInterval(_this.changeSendBtn, 1000)

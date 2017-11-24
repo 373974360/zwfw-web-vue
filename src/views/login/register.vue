@@ -70,7 +70,8 @@
         </el-col>
         <el-col :span="10">
           <el-form-item prop="naturePerson.photo">
-            <el-upload class="avatar-uploader" action="" :on-preview="handlePreview" :on-remove="handleRemove" list-type="picture">
+            <el-upload class="avatar-uploader" name="uploadFile" :action="uploadUrl"
+                       :on-success="handleSuccess" :show-file-list="false">
               <img v-if="registerForm.naturePerson.photo" :src="registerForm.naturePerson.photo" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
@@ -415,6 +416,7 @@
         memberType: this.$store.state.app.memberType,
         gender: this.$store.state.app.gender,
         loading: false,
+        uploadUrl: '/api/common/upload',
         registerForm: {
           type: this.$store.state.app.memberType.nature,
           password: '',
@@ -509,8 +511,9 @@
           this.registerForm.naturePerson.gender = this.gender.female
         }
       },
-      handlePreview() {},
-      handleRemove() {},
+      handleSuccess(response, file, fileList) {
+        this.registerForm.naturePerson.photo = response.url
+      },
       formatDate() {
         this.registerForm.legalPerson.registerDate = date(this.registerForm.legalPerson.registerDate, 'YYYY-MM-DD')
       },

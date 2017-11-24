@@ -8,16 +8,18 @@
           </div>
         </div>
         <div class="msg-content">
-          <p><el-checkbox :indeterminate="indeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
-          <b>办理该项业务，需满足以下申请条件才能进行业务的办理，请自检是否满足，符合请打勾</b></p>
-          <el-checkbox-group v-model="checkedConditions">
+          <p><!--<el-checkbox :indeterminate="indeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>-->
+          <b>办理该项业务，需满足以下申请条件才能进行业务的办理，请自检是否满足<!--，符合请打勾--></b></p>
+          <!--<el-checkbox-group v-model="checkedConditions">-->
             <!--<p v-for="(condition, index) in conditions">
               <el-checkbox :label="condition" @change="handleCheckOneChange">{{index + 1}}、{{condition.content}}</el-checkbox>
             </p>-->
-            <p v-for="condition in conditions">
-              <el-checkbox :label="condition" @change="handleCheckOneChange">{{condition}}</el-checkbox>
-            </p>
-          </el-checkbox-group>
+            <!--<p v-for="(condition, index) in conditions">
+              &lt;!&ndash;<el-checkbox :label="condition" @change="handleCheckOneChange">{{index + 1}}、{{condition}}</el-checkbox>&ndash;&gt;
+              {{index + 1}}、{{condition}}
+            </p>-->
+          <p class="condition-item" v-html="this.item.acceptCondition"></p>
+          <!--</el-checkbox-group>-->
         </div>
       </div>
       <div class="message">
@@ -27,7 +29,7 @@
           </div>
         </div>
         <div class="msg-content">
-          <p v-for="(material, index) in materials">{{index + 1}}、{{material.name}}</p>
+          <p class="material-item" v-for="(material, index) in materials">{{index + 1}}、{{material.name}}</p>
         </div>
       </div>
       <p class="remind">注：本人对办理该事项所提交的材料实质内容的真实性负责。</p>
@@ -249,7 +251,7 @@
         getItemDetail(this.itemId).then(response => {
           if (response.httpCode == 200) {
             this.item = response.data
-            this.conditions = this.$options.filters.splitLines(response.data.acceptCondition).split('<br />')
+            this.conditions = this.$options.filters.splitLines(response.data.acceptCondition).split('<br>')
           } else {
             this.$message.error('初始化信息失败，请刷新页面！')
           }
@@ -299,13 +301,13 @@
         this.indeterminate = this.checkedConditions.length > 0 && this.checkedConditions.length < this.conditions.length
       },
       nextPage() {
-        if (!this.checkAll) {
+        /*if (!this.checkAll) {
           this.$message({
             message: '请先满足审批条件再点击下一步',
             type: 'warning'
           })
           return
-        }
+        }*/
         this.secondForm = true
         this.notify2()
       },
@@ -425,6 +427,12 @@
       .msg-content {
         font-size: 14px;
         padding: 10px 0 30px 0;
+        .condition-item {
+          line-height: 2.5;
+        }
+        .material-item {
+          line-height: 1.5;
+        }
         .el-checkbox {
           font-size: 14px;
           font-weight: normal;

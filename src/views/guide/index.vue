@@ -5,11 +5,13 @@
         <div class="svg-container"><icon-svg iconClass="department"></icon-svg></div>
         <div class="svg-text">按部门分类</div>
       </div>
-      <el-menu class="category" mode="vertical">
-        <template v-for="item in deptList">
-          <el-menu-item :index="item.name" @click="loadItemList(item.id)">{{item.name}}</el-menu-item>
-        </template>
-      </el-menu>
+      <div class="menu-item">
+        <el-menu class="category" mode="vertical">
+          <template v-for="item in deptList">
+            <el-menu-item :index="item.name" @click="loadItemList(item.id)">{{item.name}}</el-menu-item>
+          </template>
+        </el-menu>
+      </div>
     </el-col>
     <el-col :span="20">
       <div class="itemList">
@@ -167,15 +169,18 @@
       padding-left: 12px;
     }
   }
-  .category {
-    background: #f2f2f2;
-    .el-menu-item {
-      height: 40px;
-      line-height: 40px;
-      font-size: 15px;
-      text-align: left;
-      padding-left: 36px !important;
-      border-bottom: 1px solid #e6e6e6;
+  .menu-item {
+    .category {
+      background: #f2f2f2;
+      .el-menu-item {
+        height: auto;
+        line-height: 40px;
+        font-size: 15px;
+        text-align: left;
+        padding-left: 36px !important;
+        border-bottom: 1px solid #e6e6e6;
+        white-space: inherit;
+      }
     }
   }
   .itemList {

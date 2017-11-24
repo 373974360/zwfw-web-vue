@@ -13,3 +13,11 @@ export function getDicts() {
     method: 'get'
   });
 }
+
+export function getHoliday(year) {
+  return fetch({
+    url: '/api/common/holiday',
+    method: 'get',
+    params: {year}
+  })
+}

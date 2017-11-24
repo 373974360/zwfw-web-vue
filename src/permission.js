@@ -6,7 +6,8 @@ const whiteList = [
   '/login', '/register', '/retrieve', '/guide/index', '/fta', '/once'
 ]
 
-const whitePath = '/guide/detail'
+const whitePath0 = '/guide/detail'
+const whitePath1 = '/guide/preorder'
 
 router.beforeEach((to, from, next) => {
   if (store.getters.enums.length === 0) {
@@ -30,7 +31,7 @@ router.beforeEach((to, from, next) => {
       }
     }
   } else {
-    if (whiteList.includes(to.path) || to.path.startsWith(whitePath)) {
+    if (whiteList.includes(to.path) || to.path.startsWith(whitePath0) || to.path.startsWith(whitePath1)) {
       next()
     } else {
       next('/login')

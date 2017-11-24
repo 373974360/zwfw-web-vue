@@ -31,7 +31,8 @@ export const constantRouterMap = [
     children: [
       {path: 'index', component: _import('guide/index')},
       {path: 'detail/:itemId', component: _import('guide/detail'), name: '详细'},
-      {path: 'pretrial/:key/:value', component: _import('guide/pretrial')}
+      {path: 'pretrial/:key/:value', component: _import('guide/pretrial'), name: '在线预审'},
+      {path: 'preorder/:itemId', component: _import('guide/preorder'), name: '在线预约'}
     ]
   },
   {

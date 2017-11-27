@@ -70,11 +70,11 @@
         </el-col>
         <el-col :span="10">
           <el-form-item prop="naturePerson.photo">
-            <el-upload class="avatar-uploader" name="uploadFile" :action="uploadUrl" :show-file-list="false"
+            <el-upload class="avatar-uploader" name="uploadFile" :accept="acceptTypes" :action="uploadUrl" :show-file-list="false"
                        :on-success="handleSuccess" :before-upload="beforeUpload">
               <img v-if="registerForm.naturePerson.photo" :src="registerForm.naturePerson.photo" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-              <div slot="tip" class="el-upload__tip">只能上传jpg文件，且不超过2MB</div>
+              <div slot="tip" class="el-upload__tip">只能上传图片，且不超过2MB</div>
             </el-upload>
           </el-form-item>
         </el-col>
@@ -422,7 +422,8 @@
         memberType: this.$store.state.app.memberType,
         gender: this.$store.state.app.gender,
         loading: false,
-        uploadUrl: '/api/common/upload',
+        uploadUrl: this.$store.state.app.uploadUrl,
+        acceptTypes: this.$store.state.app.imageAccepts,
         registerForm: {
           type: this.$store.state.app.memberType.nature,
           password: '',
@@ -529,16 +530,16 @@
         this.registerForm.naturePerson.photo = response.url
       },
       beforeUpload(file) {
-        const isJPG = file.type === 'image/jpeg';
+        const isImage = this.acceptTypes.includes(file.type);
         const isLt2M = file.size / 1024 / 1024 < 2;
 
-        if (!isJPG) {
-          this.$message.error('上传头像图片只能是 JPG 格式!');
+        if (!isImage) {
+          this.$message.error('上传头像图片格式不正确!');
         }
         if (!isLt2M) {
           this.$message.error('上传头像图片大小不能超过 2MB!');
         }
-        return isJPG && isLt2M;
+        return isImage && isLt2M;
       },
       formatDate() {
         this.registerForm.legalPerson.registerDate = date(this.registerForm.legalPerson.registerDate, 'YYYY-MM-DD')

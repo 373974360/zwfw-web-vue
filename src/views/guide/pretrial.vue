@@ -120,8 +120,8 @@
               <span>详细要求：</span>{{material.detailRequirement}}
             </p>-->
             <p>
-              <file-upload :ref='"upload"+index' name="uploadFile" :action="uploadUrl" :multiple="true" :auto-upload="false"
-                           :uploadId="index" :file-list="uploadFileList[index]" :with-credentials="true"
+              <file-upload :ref='"upload"+index' name="uploadFile" :accept="acceptTypes" :action="uploadUrl" :multiple="true"
+                           :auto-upload="false" :uploadId="index" :file-list="uploadFileList[index]" :with-credentials="true"
                            :on-preview="handlePreview" :on-success="handleSuccess" :on-remove="handleRemove">
                 <el-button size="small" type="primary">选取文件</el-button>
                 <el-button size="small" type="success" @click.stop="submitUpload(index)">上传到服务器</el-button>
@@ -178,7 +178,8 @@
           },
           itemPretrialMaterialVoList: []
         },
-        uploadUrl: '/api/common/upload',
+        uploadUrl: this.$store.state.app.uploadUrl,
+        acceptTypes: this.$store.state.app.fileAccepts,
         uploadFileList: [],
         loading: false
       }

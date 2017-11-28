@@ -9,7 +9,7 @@ const app = {
     gender: { male: 1, female: 0 },
     enums: [],
     dicts: [],
-    deptCategoryId: 1,
+    deptCategoryId: 7308629892401152,
     resourceUrl: 'http://zwfw.itl.gov.cn:8080',
     uploadUrl: `${process.env.BASE_API}/api/common/upload`,
     imageAccepts: 'image/jpg, image/jpeg, image/png, image/bmp, image/gif',

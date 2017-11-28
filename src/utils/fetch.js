@@ -53,15 +53,15 @@ service.interceptors.response.use(
     } else {
       code = response.data.httpCode;
       let msg = response.data.msg;
-      // if (code === 401) {
-      if (code === 500 && store.state.app.tokenErrorMsg.includes(msg)) {
+      if (code === 401 || code === 40101) {
+      // if (code === 500 && store.state.app.tokenErrorMsg.includes(msg)) {
         Message({
           message: "登录超时，请重新登录",
           type: 'error',
           duration: 5 * 1000
         })
-        // 登出
-        store.dispatch('DoLogout').then(() => {
+        // 清除token
+        store.dispatch('RemoveToken').then(() => {
           router.push({ path: '/login' })
         })
       }

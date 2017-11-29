@@ -9,12 +9,11 @@
             <div class="title">用户登录</div>
             <el-form-item prop="account">
               <span class="svg-container"><icon-svg iconClass="user"/></span>
-              <el-input type="text" v-model="loginForm.account" autoComplete="on" placeholder="请输入用户名"></el-input>
+              <el-input type="text" v-model="loginForm.account" auto-complete="on" placeholder="请输入用户名"></el-input>
             </el-form-item>
             <el-form-item prop="password">
               <span class="svg-container"><icon-svg iconClass="password"/></span>
-              <el-input type="password" @keyup.enter.native="handleLogin" v-model="loginForm.password" autoComplete="on"
-                        placeholder="请输入密码"></el-input>
+              <el-input type="password" @keyup.enter.native="handleLogin" v-model="loginForm.password" placeholder="请输入密码"></el-input>
             </el-form-item>
             <el-row>
               <el-col :span="12">

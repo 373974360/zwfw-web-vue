@@ -57,7 +57,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <span class="input-tip"><span>*</span>请填写机构类型</span>
+            <span class="input-tip"><span>*</span>请选择机构类型</span>
           </el-col>
         </el-row>
         <el-row>

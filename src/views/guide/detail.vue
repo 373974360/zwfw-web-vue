@@ -74,7 +74,7 @@
           </table>
         </div>
         <div class="message" v-show="basicInfo.setBasis">
-          <span>办理依据</span>
+          <span class="msg-label">办理依据</span>
           <div class="msg-content" v-html="$options.filters.splitLines(basicInfo.setBasis)"></div>
         </div>
         <!--<div class="message" v-cloak v-show="conditions.length">
@@ -86,11 +86,13 @@
           </div>
         </div>-->
         <div class="message" v-show="basicInfo.acceptCondition">
-          <span>办理条件</span>
-          <div class="msg-content" v-html="$options.filters.splitLines(basicInfo.acceptCondition)"></div>
+          <span class="msg-label">办理条件</span>
+          <div class="msg-content">
+            <div v-html="basicInfo.acceptCondition"></div>
+          </div>
         </div>
         <div class="message" v-show="materials.length">
-          <span>提交材料</span>
+          <span class="msg-label">提交材料</span>
           <div class="msg-content">
             <el-table :data="materials" border>
               <el-table-column type="index" label="序号" width="80" align="center"></el-table-column>
@@ -106,23 +108,23 @@
           </div>
         </div>
         <div class="message" v-show="materials.length">
-          <span>注意事项</span>
+          <span class="msg-label">注意事项</span>
           <div class="msg-content">
             <p class="remind">1、提交的材料如为复印件须加盖单位公章，并携带原件已备核实。
               2、网上预审环节中标★的，为必要材料，没有★标记的，为网上预审非必须材料。</p>
           </div>
         </div>
-        <div class="message" v-show="basicInfo.handleWorkflow">
-          <span>办理流程</span>
+        <div class="message" v-show="basicInfo.workflowDescription">
+          <span class="msg-label">办理流程</span>
           <div class="msg-content">
-            <img :src="basicInfo.handleWorkflow"/>
+            <div v-html="basicInfo.workflowDescription"></div>
           </div>
         </div>
         <div class="message" v-show="basicInfo.chargeStandard || basicInfo.chargeBasis">
-          <span>收费情况</span>
+          <span class="msg-label">收费情况</span>
           <div class="msg-content">
-            <p><b>收费标准：</b>{{basicInfo.chargeStandard}}</p>
-            <p><b>收费依据：</b>{{basicInfo.chargeBasis}}</p>
+            <p><b>收费标准：</b><span v-html="basicInfo.chargeStandard"></span></p>
+            <p><b>收费依据：</b><span v-html="basicInfo.chargeBasis"></span></p>
           </div>
         </div>
       </div>
@@ -330,7 +332,7 @@
       .message {
         overflow: hidden;
         font-size: 16px;
-        span {
+        .msg-label {
           display: inline-block;
           padding: 3px 5px;
           border-bottom: 2px solid #29588c;

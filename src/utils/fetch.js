@@ -84,7 +84,7 @@ service.interceptors.response.use(
   },
   error => {
     Message({
-      message: error.message,
+      message: '系统繁忙，请稍后重试',
       type: 'error',
       duration: 5 * 1000
     })

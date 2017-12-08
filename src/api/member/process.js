@@ -7,3 +7,12 @@ export function getMyProcessPage(page, rows, itemName, inStatus) {
     params: {page, rows, itemName, inStatus}
   })
 }
+
+export function sendPostCode(pretrialNumber) {
+  const data = {pretrialNumber};
+  return fetch({
+    url: '/api/zwfw-web/process/sendPostCode',
+    method: 'post',
+    data
+  })
+}

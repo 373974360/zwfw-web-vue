@@ -47,3 +47,21 @@ export function updatePassword(pwInfo) {
     data
   })
 }
+
+export function getPhoneVerifyCodeLogged(random) {
+  const data = {random}
+  return fetch({
+    url: '/api/zwfw-web/member/getPhoneVerifyCodeLogged',
+    method: 'post',
+    data
+  })
+}
+
+export function validateMemberInfo(validateInfo) {
+  const data = validateInfo;
+  return fetch({
+    url: '/api/zwfw-web/member/validateMemberInfo',
+    method: 'post',
+    data
+  });
+}

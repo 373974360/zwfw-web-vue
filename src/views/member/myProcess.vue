@@ -15,7 +15,7 @@
           </el-checkbox-group>
         </div>
       </div>
-      <process-table :data="processData"></process-table>
+      <process-table :data="processData" :take-type="changeTakeType" :post-code="getPostCode"></process-table>
       <div class="page-container">
         <el-pagination
           @size-change="handleSizeChange"
@@ -65,6 +65,8 @@
           }
         })
       },
+      changeTakeType(row) {},
+      getPostCode(row) {},
       reloadPage() {
         this.page = 1
         this.loadPage()

@@ -6,7 +6,7 @@
         <div class="more"><router-link :to="{path: '/member/process'}">更多></router-link></div>
       </div>
       <div class="data-bg">
-        <process-table :data="processData"></process-table>
+        <process-table :data="processData" :take-type="changeTakeType" :post-code="getPostCode"></process-table>
       </div>
     </div>
     <div class="data-box">
@@ -67,6 +67,8 @@
           }
         })
       },
+      changeTakeType(row) {},
+      getPostCode(row) {},
       removeFavorite(row) {
         delFavorite(row.id).then(response => {
           if (response.httpCode == 200) {

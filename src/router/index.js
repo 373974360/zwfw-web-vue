@@ -47,7 +47,8 @@ export const constantRouterMap = [
       {path: 'message', component: _import('member/message'), name: '我的消息'},
       {path: 'personInfo', component: _import('member/personInfo'), name: '个人信息'},
       {path: 'companyInfo', component: _import('member/companyInfo'), name: '企业信息'},
-      {path: 'changePw', component: _import('member/changePw'), name: '修改密码'}
+      {path: 'changePw', component: _import('member/changePw'), name: '修改密码'},
+      {path: 'processDetail/:id', component: _import('member/myProcessDetail'), name: '办件详情'}
     ]
   },
   { path: '*', redirect: '/404', hidden: true }

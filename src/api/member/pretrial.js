@@ -25,7 +25,7 @@ export function getPretrialPage(page, rows, itemName, inStatus) {
   })
 }
 
-export function getMailboxs(){
+export function getMailboxes() {
   return fetch({
     url: '/api/zwfw-web/mailbox/getAll',
     method: 'get'

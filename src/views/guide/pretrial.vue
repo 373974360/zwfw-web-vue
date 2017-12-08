@@ -75,7 +75,20 @@
             <tr v-if="item.handleType == 'blxs_wsbl' || item.handleType == 'blxs_wsys'">
               <th>取件方式：</th>
               <td colspan="3" >
-                <el-radio class="radio" v-for="item in enums['TakeType']" v-model="itemPretrial.takeTypeInfo.takeType" :label="item.code">{{ item.value }}</el-radio>
+                <el-radio-group v-model="itemPretrial.takeTypeInfo.takeType">
+                  <el-radio v-for="item in enums['TakeType']" :key="item.code" :label="item.code">{{ item.value }}</el-radio>
+                </el-radio-group>
+              </td>
+            </tr>
+          </table>
+          <table v-if="item.handleType == 'blxs_wsbl' || item.handleType == 'blxs_wsys' " v-show="itemPretrial.takeTypeInfo.takeType == '2'">
+            <tr><td colspan="4" style="text-align: center">确认取件箱地址</td></tr>
+            <tr>
+              <th>取件箱地址：</th>
+              <td>
+                <el-select style="width: 100%" v-model="itemPretrial.takeTypeInfo.mailboxInfo.mailboxId" placeholder="请选择取件箱地址">
+                  <el-option v-for="item in mailboxes" :key="item.id" :value="item.id" :label="item.name"></el-option>
+                </el-select>
               </td>
             </tr>
           </table>
@@ -90,20 +103,6 @@
             <tr>
               <th>收件地址：</th>
               <td colspan="3"><el-input type="text" v-model="itemPretrial.takeTypeInfo.postInfo.address"></el-input></td>
-            </tr>
-          </table>
-          <table v-if="item.handleType == 'blxs_wsbl' || item.handleType == 'blxs_wsys' " v-show="itemPretrial.takeTypeInfo.takeType == '2'">
-            <tr><td colspan="4" style="text-align: center">确认取件箱地址</td></tr>
-            <tr>
-              <th>取件箱地址：</th>
-              <td>
-                <el-select style="width: 100%" v-model="itemPretrial.takeTypeInfo.mailboxInfo.mailboxId" placeholder="请选择取件箱地址">
-                  <el-option v-for="item in mailboxs" :key="item.id" :value="item.id" :label="item.name"/>
-                  <!--<el-option value="1" label="办事大厅内"></el-option>
-                  <el-option value="2" label="办事大厅外"></el-option>
-                  <el-option value="3" label="办事大厅左边"></el-option>-->
-                </el-select>
-              </td>
             </tr>
           </table>
         </div>
@@ -156,7 +155,7 @@
   import { mapGetters } from 'vuex'
   import { copyProperties } from '../../utils'
   import { getItemDetail, /*getItemConditions,*/ getItemMaterials } from '../../api/item'
-  import { getPretrialInfo, submitPretrial, getMailboxs } from '../../api/member/pretrial'
+  import { getPretrialInfo, submitPretrial, getMailboxes } from '../../api/member/pretrial'
   import { getDetailInfo } from '../../api/member/member'
   import ElOption from "../../../node_modules/element-ui/packages/select/src/option.vue";
 
@@ -185,7 +184,8 @@
           takeTypeInfo: {
             id: '',
             pretrialNumber: '',
-            takeType: '',
+            memberId: '',
+            takeType: 1,
             flagTakeCert: '',
             takeCertTime: '',
             mailboxInfo: {
@@ -216,12 +216,12 @@
         acceptTypes: this.$store.state.app.fileAccepts,
         uploadFileList: [],
         loading: false,
-        mailboxs: []
+        mailboxes: []
       }
     },
     computed: {
       ...mapGetters([
-        'resourceUrl', 'id', 'enums'
+        'id', 'enums'
       ])
     },
     created() {
@@ -236,8 +236,8 @@
       getDetailInfo().then(response => {
         this.member = response.data
       })
-      getMailboxs().then(response => {
-        this.mailboxs = response.data
+      getMailboxes().then(response => {
+        this.mailboxes = response.data
       })
     },
     methods: {
@@ -247,8 +247,7 @@
         this.initItemDetail()
         this.itemPretrial.memberId = this.id
         this.itemPretrial.itemId = this.itemId
-        this.itemPretrial.takeTypeInfo.postInfo.memberId = this.id
-        this.itemPretrial.takeTypeInfo.mailboxInfo.memberId = this.id
+        this.itemPretrial.takeTypeInfo.memberId = this.id
         this.notify1()
       },
       init2() {
@@ -277,7 +276,7 @@
       },*/
       initMaterials() {
         getItemMaterials(this.itemId).then(response => {
-          if (response.httpCode == 200) {
+          if (response.httpCode === 200) {
             this.materials = response.data
             if (!this.pretrialId) {
               this.initPretrialMaterials()
@@ -289,7 +288,7 @@
       },
       initItemDetail() {
         getItemDetail(this.itemId).then(response => {
-          if (response.httpCode == 200) {
+          if (response.httpCode === 200) {
             this.item = response.data
             this.conditions = this.$options.filters.splitLines(response.data.acceptCondition).split('<br>')
           } else {
@@ -380,12 +379,12 @@
       },
       handleSubmit() {
         this.loading = true
-        if(this.itemPretrial.takeTypeInfo.takeType==null || this.itemPretrial.takeTypeInfo.takeType==''){
+        if(!this.itemPretrial.takeTypeInfo.takeType) {
           this.$message.warning('请选择取件方式')
           this.loading = false
           return
         }
-        if (this.itemPretrial.takeTypeInfo.takeType == 2
+        if (this.itemPretrial.takeTypeInfo.takeType === 2
           && (!this.itemPretrial.takeTypeInfo.mailboxInfo.mailboxId
             )) {
           this.$message.warning('请选择取件箱地址')
@@ -393,7 +392,7 @@
           return
         }
         //若在线办理且需要邮寄，判断收件信息是否填写
-        if (this.itemPretrial.takeTypeInfo.takeType == 3
+        if (this.itemPretrial.takeTypeInfo.takeType === 3
           && (!this.itemPretrial.takeTypeInfo.postInfo.name
             || !this.itemPretrial.takeTypeInfo.postInfo.mobilephone
             || !this.itemPretrial.takeTypeInfo.postInfo.address)) {

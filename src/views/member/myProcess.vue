@@ -11,7 +11,7 @@
         </div>
         <div class="checkbox-container">
           <el-checkbox-group v-model="checkList" @change="reloadPage">
-            <el-checkbox v-for="status in statusList" :key="status.code" :label="status.var">{{status.value}}</el-checkbox>
+            <el-checkbox v-for="status in enums['ItemProcessStatus']" :key="status.code" :label="status.var">{{status.value}}</el-checkbox>
           </el-checkbox-group>
         </div>
       </div>
@@ -72,6 +72,7 @@
 
 <script>
   import { ProcessTable } from './table'
+  import { mapGetters } from 'vuex'
   import { getPhoneVerifyCodeLogged, validateMemberInfo } from '../../api/member/member'
   import { getMyProcessPage, sendPostCode } from '../../api/member/process'
 
@@ -82,7 +83,6 @@
     data() {
       return {
         keywords: '',
-        statusList: this.$store.getters.enums['ItemProcessStatus'],
         checkList: [],
         processData: [],
         dialogVisible: false,
@@ -112,6 +112,9 @@
       }
     },
     computed: {
+      ...mapGetters([
+        'enums'
+      ])
     },
     created() {
       this.loadPage()

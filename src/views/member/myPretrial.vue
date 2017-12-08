@@ -11,7 +11,7 @@
         </div>
         <div class="checkbox-container">
           <el-checkbox-group v-model="checkList" @change="reloadPage">
-            <el-checkbox v-for="status in statusList" :key="status.code" :label="status.var">{{status.value}}</el-checkbox>
+            <el-checkbox v-for="status in enums['PretrialStatus']" :key="status.code" :label="status.var">{{status.value}}</el-checkbox>
           </el-checkbox-group>
         </div>
       </div>
@@ -33,6 +33,7 @@
 
 <script>
   import { PretrialTable } from './table'
+  import { mapGetters } from 'vuex'
   import { getPretrialPage } from '../../api/member/pretrial'
 
   export default {
@@ -42,7 +43,6 @@
     data() {
       return {
         keywords: '',
-        statusList: this.$store.state.app.enums['PretrialStatus'],
         checkList: [],
         pretrialData: [],
         page: this.$store.state.app.page,
@@ -50,6 +50,11 @@
         pageSizes: this.$store.state.app.pageSize,
         total: 0
       }
+    },
+    computed: {
+      ...mapGetters([
+        'enums'
+      ])
     },
     created() {
       this.loadPage()

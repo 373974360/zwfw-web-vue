@@ -136,7 +136,7 @@
       handleSendPostCode() {
         this.dialogTipVisible = false;
         this.dialogLoading = true;
-        sendPostCode(this.currentRow.pretrialNumber).then(response => {
+        sendPostCode(this.currentRow.processNumber).then(response => {
           if (response.httpCode === 200) {
             this.$message.success('取件码已发送至您的手机，请注意查收');
           } else {

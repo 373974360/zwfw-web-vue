@@ -183,14 +183,14 @@
           itemId: '',
           takeTypeInfo: {
             id: '',
-            pretrialNumber: '',
+            processNumber: '',
             memberId: '',
             takeType: 1,
             flagTakeCert: '',
             takeCertTime: '',
             mailboxInfo: {
               id: '',
-              pretrialNumber: '',
+              processNumber: '',
               memberId: '',
               mailboxId: '',
               status: '',
@@ -258,7 +258,6 @@
             this.itemId = response.data.itemId
             this.initItemDetail()
             this.initMaterials()
-            this.initUploadFileList(response.data.itemPretrialMaterialVoList)
           } else {
             this.$message.error('初始化信息失败，请刷新页面！')
           }
@@ -278,9 +277,7 @@
         getItemMaterials(this.itemId).then(response => {
           if (response.httpCode === 200) {
             this.materials = response.data
-            if (!this.pretrialId) {
-              this.initPretrialMaterials()
-            }
+            this.initPretrialMaterials()
           } else {
             this.$message.error('初始化信息失败，请刷新页面！')
           }
@@ -297,39 +294,41 @@
         })
       },
       initPretrialMaterials() {
-        for (let val of this.materials) {
-          this.itemPretrial.itemPretrialMaterialVoList.push({
-            itemMaterialId: val.id,
-            itemMaterialName: val.name,
+        let itemPretrialMaterialList = [];
+        for (let material of this.materials) {
+          let itemPretrialMaterial = {
+            itemMaterialId: material.id,
+            itemMaterialName: material.name,
             itemMaterialUrl: '',
             fileName: '',
             fileType: ''
-          })
-        }
-      },
-      initUploadFileList(itemPretrialMaterialVoList) {
-        this.itemPretrial.itemPretrialMaterialVoList = []
-        for (let filesInfo of itemPretrialMaterialVoList) {
-          this.itemPretrial.itemPretrialMaterialVoList.push({
-            itemMaterialId: filesInfo.itemMaterialId,
-            itemMaterialName: filesInfo.itemMaterialName,
-            itemMaterialUrl: filesInfo.itemMaterialUrl,
-            fileName: filesInfo.fileName,
-            fileType: filesInfo.fileType
-          })
-          let urlArr = filesInfo.itemMaterialUrl.split('|')
-          let nameArr = filesInfo.fileName.split('|')
-          let fileList = []
-          for (let index of urlArr.keys()) {
-            if (index > 0) {
-              fileList.push({
-                'name': nameArr[index],
-                'url': urlArr[index]
-              })
+          };
+          let fileList = [];
+          if (this.itemPretrial.itemPretrialMaterialVoList && this.itemPretrial.itemPretrialMaterialVoList.length > 0) {
+            for (let filesInfo of this.itemPretrial.itemPretrialMaterialVoList) {
+              if (filesInfo.itemMaterialId === material.id) {
+                itemPretrialMaterial.itemMaterialUrl = filesInfo.itemMaterialUrl;
+                itemPretrialMaterial.fileName = filesInfo.fileName;
+                itemPretrialMaterial.fileType = filesInfo.fileType;
+
+                let urlArr = filesInfo.itemMaterialUrl.split('|')
+                let nameArr = filesInfo.fileName.split('|')
+                for (let index of urlArr.keys()) {
+                  if (index > 0) {
+                    fileList.push({
+                      'name': nameArr[index],
+                      'url': urlArr[index]
+                    })
+                  }
+                }
+                break;
+              }
             }
           }
-          this.uploadFileList.push(fileList)
+          this.uploadFileList.push(fileList);
+          itemPretrialMaterialList.push(itemPretrialMaterial);
         }
+        this.itemPretrial.itemPretrialMaterialVoList = itemPretrialMaterialList;
       },
       handleCheckAllChange(event) {
         this.checkedConditions = event.target.checked ? this.conditions : []

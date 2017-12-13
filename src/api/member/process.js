@@ -8,8 +8,8 @@ export function getMyProcessPage(page, rows, itemName, inStatus) {
   })
 }
 
-export function sendPostCode(pretrialNumber) {
-  const data = {pretrialNumber};
+export function sendPostCode(processNumber) {
+  const data = {processNumber};
   return fetch({
     url: '/api/zwfw-web/process/sendPostCode',
     method: 'post',

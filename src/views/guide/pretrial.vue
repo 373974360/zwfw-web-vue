@@ -9,15 +9,15 @@
         </div>
         <div class="msg-content">
           <p><!--<el-checkbox :indeterminate="indeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>-->
-          <b>办理该项业务，需满足以下申请条件才能进行业务的办理，请自检是否满足<!--，符合请打勾--></b></p>
+            <b>办理该项业务，需满足以下申请条件才能进行业务的办理，请自检是否满足<!--，符合请打勾--></b></p>
           <!--<el-checkbox-group v-model="checkedConditions">-->
-            <!--<p v-for="(condition, index) in conditions">
-              <el-checkbox :label="condition" @change="handleCheckOneChange">{{index + 1}}、{{condition.content}}</el-checkbox>
-            </p>-->
-            <!--<p v-for="(condition, index) in conditions">
-              &lt;!&ndash;<el-checkbox :label="condition" @change="handleCheckOneChange">{{index + 1}}、{{condition}}</el-checkbox>&ndash;&gt;
-              {{index + 1}}、{{condition}}
-            </p>-->
+          <!--<p v-for="(condition, index) in conditions">
+            <el-checkbox :label="condition" @change="handleCheckOneChange">{{index + 1}}、{{condition.content}}</el-checkbox>
+          </p>-->
+          <!--<p v-for="(condition, index) in conditions">
+            &lt;!&ndash;<el-checkbox :label="condition" @change="handleCheckOneChange">{{index + 1}}、{{condition}}</el-checkbox>&ndash;&gt;
+            {{index + 1}}、{{condition}}
+          </p>-->
           <p class="condition-item" v-html="this.item.acceptCondition"></p>
           <!--</el-checkbox-group>-->
         </div>
@@ -72,25 +72,37 @@
                 <th>通讯地址：</th><td colspan="3">{{member.legalPerson.registerPlace}}</td>
               </tr>
             </template>
-            <tr v-if="item.handleType == 'blxs_wsbl'">
+            <tr v-if="item.handleType == 'blxs_wsbl' || item.handleType == 'blxs_wsys'">
               <th>取件方式：</th>
-              <td colspan="3">
-                <el-radio class="radio" v-model="itemPretrial.takeType" label="1">大厅自取</el-radio>
-                <el-radio class="radio" v-model="itemPretrial.takeType" label="2">快递邮寄</el-radio>
+              <td colspan="3" >
+                <el-radio-group v-model="itemPretrial.takeTypeInfo.takeType">
+                  <el-radio v-for="item in enums['TakeType']" :key="item.code" :label="item.code">{{ item.value }}</el-radio>
+                </el-radio-group>
               </td>
             </tr>
           </table>
-          <table v-if="item.handleType == 'blxs_wsbl'" v-show="itemPretrial.takeType == 2">
+          <table v-if="item.handleType == 'blxs_wsbl' || item.handleType == 'blxs_wsys' " v-show="itemPretrial.takeTypeInfo.takeType == '2'">
+            <tr><td colspan="4" style="text-align: center">确认取件箱地址</td></tr>
+            <tr>
+              <th>取件箱地址：</th>
+              <td>
+                <el-select style="width: 100%" v-model="itemPretrial.takeTypeInfo.mailboxInfo.mailboxId" placeholder="请选择取件箱地址">
+                  <el-option v-for="item in mailboxes" :key="item.id" :value="item.id" :label="item.name"></el-option>
+                </el-select>
+              </td>
+            </tr>
+          </table>
+          <table v-if="item.handleType == 'blxs_wsbl' || item.handleType == 'blxs_wsys' " v-show="itemPretrial.takeTypeInfo.takeType == '3'">
             <tr><td colspan="4" style="text-align: center">确认邮寄信息</td></tr>
             <tr>
               <th>收件人姓名：</th>
-              <td><el-input type="text" v-model="itemPretrial.itemPostInfo.name"></el-input></td>
+              <td><el-input type="text" v-model="itemPretrial.takeTypeInfo.postInfo.name"></el-input></td>
               <th>收件人电话：</th>
-              <td><el-input type="text" v-model="itemPretrial.itemPostInfo.tellphone"></el-input></td>
+              <td><el-input type="text" v-model="itemPretrial.takeTypeInfo.postInfo.mobilephone"></el-input></td>
             </tr>
             <tr>
               <th>收件地址：</th>
-              <td colspan="3"><el-input type="text" v-model="itemPretrial.itemPostInfo.address"></el-input></td>
+              <td colspan="3"><el-input type="text" v-model="itemPretrial.takeTypeInfo.postInfo.address"></el-input></td>
             </tr>
           </table>
         </div>
@@ -143,7 +155,7 @@
   import { mapGetters } from 'vuex'
   import { copyProperties } from '../../utils'
   import { getItemDetail, /*getItemConditions,*/ getItemMaterials } from '../../api/item'
-  import { getPretrialInfo, submitPretrial } from '../../api/member/pretrial'
+  import { getPretrialInfo, submitPretrial, getMailboxes } from '../../api/member/pretrial'
   import { getDetailInfo } from '../../api/member/member'
 
   export default {
@@ -167,26 +179,36 @@
           id: '',
           memberId: '',
           itemId: '',
-          takeType: '1',
-          itemPostInfo: {
+          takeTypeInfo: {
             id: '',
-            pretrialId: '',
+            processNumber: '',
             memberId: '',
-            name: '',
-            mobilephone: '',
-            address: ''
+            takeType: 1,
+            mailboxInfo: {
+              id: '',
+              processNumber: '',
+              mailboxId: ''
+            },
+            postInfo: {
+              id: '',
+              processNumber: '',
+              name: '',
+              mobilephone: '',
+              address: ''
+            }
           },
           itemPretrialMaterialVoList: []
         },
         uploadUrl: this.$store.state.app.uploadUrl,
         acceptTypes: this.$store.state.app.fileAccepts,
         uploadFileList: [],
-        loading: false
+        loading: false,
+        mailboxes: []
       }
     },
     computed: {
       ...mapGetters([
-        'resourceUrl', 'id'
+        'id', 'enums'
       ])
     },
     created() {
@@ -201,6 +223,9 @@
       getDetailInfo().then(response => {
         this.member = response.data
       })
+      getMailboxes().then(response => {
+        this.mailboxes = response.data
+      })
     },
     methods: {
       init1() {
@@ -209,7 +234,7 @@
         this.initItemDetail()
         this.itemPretrial.memberId = this.id
         this.itemPretrial.itemId = this.itemId
-        this.itemPretrial.itemPostInfo.memberId = this.id
+        this.itemPretrial.takeTypeInfo.memberId = this.id
         this.notify1()
       },
       init2() {
@@ -220,7 +245,6 @@
             this.itemId = response.data.itemId
             this.initItemDetail()
             this.initMaterials()
-            this.initUploadFileList(response.data.itemPretrialMaterialVoList)
           } else {
             this.$message.error('初始化信息失败，请刷新页面！')
           }
@@ -238,11 +262,9 @@
       },*/
       initMaterials() {
         getItemMaterials(this.itemId).then(response => {
-          if (response.httpCode == 200) {
+          if (response.httpCode === 200) {
             this.materials = response.data
-            if (!this.pretrialId) {
-              this.initPretrialMaterials()
-            }
+            this.initPretrialMaterials()
           } else {
             this.$message.error('初始化信息失败，请刷新页面！')
           }
@@ -250,7 +272,7 @@
       },
       initItemDetail() {
         getItemDetail(this.itemId).then(response => {
-          if (response.httpCode == 200) {
+          if (response.httpCode === 200) {
             this.item = response.data
             this.conditions = this.$options.filters.splitLines(response.data.acceptCondition).split('<br>')
           } else {
@@ -259,39 +281,41 @@
         })
       },
       initPretrialMaterials() {
-        for (let val of this.materials) {
-          this.itemPretrial.itemPretrialMaterialVoList.push({
-            itemMaterialId: val.id,
-            itemMaterialName: val.name,
+        let itemPretrialMaterialList = [];
+        for (let material of this.materials) {
+          let itemPretrialMaterial = {
+            itemMaterialId: material.id,
+            itemMaterialName: material.name,
             itemMaterialUrl: '',
             fileName: '',
             fileType: ''
-          })
-        }
-      },
-      initUploadFileList(itemPretrialMaterialVoList) {
-        this.itemPretrial.itemPretrialMaterialVoList = []
-        for (let filesInfo of itemPretrialMaterialVoList) {
-          this.itemPretrial.itemPretrialMaterialVoList.push({
-            itemMaterialId: filesInfo.itemMaterialId,
-            itemMaterialName: filesInfo.itemMaterialName,
-            itemMaterialUrl: filesInfo.itemMaterialUrl,
-            fileName: filesInfo.fileName,
-            fileType: filesInfo.fileType
-          })
-          let urlArr = filesInfo.itemMaterialUrl.split('|')
-          let nameArr = filesInfo.fileName.split('|')
-          let fileList = []
-          for (let index of urlArr.keys()) {
-            if (index > 0) {
-              fileList.push({
-                'name': nameArr[index],
-                'url': urlArr[index]
-              })
+          };
+          let fileList = [];
+          if (this.itemPretrial.itemPretrialMaterialVoList && this.itemPretrial.itemPretrialMaterialVoList.length > 0) {
+            for (let filesInfo of this.itemPretrial.itemPretrialMaterialVoList) {
+              if (filesInfo.itemMaterialId === material.id) {
+                itemPretrialMaterial.itemMaterialUrl = filesInfo.itemMaterialUrl;
+                itemPretrialMaterial.fileName = filesInfo.fileName;
+                itemPretrialMaterial.fileType = filesInfo.fileType;
+
+                let urlArr = filesInfo.itemMaterialUrl.split('|')
+                let nameArr = filesInfo.fileName.split('|')
+                for (let index of urlArr.keys()) {
+                  if (index > 0) {
+                    fileList.push({
+                      'name': nameArr[index],
+                      'url': urlArr[index]
+                    })
+                  }
+                }
+                break;
+              }
             }
           }
-          this.uploadFileList.push(fileList)
+          this.uploadFileList.push(fileList);
+          itemPretrialMaterialList.push(itemPretrialMaterial);
         }
+        this.itemPretrial.itemPretrialMaterialVoList = itemPretrialMaterialList;
       },
       handleCheckAllChange(event) {
         this.checkedConditions = event.target.checked ? this.conditions : []
@@ -341,11 +365,23 @@
       },
       handleSubmit() {
         this.loading = true
+        if(!this.itemPretrial.takeTypeInfo.takeType) {
+          this.$message.warning('请选择取件方式')
+          this.loading = false
+          return
+        }
+        if (this.itemPretrial.takeTypeInfo.takeType === 2
+          && (!this.itemPretrial.takeTypeInfo.mailboxInfo.mailboxId
+          )) {
+          this.$message.warning('请选择取件箱地址')
+          this.loading = false
+          return
+        }
         //若在线办理且需要邮寄，判断收件信息是否填写
-        if (this.item.onlineHandleMode == 2 && this.itemPretrial.takeType == 2
-          && (!this.itemPretrial.itemPostInfo.name
-            || !this.itemPretrial.itemPostInfo.mobilephone
-            || !this.itemPretrial.itemPostInfo.address)) {
+        if (this.itemPretrial.takeTypeInfo.takeType === 3
+          && (!this.itemPretrial.takeTypeInfo.postInfo.name
+            || !this.itemPretrial.takeTypeInfo.postInfo.mobilephone
+            || !this.itemPretrial.takeTypeInfo.postInfo.address)) {
           this.$message.warning('请完善收件信息')
           this.loading = false
           return

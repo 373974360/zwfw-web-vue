@@ -24,3 +24,10 @@ export function getPretrialPage(page, rows, itemName, inStatus) {
     params: {page, rows, itemName, inStatus}
   })
 }
+
+export function getMailboxes() {
+  return fetch({
+    url: '/api/zwfw-web/mailbox/getAll',
+    method: 'get'
+  })
+}

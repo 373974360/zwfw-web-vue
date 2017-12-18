@@ -157,11 +157,9 @@
   import { getItemDetail, /*getItemConditions,*/ getItemMaterials } from '../../api/item'
   import { getPretrialInfo, submitPretrial, getMailboxes } from '../../api/member/pretrial'
   import { getDetailInfo } from '../../api/member/member'
-  import ElOption from "../../../node_modules/element-ui/packages/select/src/option.vue";
 
   export default {
     components: {
-      ElOption,
       FileUpload
     },
     data() {
@@ -186,28 +184,17 @@
             processNumber: '',
             memberId: '',
             takeType: 1,
-            flagTakeCert: '',
-            takeCertTime: '',
             mailboxInfo: {
               id: '',
               processNumber: '',
-              memberId: '',
-              mailboxId: '',
-              status: '',
-              resvOrderNo: '',
-              boxNo: '',
-              resvCode: '',
-              openCode: ''
+              mailboxId: ''
             },
             postInfo: {
               id: '',
-              pretrialId: '',
-              memberId: '',
+              processNumber: '',
               name: '',
               mobilephone: '',
-              address: '',
-              expressCompany: '',
-              expressNumber: ''
+              address: ''
             }
           },
           itemPretrialMaterialVoList: []

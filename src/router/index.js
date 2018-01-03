@@ -11,6 +11,7 @@ Vue.use(Router)
 export const constantRouterMap = [
   { path: '/login', component: _import('login/index'), hidden: true },
   { path: '/404', component: _import('errorPage/404'), hidden: true },
+  { path: '/guide/detail/print/:itemId', component: _import('guide/print'), hidden: true},
   {
     path: '/',
     component: Layout,

@@ -45,6 +45,10 @@
           <div class="svg-container"><icon-svg iconClass="collect"/></div>
           <p>我要收藏</p>
         </el-button>
+        <el-button type="primary" @click="linkToPrintPage">
+          <div class="svg-container"><icon-svg iconClass="print"/></div>
+          <p>打印指南</p>
+        </el-button>
       </div>
     </el-col>
     <el-col :span="20">
@@ -101,9 +105,9 @@
               <el-table-column prop="form" label="材料形式" min-width="160" align="center"></el-table-column>
               <el-table-column v-if="basicInfo.handleType == 'blxs_wsbl'" prop="pretrialDescription" label="网上预审环节"
                                min-width="160" align="center"></el-table-column>-->
-              <el-table-column prop="paperDescription" label="纸质材料说明" min-width="180" align="center"></el-table-column>
-              <el-table-column prop="acceptStandard" label="受理标准" min-width="150" align="center"></el-table-column>
-              <el-table-column prop="notice" label="填表须知" min-width="150" align="center"></el-table-column>
+              <el-table-column prop="type" :formatter="formatType" label="材料类型" min-width="150" align="center"></el-table-column>
+              <el-table-column prop="paperDescription" label="纸质材料份数和规格" min-width="180" align="center"></el-table-column>
+              <el-table-column prop="electronicMaterial" :formatter="formatBoolean" label="是否需要电子材料" min-width="150" align="center"></el-table-column>
             </el-table>
           </div>
         </div>
@@ -134,6 +138,7 @@
 
 <script>
   import { mapGetters } from 'vuex'
+  import { enums, dicts } from '../../filters'
   import { getItemDetail, /*getItemConditions,*/ getItemMaterials, getItemPreorderConfig } from '../../api/item'
   import { getAllFavorites, addFavorite, delFavorite } from '../../api/member/favorite'
 
@@ -191,6 +196,12 @@
       }
     },
     methods: {
+      formatType(row, column, cellValue) {
+        return dicts(cellValue, 'cllx');
+      },
+      formatBoolean(row, column, cellValue) {
+        return enums(cellValue, 'YesNo');
+      },
       isFavorite() {
         if (this.token) {
           for (let favorite of this.favoriteList) {
@@ -233,6 +244,9 @@
       },
       linkToPreorder() {
         this.$router.push({path: `/guide/preorder/${this.itemId}`})
+      },
+      linkToPrintPage() {
+        this.$router.push({path: `/guide/detail/print/${this.itemId}`})
       }
     }
   }

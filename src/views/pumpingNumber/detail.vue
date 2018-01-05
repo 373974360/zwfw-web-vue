@@ -6,7 +6,7 @@
           <p class="p1">事项类型</p>
           <p class="p2">行政审批</p>
           <p class="p1">办理主体</p>
-          <p class="p2">{{basicInfo.implAgency}}</p>
+          <p class="p2">{{basicInfo.implAgencyDepartmentName}}</p>
           <p class="p1">办理类型</p>
           <p class="p2">{{basicInfo.processType | dicts('bjlx')}}</p>
         </div>

@@ -22,7 +22,7 @@
                 <router-link :to="{path: `/pumpingNumber/detail/${item.id}`}">{{item.name}}</router-link>
               </p>
               <p class="p2">
-                办理机构：{{item.implAgency}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;咨询电话：{{item.askPhone}}
+                办理机构：{{item.implAgencyDepartmentName}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;咨询电话：{{item.askPhone}}
               </p>
             </div>
           </li>
@@ -64,11 +64,11 @@
     },
     computed: {
       ...mapGetters([
-        'token', 'deptCategoryId'
+        'token', 'keshiCategoryId'
       ])
     },
     created() {
-      getItemCategory(this.deptCategoryId).then(response => {
+      getItemCategory(this.keshiCategoryId).then(response => {
         this.deptList = response.data
         this.loadItemList(response.data[0].id)
       })

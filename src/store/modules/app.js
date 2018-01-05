@@ -11,6 +11,7 @@ const app = {
     dicts: [],
     deptCategoryId: 7308629892401152,
     // deptCategoryId: 1,
+    keshiCategoryId: 7344364064835072,
     resourceUrl: 'http://zwfw.itl.gov.cn:8080',
     uploadUrl: `${process.env.BASE_API}/api/common/upload`,
     imageAccepts: 'image/jpg, image/jpeg, image/png, image/bmp, image/gif',

@@ -8,7 +8,8 @@ const getters = {
   enums: state => state.app.enums,
   dicts: state => state.app.dicts,
   deptCategoryId: state => state.app.deptCategoryId,
-  resourceUrl: state => state.app.resourceUrl
+  resourceUrl: state => state.app.resourceUrl,
+  keshiCategoryId: state => state.app.keshiCategoryId
 }
 
 export default getters

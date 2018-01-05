@@ -51,6 +51,16 @@ export const constantRouterMap = [
       {path: 'changePw', component: _import('member/changePw'), name: '修改密码'}
     ]
   },
+  {
+    path: '/pumpingNumber',
+    component: Layout,
+    redirect: '/pumpingNumber/index',
+    name: '抽号',
+    children: [
+      {path: 'index', component: _import('pumpingNumber/index')},
+      {path: 'detail/:itemId', component: _import('pumpingNumber/detail'), name: '详细'}
+    ]
+  },
   { path: '*', redirect: '/404', hidden: true }
 ]
 

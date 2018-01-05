@@ -3,10 +3,12 @@ import store from './store'
 import { getToken } from "./utils/auth"
 
 const whiteList = [
-  '/login', '/register', '/retrieve', '/guide/index', '/fta', '/once'
+  '/login', '/register', '/retrieve', '/guide/index', '/fta', '/once', '/pumpingNumber/index'
 ]
 
 const whitePath = '/guide/detail'
+
+const pumpingNumberDetailPath = '/pumpingNumber/detail'
 
 router.beforeEach((to, from, next) => {
   if (store.getters.enums.length === 0) {
@@ -30,7 +32,7 @@ router.beforeEach((to, from, next) => {
       }
     }
   } else {
-    if (whiteList.includes(to.path) || to.path.startsWith(whitePath)) {
+    if (whiteList.includes(to.path) || to.path.startsWith(whitePath) || to.path.startsWith(pumpingNumberDetailPath)) {
       next()
     } else {
       next('/login')

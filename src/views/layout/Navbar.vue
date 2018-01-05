@@ -15,6 +15,9 @@
         <el-menu-item index="/guide">
           <span>办事指南</span>
         </el-menu-item>
+        <el-menu-item index="/pumpingNumber">
+          <span>办事抽号</span>
+        </el-menu-item>
         <!--<el-menu-item index="/guide">
           <span>办事大厅</span>
         </el-menu-item>-->

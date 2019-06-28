@@ -12,15 +12,15 @@
         <el-menu-item index="/fta">
           <span>自贸区一站式服务</span>
         </el-menu-item>
-        <el-menu-item index="/guide">
+        <!--<el-menu-item index="/guide">
           <span>办事指南</span>
-        </el-menu-item>
+        </el-menu-item>-->
         <el-menu-item index="/guide">
           <span>办事大厅</span>
         </el-menu-item>
-        <el-menu-item index="/guide">
+        <!--<el-menu-item index="/guide">
           <span>云服务</span>
-        </el-menu-item>
+        </el-menu-item>-->
         <el-menu-item index="/member">
           <span>我要查</span>
         </el-menu-item>

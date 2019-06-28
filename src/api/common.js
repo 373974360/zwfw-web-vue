@@ -2,14 +2,14 @@ import fetch from "../utils/fetch"
 
 export function getEnums() {
   return fetch({
-    url: '/api/common/enums',
+    url: '/manage/common/getEnums',
     method: 'get'
   });
 }
 
 export function getDicts() {
   return fetch({
-    url: '/api/common/dics',
+    url: '/manage/common/getDictionaries',
     method: 'get'
   });
 }

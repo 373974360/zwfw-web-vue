@@ -90,7 +90,7 @@
           verifyCode: [
             {required: true, message: '验证码不能为空', trigger: 'blur'},
             {min: 4, max: 4, message: '验证码为4位', trigger: 'blur'},
-            {validator: validateCaptcha, trigger: 'blur'}
+            //{validator: validateCaptcha, trigger: 'blur'}
           ]
         },
         imgUrl: '',
@@ -99,7 +99,7 @@
     },
     methods: {
       handleLogin() {
-        this.$refs.loginForm.validate(valid => {
+        /*this.$refs.loginForm.validate(valid => {
           if (valid) {
             this.loading = true
             this.$store.dispatch('DoLogin', this.loginForm).then(() => {
@@ -113,11 +113,17 @@
               this.changeVerifyCode();
             })
           }
-        })
+        })*/
+        // window.location.href= 'http://zwfw.xa.gov.cn/zdpyc/sso/login'
+        // window.location.href= 'http://sfrz.shaanxi.gov.cn/sysauthserver/authorize?response_type=code&client_id=000000047&redirect_uri=http://www.chengshengming.com:9001'
+        // window.location.href= 'http://zwfw.xa.gov.cn/zdpyc/sso/login?service=http://www.chengshengming.com:9001/#/member/index'
+        // this.$router.push({path: '/member'})
+        // window.location.href = 'http://localhost:8765/web/api/sso/getMemberProfile'
+        window.location.href = 'http://localhost:8765/web/api/sso/login'
       },
       changeVerifyCode() {
         this.loginForm.random = Math.random();
-        this.imgUrl = process.env.BASE_API + '/api/common/getVerifyCode?random=' + this.loginForm.random
+        this.imgUrl = process.env.BASE_API + '/manage/common/getVerifyCode?random=' + this.loginForm.random
       }
     },
     created() {

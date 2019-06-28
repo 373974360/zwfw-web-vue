@@ -19,10 +19,15 @@
           <li v-for="item in itemList">
             <div class="itemContent">
               <p class="p1">
-                <router-link :to="{path: `/guide/detail/${item.id}`}">{{item.name}}</router-link>
+                <span v-if="item.remoteEnable == 1">
+                  <a :href="'http://zwfw.xa.gov.cn/zdpyc/portal/#/home/home-procceeds-list?areaCode=610155000000&searchName=' + item.name">{{item.name}}</a>
+                </span>
+                <span v-else>
+                  <router-link :to="{path: `/guide/detail/${item.id}`}">{{item.name}}</router-link>
+                </span>
               </p>
               <p class="p2">
-                办理机构：{{item.implAgency}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;咨询电话：{{item.askPhone}}
+                办理机构：{{item.dealDeptName}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;咨询电话：{{item.askTel}}
               </p>
               <p class="p3">
                 <el-button v-if="isFavorite(item.id)" type="primary" @click="removeFavorite(item.id)">取消收藏</el-button>
@@ -91,8 +96,8 @@
       },
       loadPage() {
         getItemPageByCategories(this.page, this.pageSize, this.currentDeptId).then(response => {
-          this.itemList = response.data.list
-          this.total = response.data.total
+          this.itemList = response.data.records;
+          this.total = response.data.total;
         })
       },
       handleSizeChange(pageSize) {

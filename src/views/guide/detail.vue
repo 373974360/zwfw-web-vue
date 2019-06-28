@@ -6,26 +6,26 @@
           <p class="p1">事项类型</p>
           <p class="p2">行政审批</p>
           <p class="p1">办理主体</p>
-          <p class="p2">{{basicInfo.implAgency}}</p>
+          <p class="p2">{{basicInfo.dealDeptName}}</p>
           <p class="p1">办理类型</p>
-          <p class="p2">{{basicInfo.processType | dicts('bjlx')}}</p>
+          <p class="p2">{{basicInfo.itemType | enums('ItemTypeEnum')}}</p>
         </div>
-        <el-button type="primary" :disabled="basicInfo.handleType == 'blxs_ckbl'" @click="linkToPretrial">
+        <el-button type="primary" @click="linkToPretrial">
           <div class="svg-container"><icon-svg iconClass="online"/></div>
-          <p>{{basicInfo.handleType | dicts('blxs')}}</p>
+          <p>在线预审</p>
         </el-button>
-        <el-button type="primary" :disabled="!basicInfo.orderable" @click="linkToPreorder">
+        <!--<el-button type="primary" :disabled="!basicInfo.orderable" @click="linkToPreorder">
           <div class="svg-container"><icon-svg iconClass="online"/></div>
           <p v-if="basicInfo.orderable">现在预约</p>
           <p v-else>不支持预约</p>
-        </el-button>
+        </el-button>-->
         <el-button type="primary" @click="exampleShow = !exampleShow">
           <div class="svg-container"><icon-svg iconClass="list"/></div>
           <p>样表查询</p>
         </el-button>
         <div class="downloadList" v-show="exampleShow">
             <p v-for="(material, index) in exampleMaterials">
-              <a :href="material.example" :download="material.name">{{index + 1}}、{{material.name}}</a>
+              <a :href="'/manage/common/download?filePath=' + material.materialsFileUrl" :download="material.materialsName">{{index + 1}}. {{material.materialsName}}</a>
             </p>
         </div>
         <el-button type="primary" @click="originalShow = !originalShow">
@@ -34,7 +34,7 @@
         </el-button>
         <div class="downloadList" v-show="originalShow">
             <p v-for="(material, index) in originalMaterials">
-              <a :href="material.eform" :download="material.name">{{index + 1}}、{{material.name}}</a>
+              <a :href="'/manage/common/download?filePath=' + material.materialsEmptyUrl" :download="material.materialsName">{{index + 1}}. {{material.materialsName}}</a>
             </p>
         </div>
         <el-button v-if="isFavorite()" type="primary" @click="removeFavorite">
@@ -53,29 +53,29 @@
         <div class="table-container">
           <table>
             <tr>
-              <th>联办机构</th><td>{{basicInfo.unionAgency}}</td>
-              <th>通办范围</th><td>{{basicInfo.handleScope | dicts('tbfw')}}</td></tr>
+              <th>联办机构</th><td>{{basicInfo.unionOrgName}}</td>
+              <th>通办范围</th><td>{{basicInfo.generalRange | enums('GeneralRangeEnum')}}</td></tr>
             <tr>
-              <th>承诺期限</th><td>{{basicInfo.promiseEndTime}} 个工作日</td>
-              <th>法定期限</th><td>{{basicInfo.legalEndTime}} 个工作日</td>
+              <th>承诺期限</th><td>{{basicInfo.promiseComptime}}</td>
+              <th>法定期限</th><td>{{basicInfo.lawComptime}}</td>
             </tr>
             <tr>
               <th>办理时间</th><td>法定工作日 上午9:00-12:00 下午14:00-17:00</td>
-              <th>咨询电话</th><td>{{basicInfo.askPhone}}</td>
+              <th>咨询电话</th><td>{{basicInfo.askTel}}</td>
             </tr>
             <tr>
-              <th>办理地点</th><td>{{basicInfo.handlePlace}}</td>
-              <th>监督电话</th><td>{{basicInfo.supervisePhone}}</td>
+              <th>办理地点</th><td>{{basicInfo.acceptPlace}}</td>
+              <th>监督电话</th><td>{{basicInfo.superviseTel}}</td>
             </tr>
             <tr>
               <th>办理结果</th><td>{{basicInfo.resultName}}</td>
-              <th>数量限制</th><td>{{basicInfo.numberLimit == 0 ? '不限' : basicInfo.numberLimit}}</td>
+              <th>数量限制</th><td>{{basicInfo.numLimit == null ? '不限' : basicInfo.numLimit}}</td>
             </tr>
           </table>
         </div>
-        <div class="message" v-show="basicInfo.setBasis">
+        <div class="message" v-show="basicInfo.legalBasis">
           <span class="msg-label">办理依据</span>
-          <div class="msg-content" v-html="$options.filters.splitLines(basicInfo.setBasis)"></div>
+          <div class="msg-content" v-html="$options.filters.splitLines(basicInfo.legalBasis)"></div>
         </div>
         <!--<div class="message" v-cloak v-show="conditions.length">
           <span>办理条件</span>
@@ -95,17 +95,25 @@
           <span class="msg-label">提交材料</span>
           <div class="msg-content">
             <el-table :data="materials" border>
-              <el-table-column type="index" label="序号" width="80" align="center"></el-table-column>
-              <el-table-column prop="name" label="材料名称" min-width="320" align="center"></el-table-column>
+              <el-table-column type="index" label="序号" width="70" align="center"></el-table-column>
+              <el-table-column prop="materialsName" label="材料名称" min-width="120" align="center"></el-table-column>
+              <el-table-column prop="materialsFrom" label="材料来源" min-width="100" align="center"></el-table-column>
+              <el-table-column prop="materialsTypeName" label="材料类型" min-width="100" align="center"></el-table-column>
+              <el-table-column prop="materialsSubTypeName" label="材料子类型" min-width="120" align="center"></el-table-column>
+              <el-table-column prop="copySpecialRequirements" label="复印件特殊要求" min-width="140" align="center"></el-table-column>
               <!--<el-table-column prop="number" label="份数" min-width="80" align="center"></el-table-column>
               <el-table-column prop="form" label="材料形式" min-width="160" align="center"></el-table-column>
               <el-table-column v-if="basicInfo.handleType == 'blxs_wsbl'" prop="pretrialDescription" label="网上预审环节"
-                               min-width="160" align="center"></el-table-column>-->
+                               min-width="160" align="center"></el-table-column>
               <el-table-column prop="paperDescription" label="纸质材料说明" min-width="180" align="center"></el-table-column>
-              <el-table-column prop="acceptStandard" label="受理标准" min-width="150" align="center"></el-table-column>
-              <el-table-column prop="notice" label="填表须知" min-width="150" align="center"></el-table-column>
+              <el-table-column prop="acceptStandard" label="受理标准" min-width="150" align="center"></el-table-column>-->
+              <el-table-column prop="materialsWarn" label="填表须知" min-width="120" align="center"></el-table-column>
+              <el-table-column prop="materialsNum" label="纸质材料数量" min-width="120" align="center"></el-table-column>
             </el-table>
           </div>
+        </div>
+        <div class="materials-item" >
+
         </div>
         <div class="message" v-show="materials.length">
           <span class="msg-label">注意事项</span>
@@ -114,10 +122,10 @@
               2、网上预审环节中标★的，为必要材料，没有★标记的，为网上预审非必须材料。</p>
           </div>
         </div>
-        <div class="message" v-show="basicInfo.workflowDescription">
+        <div class="message" v-show="basicInfo.handleWorkflow">
           <span class="msg-label">办理流程</span>
           <div class="msg-content">
-            <div v-html="basicInfo.workflowDescription"></div>
+            <a :href="basicInfo.handleWorkflow" target="_blank">{{basicInfo.handleWorkflow}}</a>
           </div>
         </div>
         <div class="message" v-show="basicInfo.chargeStandard || basicInfo.chargeBasis">
@@ -149,7 +157,9 @@
         favoriteList: [],
         exampleShow: false,
         originalShow: false,
-        id: undefined
+        id: undefined,
+        uploadUrl: this.$store.state.app.uploadUrl,
+        acceptTypes: this.$store.state.app.fileAccepts,
       }
     },
     computed: {
@@ -172,11 +182,11 @@
         let exampleIndex = 0;
         let exampleMaterials = [];
         for (let i = 0; i < response.data.length; i++) {
-          if (response.data[i].example) {
+          if (response.data[i].materialsFileUrl) {
             exampleMaterials[exampleIndex] = response.data[i];
             exampleIndex++;
           }
-          if (response.data[i].eform) {
+          if (response.data[i].materialsEmptyUrl) {
             originalMaterials[originalIndex] = response.data[i];
             originalIndex++;
           }
@@ -230,6 +240,7 @@
       },
       linkToPretrial() {
         this.$router.push({path: `/guide/pretrial/itemId/${this.itemId}`})
+        // window.location.href = 'http://localhost:8765/web/api/sso/login?url=/guide/pretrial/itemId/' + this.itemId
       },
       linkToPreorder() {
         this.$router.push({path: `/guide/preorder/${this.itemId}`})
@@ -354,6 +365,7 @@
             color: #ff0000;
             white-space: pre-line;
           }
+          a { text-decoration: underline blue; color: blue }
         }
       }
     }

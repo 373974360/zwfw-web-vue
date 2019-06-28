@@ -6,16 +6,24 @@
     <div class="data-bg">
       <div class="data-tool">
         <div class="search-container">
-          <el-input type="text" v-model="keywords" placeholder="请输入办件名称进行检索" @keyup.enter.native="reloadPage"></el-input>
-          <el-button typ="primary" size="small" @click="reloadPage">检&nbsp;&nbsp;索</el-button>
+          <el-input type="text" v-model="itemName" placeholder="请输入事项名称进行检索" @keyup.enter.native="reloadPage"></el-input>
+          <el-button type="primary" size="small" @click="reloadPage">检&nbsp;&nbsp;索</el-button>
+          <el-button type="primary" size="small" @click="resetSearch">清&nbsp;&nbsp;空</el-button>
         </div>
-        <div class="checkbox-container">
-          <el-checkbox-group v-model="checkList" @change="reloadPage">
-            <el-checkbox v-for="status in enums['PretrialStatus']" :key="status.code" :label="status.var">{{status.value}}</el-checkbox>
-          </el-checkbox-group>
+        <div class="search-container" style="margin-right: 10px">
+          <!--<el-checkbox-group v-model="status" @change="reloadPage">
+            <el-checkbox v-for="status in enums['PreauditStatusEnum']" :key="status.code" :label="status.var">{{status.value}}</el-checkbox>
+          </el-checkbox-group>-->
+          <el-select v-model="status" placeholder="预审状态">
+            <el-option
+              v-for = "o in enums['PreauditStatusEnum']"
+              :label="o.value"
+              :value="o.code">
+            </el-option>
+          </el-select>
         </div>
       </div>
-      <pretrial-table :data="pretrialData"></pretrial-table>
+      <pretrial-table :data="preauditRecordList"></pretrial-table>
       <div class="page-container">
         <el-pagination
           @size-change="handleSizeChange"
@@ -34,6 +42,7 @@
 <script>
   import { PretrialTable } from './table'
   import { mapGetters } from 'vuex'
+  import { getMemberProfile } from '../../api/member/member'
   import { getPretrialPage } from '../../api/member/pretrial'
 
   export default {
@@ -42,9 +51,10 @@
     },
     data() {
       return {
-        keywords: '',
-        checkList: [],
-        pretrialData: [],
+        itemName: undefined,
+        memberId: undefined,
+        status: undefined,
+        preauditRecordList: [],
         page: this.$store.state.app.page,
         pageSize: this.$store.state.app.rows,
         pageSizes: this.$store.state.app.pageSize,
@@ -53,18 +63,43 @@
     },
     computed: {
       ...mapGetters([
-        'enums'
+        'id','enums'
       ])
     },
     created() {
-      this.loadPage()
+      this.init()
     },
     methods: {
+      resetSearch(){
+        this.page = this.$store.state.app.page,
+        this.pageSize = this.$store.state.app.rows,
+        this.itemName = undefined,
+        this.status = undefined
+      },
+      init() {
+        getMemberProfile().then(response => {
+          if (response.status == 200) {
+            this.memberId = response.data.infoInformation.userId;
+            this.loadPage()
+          } else {
+            this.$message.error('数据加载失败')
+          }
+        }).catch(error => {
+          this.$message.error('未登录，请重新登录！')
+          setTimeout(function () {
+            window.location.href = 'http://localhost:8765/web/api/sso/login?url=/member/pretrial'
+          }, 1000);
+        })
+      },
       loadPage() {
-        getPretrialPage(this.page, this.pageSize, this.keywords, this.checkList.join()).then(response => {
-          if (response.httpCode == 200) {
-            this.pretrialData = response.data.list
-            this.total = response.data.total
+        //this.memberId = this.id
+        this.preauditRecordList = [];
+        getPretrialPage(this.page, this.pageSize, this.itemName, this.status, this.memberId).then(response => {
+          if (response.status == 200) {
+            this.preauditRecordList = response.data.records;
+            this.total = response.data.total;
+          } else {
+            this.$message.error('数据加载失败')
           }
         })
       },

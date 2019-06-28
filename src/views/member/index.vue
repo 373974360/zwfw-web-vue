@@ -72,9 +72,10 @@
 <script>
   import { ProcessTable, PretrialTable, CollectionTable } from './table'
   import { mapGetters } from 'vuex'
-  import { getMyItem, getPhoneVerifyCodeLogged, validateMemberInfo } from '../../api/member/member'
+  import { getMemberProfile, getPhoneVerifyCodeLogged, validateMemberInfo } from '../../api/member/member'
   import { getMyProcessPage, sendPostCode } from '../../api/member/process'
   import { delFavorite } from '../../api/member/favorite'
+  import { getPretrialPage } from '../../api/member/pretrial'
 
   export default {
     components: {
@@ -82,6 +83,7 @@
     },
     data() {
       return {
+        memberId: undefined,
         pretrialData: [],
         collectionData: [],
         processData: [],
@@ -117,14 +119,23 @@
     },
     methods: {
       init() {
-        getMyItem(this.id).then(response => {
-          if (response.httpCode == 200) {
-            this.pretrialData = response.data.pretrialList
-            this.collectionData = response.data.favoriteList
-            this.processData = response.data.processList
+        getMemberProfile().then(response => {
+          if (response.status == 200) {
+            this.memberId = response.data.infoInformation.userId;
+            getPretrialPage(1, 5, null, null, this.memberId).then(response => {
+              this.pretrialData = response.data.records;
+            })
+            // this.pretrialData = response.data.pretrialList
+            // this.collectionData = response.data.favoriteList
+            // this.processData = response.data.processList
           } else {
             this.$message.error('数据加载失败')
           }
+        }).catch(error => {
+          this.$message.error('未登录，请重新登录！')
+          setTimeout(function () {
+            window.location.href = 'http://localhost:8765/web/api/sso/login'
+          }, 1000);
         })
       },
       changeTakeType(row) {},

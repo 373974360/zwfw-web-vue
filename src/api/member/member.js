@@ -1,5 +1,15 @@
 import fetch from '../../utils/fetch'
 
+export function getMemberProfile() {
+  return fetch({
+    url: '/web/api/sso/getMemberProfile',
+    method: 'get'
+  })
+}
+
+
+
+
 export function getMyProfile() {
   return fetch({
     url: '/api/zwfw-web/member/getDetailInfo',

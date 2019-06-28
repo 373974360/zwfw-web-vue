@@ -9,9 +9,10 @@ const app = {
     gender: { male: 1, female: 0 },
     enums: [],
     dicts: [],
-    deptCategoryId: 1,
+    deptCategoryId: 0,
     resourceUrl: 'http://zwfw.itl.gov.cn:8080',
-    uploadUrl: `${process.env.BASE_API}/api/common/upload`,
+    //uploadUrl: `${process.env.BASE_API}/api/common/upload`,
+    uploadUrl: `/manage/common/upload`,
     imageAccepts: 'image/jpg, image/jpeg, image/png, image/bmp, image/gif',
     fileAccepts: 'image/jpg,image/jpeg,image/png,image/bmp,image/gif,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/pdf,text/plain,application/zip,application/rar',
     tokenErrorMsg: [
@@ -31,8 +32,8 @@ const app = {
     SetEnums({commit}) {
       return new Promise((resolve, reject) => {
         getEnums().then(response => {
-          if (response.httpCode !== 200) {
-            reject(response.msg);
+          if (response.status !== 200) {
+            reject(response.message);
           } else {
             const enums = {};
             const result = response.data;
@@ -50,8 +51,8 @@ const app = {
     SetDicts({commit}) {
       return new Promise((resolve, reject) => {
         getDicts().then(response => {
-          if (response.httpCode !== 200) {
-            reject(response.msg);
+          if (response.status !== 200) {
+            reject(response.message);
           } else {
             let dicts = {};
             let result = response.data;

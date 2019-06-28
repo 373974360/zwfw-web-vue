@@ -29,7 +29,7 @@
           </div>
         </div>
         <div class="msg-content">
-          <p class="material-item" v-for="(material, index) in materials">{{index + 1}}、{{material.name}}</p>
+          <p class="material-item" v-for="(material, index) in materials">{{index + 1}}. {{material.materialsName}}</p>
         </div>
       </div>
       <p class="remind">注：本人对办理该事项所提交的材料实质内容的真实性负责。</p>
@@ -72,16 +72,16 @@
                 <th>通讯地址：</th><td colspan="3">{{member.legalPerson.registerPlace}}</td>
               </tr>
             </template>
-            <tr v-if="item.handleType == 'blxs_wsbl' || item.handleType == 'blxs_wsys'">
+            <!--<tr v-if="item.handleType == 'blxs_wsbl' || item.handleType == 'blxs_wsys'">
               <th>取件方式：</th>
               <td colspan="3" >
                 <el-radio-group v-model="itemPretrial.takeTypeInfo.takeType">
                   <el-radio v-for="item in enums['TakeType']" :key="item.code" :label="item.code">{{ item.value }}</el-radio>
                 </el-radio-group>
               </td>
-            </tr>
+            </tr>-->
           </table>
-          <table v-if="item.handleType == 'blxs_wsbl' || item.handleType == 'blxs_wsys' " v-show="itemPretrial.takeTypeInfo.takeType == '2'">
+          <!--<table v-if="item.handleType == 'blxs_wsbl' || item.handleType == 'blxs_wsys' " v-show="itemPretrial.takeTypeInfo.takeType == '2'">
             <tr><td colspan="4" style="text-align: center">确认取件箱地址</td></tr>
             <tr>
               <th>取件箱地址：</th>
@@ -104,7 +104,7 @@
               <th>收件地址：</th>
               <td colspan="3"><el-input type="text" v-model="itemPretrial.takeTypeInfo.postInfo.address"></el-input></td>
             </tr>
-          </table>
+          </table>-->
         </div>
       </div>
       <div class="message">
@@ -117,24 +117,25 @@
           <div class="materials-item" v-for="(material, index) in materials">
             <p>
               <span>材料名称：</span>
-              <icon-svg iconClass="star_fill" v-if="material.electronicMaterial"></icon-svg>
-              <icon-svg iconClass="star" v-else></icon-svg>
-              {{material.name}}
-              <a v-if="material.eform" :href="material.eform" :download="material.name" :title="material.name">（点击下载）</a>
+              <!--<icon-svg iconClass="star_fill" v-if="material.electronicMaterial"></icon-svg>
+              <icon-svg iconClass="star" v-else></icon-svg>-->
+              <icon-svg iconClass="star_fill"></icon-svg>
+              {{material.materialsName}}
+              <a v-if="material.materialsEmptyUrl" :href="'/manage/common/download?filePath=' + material.materialsEmptyUrl" :download="material.materialsName" :title="material.materialsName">（点击下载）</a>
             </p>
             <p>
               <!--<template v-if="material.form"><span>材料形式：</span>{{material.form}}</template>&nbsp;&nbsp;&nbsp;
               <template v-if="material.number"><span>需要份数：</span>{{material.number}}</template>&nbsp;&nbsp;&nbsp;
-              <template v-if="material.pretrialDescription"><span>上传说明：</span>{{material.pretrialDescription}}</template>-->
-              <template v-if="material.paperDescription"><span>材料说明：</span>{{material.paperDescription}}</template>
+              <template v-if="material.pretrialDescription"><span>上传说明：</span>{{material.pretrialDescription}}</template>
+              <template v-if="material.paperDescription"><span>材料说明：</span>{{material.paperDescription}}</template>-->
             </p>
             <!--<p v-if="material.detailRequirement">
               <span>详细要求：</span>{{material.detailRequirement}}
             </p>-->
             <p>
-              <file-upload :ref='"upload"+index' name="uploadFile" :accept="acceptTypes" :action="uploadUrl" :multiple="true"
+              <file-upload :ref='"upload"+index' name="file" :accept="acceptTypes" :action="uploadUrl" :multiple="true"
                            :auto-upload="false" :uploadId="index" :file-list="uploadFileList[index]" :with-credentials="true"
-                           :on-preview="handlePreview" :on-success="handleSuccess" :on-remove="handleRemove">
+                           :before-upload="beforeUpload" :on-success="handleSuccess" :on-remove="handleRemove" on>
                 <el-button size="small" type="primary">选取文件</el-button>
                 <el-button size="small" type="success" @click.stop="submitUpload(index)">上传到服务器</el-button>
               </file-upload>
@@ -156,7 +157,7 @@
   import { copyProperties } from '../../utils'
   import { getItemDetail, /*getItemConditions,*/ getItemMaterials } from '../../api/item'
   import { getPretrialInfo, submitPretrial, getMailboxes } from '../../api/member/pretrial'
-  import { getDetailInfo } from '../../api/member/member'
+  import { getMemberProfile } from '../../api/member/member'
 
   export default {
     components: {
@@ -179,7 +180,8 @@
           id: '',
           memberId: '',
           itemId: '',
-          takeTypeInfo: {
+          materialsVersion: '',
+          /*takeTypeInfo: {
             id: '',
             processNumber: '',
             memberId: '',
@@ -196,7 +198,7 @@
               mobilephone: '',
               address: ''
             }
-          },
+          },*/
           itemPretrialMaterialVoList: []
         },
         uploadUrl: this.$store.state.app.uploadUrl,
@@ -220,27 +222,33 @@
         this.pretrialId = this.$route.params.value
         this.init2()
       }
-      getDetailInfo().then(response => {
+      getMemberProfile().then(response => {
         this.member = response.data
+        this.itemPretrial.memberId = response.data.infoInformation.userId;
+      }).catch(error => {
+        this.$message.error('未登录，请重新登录！')
+        setTimeout(function () {
+          window.location.href = 'http://localhost:8765/web/api/sso/login'
+        }, 1000);
       })
-      getMailboxes().then(response => {
+      /*getMailboxes().then(response => {
         this.mailboxes = response.data
-      })
+      })*/
     },
     methods: {
       init1() {
         /*this.initConditions()*/
         this.initMaterials()
         this.initItemDetail()
-        this.itemPretrial.memberId = this.id
+        //this.itemPretrial.memberId = this.id
         this.itemPretrial.itemId = this.itemId
-        this.itemPretrial.takeTypeInfo.memberId = this.id
+        //this.itemPretrial.takeTypeInfo.memberId = this.id
         this.notify1()
       },
       init2() {
-        this.secondForm = true
+        this.secondForm = true;
         getPretrialInfo(this.pretrialId).then(response => {
-          if (response.httpCode == 200) {
+          if (response.status == 200) {
             copyProperties(response.data, this.itemPretrial)
             this.itemId = response.data.itemId
             this.initItemDetail()
@@ -262,9 +270,11 @@
       },*/
       initMaterials() {
         getItemMaterials(this.itemId).then(response => {
-          if (response.httpCode === 200) {
-            this.materials = response.data
-            this.initPretrialMaterials()
+          if (response.status === 200) {
+            if (response.data && response.data.length > 0) {
+              this.materials = response.data
+              this.initPretrialMaterials()
+            }
           } else {
             this.$message.error('初始化信息失败，请刷新页面！')
           }
@@ -272,9 +282,9 @@
       },
       initItemDetail() {
         getItemDetail(this.itemId).then(response => {
-          if (response.httpCode === 200) {
+          if (response.status === 200) {
             this.item = response.data
-            this.conditions = this.$options.filters.splitLines(response.data.acceptCondition).split('<br>')
+            //this.conditions = this.$options.filters.splitLines(response.data.acceptCondition).split('<br>')
           } else {
             this.$message.error('初始化信息失败，请刷新页面！')
           }
@@ -282,24 +292,25 @@
       },
       initPretrialMaterials() {
         let itemPretrialMaterialList = [];
+        this.itemPretrial.materialsVersion = this.materials[0].materialsVersion;
         for (let material of this.materials) {
           let itemPretrialMaterial = {
-            itemMaterialId: material.id,
-            itemMaterialName: material.name,
-            itemMaterialUrl: '',
+            materialsId: material.id,
+            itemMaterialName: material.materialsName,
+            materialsUrl: '',
             fileName: '',
             fileType: ''
           };
           let fileList = [];
           if (this.itemPretrial.itemPretrialMaterialVoList && this.itemPretrial.itemPretrialMaterialVoList.length > 0) {
             for (let filesInfo of this.itemPretrial.itemPretrialMaterialVoList) {
-              if (filesInfo.itemMaterialId === material.id) {
-                itemPretrialMaterial.itemMaterialUrl = filesInfo.itemMaterialUrl;
+              if (filesInfo.materialsId === material.id) {
+                itemPretrialMaterial.materialsUrl = filesInfo.materialsUrl;
                 itemPretrialMaterial.fileName = filesInfo.fileName;
                 itemPretrialMaterial.fileType = filesInfo.fileType;
 
-                let urlArr = filesInfo.itemMaterialUrl.split('|')
-                let nameArr = filesInfo.fileName.split('|')
+                let urlArr = filesInfo.materialsUrl.split(',')
+                let nameArr = filesInfo.fileName.split(',')
                 for (let index of urlArr.keys()) {
                   if (index > 0) {
                     fileList.push({
@@ -336,59 +347,65 @@
         this.secondForm = true
         this.notify2()
       },
+      beforeUpload(file) {
+        let fileMax = 1024 * 1024 * 10;
+        if (file.size > fileMax) {
+          this.$message.error("文件过大，请重新选择文件！文件最大为10MB！");
+          return false
+        }
+      },
       submitUpload(index) {
         let uploader = 'upload' + index
         this.$refs[uploader][0].submit()
       },
-      handlePreview(file) {
-//        console.log(file)
-      },
       handleSuccess(response, file, fileList, index) {
-        this.itemPretrial.itemPretrialMaterialVoList[index].itemMaterialUrl += `|${response.url}`
+        this.$message.success(response.message);
+        this.itemPretrial.itemPretrialMaterialVoList[index].materialsUrl += `,${response.data.url}`
         let fileName = file.name.substring(0, file.name.lastIndexOf('.'))
         let fileType = file.name.substring(file.name.lastIndexOf('.') + 1)
-        this.itemPretrial.itemPretrialMaterialVoList[index].fileName += `|${fileName}`
-        this.itemPretrial.itemPretrialMaterialVoList[index].fileType += `|${fileType}`
+        this.itemPretrial.itemPretrialMaterialVoList[index].fileName += `,${fileName}`
+        this.itemPretrial.itemPretrialMaterialVoList[index].fileType += `,${fileType}`
       },
       handleRemove(file, fileList, index) {
         let filesInfo = this.itemPretrial.itemPretrialMaterialVoList[index]
-        let urlArr = filesInfo.itemMaterialUrl.split('|')
-        let nameArr = filesInfo.fileName.split('|')
-        let typeArr = filesInfo.fileType.split('|')
-        let position = urlArr.indexOf(file.response.url)
+        let urlArr = filesInfo.materialsUrl.split(',')
+        let nameArr = filesInfo.fileName.split(',')
+        let typeArr = filesInfo.fileType.split(',')
+        // let position = urlArr.indexOf(file.response.data.url)
+        let position = urlArr.indexOf(file.url)
         urlArr.splice(position, 1)
         nameArr.splice(position, 1)
         typeArr.splice(position, 1)
-        filesInfo.itemMaterialUrl = urlArr.join('|')
-        filesInfo.fileName = nameArr.join('|')
-        filesInfo.fileType = typeArr.join('|')
+        filesInfo.materialsUrl = urlArr.join(',')
+        filesInfo.fileName = nameArr.join(',')
+        filesInfo.fileType = typeArr.join(',')
       },
       handleSubmit() {
         this.loading = true
-        if(!this.itemPretrial.takeTypeInfo.takeType) {
-          this.$message.warning('请选择取件方式')
-          this.loading = false
-          return
-        }
-        if (this.itemPretrial.takeTypeInfo.takeType === 2
-          && (!this.itemPretrial.takeTypeInfo.mailboxInfo.mailboxId
-            )) {
-          this.$message.warning('请选择取件箱地址')
-          this.loading = false
-          return
-        }
-        //若在线办理且需要邮寄，判断收件信息是否填写
-        if (this.itemPretrial.takeTypeInfo.takeType === 3
-          && (!this.itemPretrial.takeTypeInfo.postInfo.name
-            || !this.itemPretrial.takeTypeInfo.postInfo.mobilephone
-            || !this.itemPretrial.takeTypeInfo.postInfo.address)) {
-          this.$message.warning('请完善收件信息')
-          this.loading = false
-          return
-        }
+        // if(!this.itemPretrial.takeTypeInfo.takeType) {
+        //   this.$message.warning('请选择取件方式')
+        //   this.loading = false
+        //   return
+        // }
+        // if (this.itemPretrial.takeTypeInfo.takeType === 2
+        //   && (!this.itemPretrial.takeTypeInfo.mailboxInfo.mailboxId
+        //     )) {
+        //   this.$message.warning('请选择取件箱地址')
+        //   this.loading = false
+        //   return
+        // }
+        // //若在线办理且需要邮寄，判断收件信息是否填写
+        // if (this.itemPretrial.takeTypeInfo.takeType === 3
+        //   && (!this.itemPretrial.takeTypeInfo.postInfo.name
+        //     || !this.itemPretrial.takeTypeInfo.postInfo.mobilephone
+        //     || !this.itemPretrial.takeTypeInfo.postInfo.address)) {
+        //   this.$message.warning('请完善收件信息')
+        //   this.loading = false
+        //   return
+        // }
         //判断所有预审材料是否均已上传
         for (let [index, val] of this.materials.entries()) {
-          if (val.electronicMaterial && !this.itemPretrial.itemPretrialMaterialVoList[index].itemMaterialUrl) {
+          if (!this.itemPretrial.itemPretrialMaterialVoList[index].materialsUrl) {
             this.$message.warning('资料提交不全，请先上传资料！')
             this.loading = false
             return
@@ -397,12 +414,14 @@
         this.doSubmit()
       },
       doSubmit() {
+        //console.log(JSON.stringify(this.itemPretrial))
         submitPretrial(this.itemPretrial).then(response => {
-          if (response.httpCode == 200) {
+          if (response.status == 200) {
             this.$message.success('申请提交成功，请耐心等待审核！')
             this.$router.push({path: '/member'})
+            // window.location.href = 'http://localhost:8765/web/api/sso/login?url=/member'
           } else {
-            this.$message.error(response.msg)
+            this.$message.error(response.message)
             this.loading = false
           }
         }).catch(error => {
@@ -414,7 +433,7 @@
         this.$notify.info({
           title: '提醒',
           message: '您本次网上申报的办件，工作人员将在预受理之后联系您。',
-          duration: 0,
+          duration: 10000,
           offset: 25
         })
       },
@@ -422,7 +441,7 @@
         this.$notify.info({
           title: '提醒',
           message: '★为必要材料，您必须提交才能申报，☆为容缺候补材料，您可以在网上预受理后在窗口提交，其他为非必要材料，根据您实际情况选择提交。',
-          duration: 0,
+          duration: 10000,
           offset: 25
         })
       }

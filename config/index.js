@@ -28,16 +28,32 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/jwt': {
-        target: 'http://localhost:8765',
-        pathRewrite: {
-          '^/jwt': '/jwt'
-        },
-      },
+      // '/jwt': {
+      //   target: 'http://www.chengshengming.com:8765',
+      //   changeOrigin: true,
+      //   pathRewrite: {
+      //     '^/jwt': '/jwt'
+      //   },
+      // },
       '/api': {
-        target: 'http://localhost:8765',
+        target: 'http://www.chengshengming.com:8765',
+        changeOrigin: true,
         pathRewrite: {
           '^/api': '/api'
+        },
+      },
+      '/manage': {
+        target: 'http://www.chengshengming.com:8765',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/manage': '/manage'
+        },
+      },
+      '/web': {
+        target: 'http://www.chengshengming.com:8765',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/web': '/web'
         },
       }
     },

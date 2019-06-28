@@ -7,6 +7,7 @@
     :onSuccess="handleSuccess"
     :onPreview="onPreview"
     :onRemove="handleRemove"
+    :beforeUpload="beforeUpload"
     :accept="accept"
     :fileList="fileList"
     :autoUpload="autoUpload"
@@ -30,6 +31,7 @@
       onSuccess: Function,
       onPreview: Function,
       onRemove: Function,
+      beforeUpload: Function,
       accept: {
         type: String,
         default: ''

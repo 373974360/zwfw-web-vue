@@ -27,7 +27,7 @@ export const constantRouterMap = [
     path: '/guide',
     component: Layout,
     redirect: '/guide/index',
-    name: '办事指南',
+    name: '办事大厅',
     children: [
       {path: 'index', component: _import('guide/index')},
       {path: 'detail/:itemId', component: _import('guide/detail'), name: '详细'},
@@ -51,7 +51,7 @@ export const constantRouterMap = [
       {path: 'processDetail/:id', component: _import('member/myProcessDetail'), name: '办件详情'}
     ]
   },
-  { path: '*', redirect: '/404', hidden: true }
+  { path: '*', redirect: '/404', hidden: true },
 ]
 
 export default new Router({

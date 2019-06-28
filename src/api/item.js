@@ -2,7 +2,7 @@ import fetch from "../utils/fetch"
 
 export function getItemDetail(id) {
   return fetch({
-    url: '/api/zwfw-web/item/findById',
+    url: '/web/api/item/getItemDetail',
     method: 'get',
     params: {id}
   })
@@ -18,7 +18,7 @@ export function getItemConditions(itemId) {
 
 export function getItemMaterials(itemId) {
   return fetch({
-    url: '/api/zwfw-web/itemMaterial/listByItemId',
+    url: '/web/api/item/selectNewestMaterialsByItemId',
     method: 'get',
     params: {itemId}
   })

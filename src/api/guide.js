@@ -2,17 +2,19 @@ import fetch from "../utils/fetch"
 
 export function getItemCategory(parentId) {
   return fetch({
-    url: '/api/zwfw-web/category/getItemCategory',
+    url: '/manage/admin/department/listByDepartment',
     method: 'get',
     params: {parentId}
   })
 }
 
-export function getItemPageByCategories(page, rows, itemCategories) {
+export function getItemPageByCategories(page, size, departmentId) {
   return fetch({
-    url: '/api/zwfw-web/item/list',
+    url: '/web/api/item/getItemPageByCategories',
     method: 'get',
-    params: {page, rows, itemCategories}
+    // TODO
+    //params: {page, size, departmentId}
+    params: {page, size}
   })
 }
 

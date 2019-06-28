@@ -360,7 +360,11 @@
       },
       handleSuccess(response, file, fileList, index) {
         this.$message.success(response.message);
-        this.itemPretrial.itemPretrialMaterialVoList[index].materialsUrl += `,${response.data.url}`
+        if (this.itemPretrial.itemPretrialMaterialVoList[index].materialsUrl) {
+          this.itemPretrial.itemPretrialMaterialVoList[index].materialsUrl += `,${response.data.url}`
+        } else {
+          this.itemPretrial.itemPretrialMaterialVoList[index].materialsUrl = `${response.data.url}`
+        }
         let fileName = file.name.substring(0, file.name.lastIndexOf('.'))
         let fileType = file.name.substring(file.name.lastIndexOf('.') + 1)
         this.itemPretrial.itemPretrialMaterialVoList[index].fileName += `,${fileName}`
@@ -415,6 +419,7 @@
       },
       doSubmit() {
         //console.log(JSON.stringify(this.itemPretrial))
+
         submitPretrial(this.itemPretrial).then(response => {
           if (response.status == 200) {
             this.$message.success('申请提交成功，请耐心等待审核！')

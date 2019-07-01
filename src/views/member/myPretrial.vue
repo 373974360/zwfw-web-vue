@@ -5,6 +5,7 @@
     </div>
     <div class="data-bg">
       <div class="data-tool">
+        <span class="tips">注意：未显示事项需到陕西政务服务网个人中心查看！</span>
         <div class="search-container">
           <el-input type="text" v-model="itemName" placeholder="请输入事项名称进行检索" @keyup.enter.native="reloadPage"></el-input>
           <el-button type="primary" size="small" @click="reloadPage">检&nbsp;&nbsp;索</el-button>
@@ -145,6 +146,13 @@
         height: 30px;
         overflow: hidden;
         margin-bottom: 15px;
+        .tips {
+          font-size: 14px;
+          color: red;
+          height: 28px;
+          line-height: 28px;
+          font-weight: bold;
+        }
         .search-container {
           float: right;
           .el-input {

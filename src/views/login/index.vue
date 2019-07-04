@@ -118,8 +118,8 @@
         // window.location.href= 'http://sfrz.shaanxi.gov.cn/sysauthserver/authorize?response_type=code&client_id=000000047&redirect_uri=http://www.chengshengming.com:9001'
         // window.location.href= 'http://zwfw.xa.gov.cn/zdpyc/sso/login?service=http://www.chengshengming.com:9001/#/member/index'
         // this.$router.push({path: '/member'})
-        // window.location.href = 'http://localhost:8765/web/api/sso/getMemberProfile'
-        window.location.href = 'http://localhost:8765/web/api/sso/login'
+        // window.location.href = '/web/api/sso/getMemberProfile'
+        window.location.href = '/web/api/sso/login'
       },
       changeVerifyCode() {
         this.loginForm.random = Math.random();

@@ -228,7 +228,7 @@
       }).catch(error => {
         this.$message.error('未登录，请重新登录！')
         setTimeout(function () {
-          window.location.href = 'http://localhost:8765/web/api/sso/login'
+          window.location.href = '/web/api/sso/login'
         }, 1000);
       })
       /*getMailboxes().then(response => {
@@ -424,7 +424,6 @@
           if (response.status == 200) {
             this.$message.success('申请提交成功，请耐心等待审核！')
             this.$router.push({path: '/member'})
-            // window.location.href = 'http://localhost:8765/web/api/sso/login?url=/member'
           } else {
             this.$message.error(response.message)
             this.loading = false

@@ -88,7 +88,7 @@
         }).catch(error => {
           this.$message.error('未登录，请重新登录！')
           setTimeout(function () {
-            window.location.href = 'http://localhost:8765/web/api/sso/login?url=/member/pretrial'
+            window.location.href = '/web/api/sso/login?url=/member/pretrial'
           }, 1000);
         })
       },

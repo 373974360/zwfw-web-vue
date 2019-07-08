@@ -1,6 +1,7 @@
 import Cookies from 'js-cookie'
 
-const TokenKey = 'Zwfw-Token'
+// const TokenKey = 'Zwfw-Token'
+const TokenKey = 'member_id'
 
 export function getToken() {
   return Cookies.get(TokenKey)

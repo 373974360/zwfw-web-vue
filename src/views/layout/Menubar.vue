@@ -12,9 +12,9 @@
       <el-menu-item index="/member/pretrial">我的预审</el-menu-item>
       <el-menu-item index="/member/collection">我的收藏</el-menu-item>
       <el-menu-item index="/member/message">我的消息</el-menu-item>
-      <el-menu-item v-if="type === memberType.nature" index="/member/personInfo">修改资料</el-menu-item>
+      <!--<el-menu-item v-if="type === memberType.nature" index="/member/personInfo">修改资料</el-menu-item>
       <el-menu-item v-if="type === memberType.legal" index="/member/companyInfo">修改资料</el-menu-item>
-      <el-menu-item index="/member/changePw">修改密码</el-menu-item>
+      <el-menu-item index="/member/changePw">修改密码</el-menu-item>-->
     </el-menu>
   </div>
 </template>

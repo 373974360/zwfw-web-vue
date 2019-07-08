@@ -31,11 +31,13 @@ service.interceptors.request.use(
 
 service.interceptors.response.use(
   response => {
-    let code = response.status
+    let code = response.data.status
     /**
      * 下面的注释为通过response自定义code来标示请求状态，当code返回如下情况为权限有问题，登出并返回到登录页
      * 如通过xmlhttprequest 状态码标识 逻辑可写在下面error中
      */
+    // console.log(JSON.stringify(response))
+    // console.log("code:" + code)
     if (code !== 200) {
       if (code === 207) {
         Message({
@@ -44,40 +46,32 @@ service.interceptors.response.use(
           duration: 5 * 1000
         })
       } else {
-        Message({
-          message: response.data.msg,
-          type: 'error',
-          duration: 5 * 1000
-        })
-      }
-    } else {
-      code = response.data.httpCode;
-      let msg = response.data.msg;
-      if (code === 401 || code === 40101) {
-      // if (code === 500 && store.state.app.tokenErrorMsg.includes(msg)) {
-        Message({
-          message: "登录超时，请重新登录",
-          type: 'error',
-          duration: 5 * 1000
-        })
-        // 清除token
-        store.dispatch('RemoveToken').then(() => {
-          router.push({ path: '/login' })
-        })
-      }
-      if (code === 403) {
-        Message({
-          message: "当前登录用户没有此权限",
-          type: 'error',
-          duration: 5 * 1000
-        })
-      }
-      const refreshToken = response.headers.refresh_token;
-      if (refreshToken) {
-        // 刷新token
-        store.dispatch('RefreshToken').then(() => {
-          console.dir("刷新token成功");
-        });
+        if (code === 401 || code === 40101) {
+        // if (code === 500 && store.state.app.tokenErrorMsg.includes(msg)) {
+          Message({
+            message: "登录超时，请重新登录",
+            type: 'error',
+            duration: 5 * 1000
+          })
+          // console.log("fetch.js")
+          // 清除token
+          store.dispatch('RemoveToken').then(() => {
+            router.push({ path: '/login' })
+          })
+        }
+        if (code === 403) {
+          Message({
+            message: "当前登录用户没有此权限",
+            type: 'error',
+            duration: 5 * 1000
+          })
+        }
+        /*const refreshToken = response.headers.refresh_token;
+        if (refreshToken) {
+          // 刷新token
+          store.dispatch('RefreshToken').then(() => {
+            console.dir("刷新token成功");
+          });*/
       }
     }
     return response.data

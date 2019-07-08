@@ -1,31 +1,26 @@
 import { doLogin, doLogout, refreshToken } from "../../api/login"
-import { getMyProfile } from "../../api/member/member"
+import { getMemberProfile } from "../../api/member/member"
 import { getToken, setToken, removeToken } from "../../utils/auth"
+import {Message} from 'element-ui'
+import router from '../../router'
 
-const user = {
+const    user = {
   state: {
     token: getToken(),
     id: '',
-    type: '',
     name: '',
-    personId: ''
+    member: {}
   },
   mutations: {
-    SET_TOKEN: (state, token) => {
-      state.token = token
-    },
     SET_ID: (state, id) => {
       state.id = id
-    },
-    SET_TYPE: (state, type) => {
-      state.type = type
     },
     SET_NAME: (state, name) => {
       state.name = name
     },
-    SET_PERSON_ID: (state, personId) => {
-      state.personId = personId
-    }
+    SET_MEMBER: (state, member) => {
+      state.member = member
+    },
   },
   actions: {
     DoLogin({commit}, loginInfo) {
@@ -47,18 +42,32 @@ const user = {
 
     GetInfo({commit}) {
       return new Promise((resolve, reject) => {
-        getMyProfile().then(response => {
-          if (response.httpCode == 200) {
+        getMemberProfile().then(response => {
+          if (response.status == 200) {
             const data = response.data
-            commit('SET_ID', data.id)
-            commit('SET_TYPE', data.type)
-            commit('SET_NAME', data.name)
-            commit('SET_PERSON_ID', data.personId)
+            console.log("memberData:" + JSON.stringify(data))
+            commit('SET_ID', data.infoInformation.userId)
+            commit('SET_NAME', data.infoInformation.name)
+            commit('SET_MEMBER', data)
+            window.sessionStorage.setItem("id", data.infoInformation.userId, )
+            window.sessionStorage.setItem("name", data.infoInformation.name)
+            // console.log(user.state.id)
+            // console.log(user.state.name)
             resolve()
           }
         }).catch(error => {
-          reject(error)
-        })
+          Message({
+            message: "登录超时，请重新登录",
+            type: 'error',
+            duration: 5 * 1000
+          })
+          // console.log("user.js")
+          removeToken()
+          window.sessionStorage.removeItem("id")
+          window.sessionStorage.removeItem("name")
+          router.push({ path: '/login' })
+          reject(error);
+        });
       })
     },
 
@@ -78,20 +87,25 @@ const user = {
 
     DoLogout({commit}) {
       return new Promise((resolve, reject) => {
-        doLogout().then(() => {
+        /*doLogout().then(() => {
           removeToken()
           commit('SET_TOKEN', undefined)
           resolve()
         }).catch(error => {
           reject(error)
-        })
+        })*/
+        window.sessionStorage.removeItem("id")
+        window.sessionStorage.removeItem("name")
+        window.location.href = '/web/api/sso/logout'
       })
     },
 
     RemoveToken({commit}) {
       return new Promise((resolve, reject) => {
         removeToken()
-        commit('SET_TOKEN', undefined)
+        window.sessionStorage.removeItem("id")
+        window.sessionStorage.removeItem("name")
+        // commit('SET_TOKEN', undefined)
         resolve()
       })
     }

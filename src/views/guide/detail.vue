@@ -194,11 +194,11 @@
         this.originalMaterials = originalMaterials;
         this.exampleMaterials = exampleMaterials;
       })
-      if (this.token) {
+      /*if (this.token) {
         getAllFavorites().then(response => {
           this.favoriteList = response.data
         })
-      }
+      }*/
     },
     methods: {
       isFavorite() {
@@ -240,7 +240,6 @@
       },
       linkToPretrial() {
         this.$router.push({path: `/guide/pretrial/itemId/${this.itemId}`})
-        // window.location.href = 'http://localhost:8765/web/api/sso/login?url=/guide/pretrial/itemId/' + this.itemId
       },
       linkToPreorder() {
         this.$router.push({path: `/guide/preorder/${this.itemId}`})

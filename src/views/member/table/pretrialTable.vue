@@ -34,7 +34,8 @@
     },
     methods: {
       handleUpdate(id) {
-        this.$router.push({path: `/guide/pretrial/id/${id}`})
+        // this.$router.push({path: `/guide/pretrial/id/${id}`})
+        window.location.href = '/web/api/sso/redirect?url=/guide/pretrial/id/' + id
       },
       formatStatus(row, column, cellValue) {
         return enums(cellValue, 'PreauditStatusEnum')

@@ -7,7 +7,7 @@
       <div class="top_bx right">
         <template v-if="token">
           当前用户：{{storageName}} <em>|</em>
-          <router-link :to="{path: '/member'}">个人中心</router-link> <em>|</em>
+          <a href="/web/api/sso/redirect?url=/member">个人中心</a> <em>|</em>
           <a href="javascript:void(0)" @click="logout">注销</a>
         </template>
         <template v-else>

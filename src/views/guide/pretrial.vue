@@ -411,14 +411,9 @@
         submitPretrial(this.itemPretrial).then(response => {
           if (response.status == 200) {
             this.$message.success('申请提交成功，请耐心等待审核！')
-            this.$router.push({path: '/member'})
-          } else {
-            this.$message.error(response.message)
-            this.loading = false
+            // this.$router.push({path: '/member'})
+            window.location.href = '/web/api/sso/redirect?url=/member'
           }
-        }).catch(error => {
-          this.$message.error('系统繁忙，请稍后重试！')
-          this.loading = false
         })
       },
       notify1() {

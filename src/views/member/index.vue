@@ -1,6 +1,6 @@
 <template>
   <div class="my-item">
-    <div class="data-box">
+    <!--<div class="data-box">
       <div class="label-bg">
         <div class="label">我的办件</div>
         <div class="more"><router-link :to="{path: '/member/process'}">更多></router-link></div>
@@ -8,17 +8,17 @@
       <div class="data-bg">
         <process-table :data="processData" :take-type="changeTakeType" :post-code="getPostCode"></process-table>
       </div>
-    </div>
+    </div>-->
     <div class="data-box">
       <div class="label-bg">
         <div class="label">我的预审</div>
-        <div class="more"><router-link :to="{path: '/member/pretrial'}">更多></router-link></div>
+        <div class="more"><a href="/web/api/sso/redirect?url=/member/pretrial">更多></a></div>
       </div>
       <div class="data-bg">
         <pretrial-table :data="pretrialData"></pretrial-table>
       </div>
     </div>
-    <div class="data-box">
+    <!--<div class="data-box">
       <div class="label-bg">
         <div class="label">我的收藏</div>
         <div class="more"><router-link :to="{path: '/member/collection'}">更多></router-link></div>
@@ -26,7 +26,7 @@
       <div class="data-bg">
         <collection-table :data="collectionData" :handle-remove="removeFavorite"></collection-table>
       </div>
-    </div>
+    </div>-->
 
     <el-dialog title="提示" :visible.sync="dialogTipVisible" :close-on-click-modal="false" class="dialog">
       <div v-loading="dialogLoading">

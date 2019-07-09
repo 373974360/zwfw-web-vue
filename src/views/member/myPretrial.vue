@@ -24,7 +24,8 @@
           </el-select>
         </div>
       </div>
-      <pretrial-table :data="preauditRecordList"></pretrial-table>
+      <pretrial-table :data="preauditRecordList" :on-hand-type="handleHandType" :on-take-type="handleTakeType"
+                      :on-resv-code="showResvCode"></pretrial-table>
       <div class="page-container">
         <el-pagination
           @size-change="handleSizeChange"
@@ -37,20 +38,133 @@
         </el-pagination>
       </div>
     </div>
+
+    <el-dialog title="修改交件方式" :visible.sync="handTypeVisible" :before-close="resetHandTypeForm">
+      <el-form ref="handTypeForm" :model="handTypeInfo" :rules="handTypeRules" v-loading="dialogLoading"
+               label-position="right" label-width="120px">
+        <el-form-item label="交件方式" prop="handType">
+          <el-select v-model="handTypeInfo.handType">
+            <el-option v-for="item in handTypeList" :key="item" :value="item" :label="item | enums('HandTypeEnum')">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="信包箱" prop="mailboxInfo.mailboxId" v-if="handTypeInfo.handType === 2">
+          <el-select v-model="handTypeInfo.mailboxInfo.mailboxId">
+            <el-option v-for="item in mailboxList" :key="item.id" :value="item.id" :label="item.name">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="交件人姓名" prop="mailboxInfo.senderName" v-if="handTypeInfo.handType === 2">
+          <el-input v-model="handTypeInfo.mailboxInfo.senderName"></el-input>
+        </el-form-item>
+        <el-form-item label="交件人手机号" prop="mailboxInfo.senderMobile" v-if="handTypeInfo.handType === 2">
+          <el-input v-model="handTypeInfo.mailboxInfo.senderMobile"></el-input>
+        </el-form-item>
+        <el-form-item label="收件人姓名" v-if="handTypeInfo.handType === 3">
+          <span>{{handAddressee.name}}</span>
+        </el-form-item>
+        <el-form-item label="收件人手机号" v-if="handTypeInfo.handType === 3">
+          <span>{{handAddressee.phone}}</span>
+        </el-form-item>
+        <el-form-item label="收件地址" v-if="handTypeInfo.handType === 3">
+          <span>{{handAddressee.address}}</span>
+        </el-form-item>
+        <el-form-item label="快递公司" prop="postInfo.expressCompany" v-if="handTypeInfo.handType === 3">
+          <el-select v-model="handTypeInfo.postInfo.expressCompany">
+            <el-option v-for="item in enums['ExpressCompanyEnum']" :key="item.code" :value="item.code" :label="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="快递单号" prop="postInfo.expressNumber" v-if="handTypeInfo.handType === 3">
+          <el-input v-model="handTypeInfo.postInfo.expressNumber"></el-input>
+        </el-form-item>
+        <el-form-item label="信包箱" prop="mailboxPost.mailboxDeviceId" v-if="handTypeInfo.handType === 5">
+          <el-select v-model="handTypeInfo.mailboxPost.mailboxDeviceId"></el-select>
+        </el-form-item>
+        <el-form-item label="交件人姓名" prop="mailboxPost.senderName" v-if="handTypeInfo.handType === 5">
+          <el-input v-model="handTypeInfo.mailboxPost.senderName"></el-input>
+        </el-form-item>
+        <el-form-item label="交件人手机号" prop="mailboxPost.senderMobile" v-if="handTypeInfo.handType === 5">
+          <el-input v-model="handTypeInfo.mailboxPost.senderMobile"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="danger" icon="circle-cross" :loading="btnLoading" @click="resetHandTypeForm">取 消</el-button>
+        <el-button type="primary" icon="circle-check" :loading="btnLoading" @click="submitHandType">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog title="修改取件方式" :visible.sync="takeTypeVisible" :before-close="resetTakeTypeForm">
+      <el-form ref="takeTypeForm" :model="takeTypeInfo" :rules="takeTypeRules" v-loading="dialogLoading"
+               label-position="right" label-width="120px">
+        <el-form-item label="取件方式" prop="takeType">
+          <el-select v-model="takeTypeInfo.takeType">
+            <el-option v-for="item in takeTypeList" :key="item" :value="item" :label="item | enums('TakeTypeEnum')">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="信包箱" prop="mailboxInfo.mailboxId" v-if="takeTypeInfo.takeType === 2">
+          <el-select v-model="takeTypeInfo.mailboxInfo.mailboxId">
+            <el-option v-for="item in mailboxList" :key="item.id" :value="item.id" :label="item.name">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="取件人姓名" prop="mailboxInfo.consigneeName" v-if="takeTypeInfo.takeType === 2">
+          <el-input v-model="takeTypeInfo.mailboxInfo.consigneeName"></el-input>
+        </el-form-item>
+        <el-form-item label="取件人手机号" prop="mailboxInfo.consigneeMobile" v-if="takeTypeInfo.takeType === 2">
+          <el-input v-model="takeTypeInfo.mailboxInfo.consigneeMobile"></el-input>
+        </el-form-item>
+        <el-form-item label="收件人姓名" prop="postInfo.name" v-if="takeTypeInfo.takeType === 3">
+          <el-input v-model="takeTypeInfo.postInfo.name"></el-input>
+        </el-form-item>
+        <el-form-item label="手机号" prop="postInfo.phone" v-if="takeTypeInfo.takeType === 3">
+          <el-input v-model="takeTypeInfo.postInfo.phone"></el-input>
+        </el-form-item>
+        <el-form-item label="收件地址" prop="postInfo.address" v-if="takeTypeInfo.takeType === 3">
+          <el-input v-model="takeTypeInfo.postInfo.address"></el-input>
+        </el-form-item>
+        <el-form-item label="收件地址" prop="postInfo.addresseeId" v-if="takeTypeInfo.takeType === 3">
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="danger" icon="circle-cross" :loading="btnLoading" @click="resetTakeTypeForm">取 消</el-button>
+        <el-button type="primary" icon="circle-check" :loading="btnLoading" @click="submitTakeType">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
   import { PretrialTable } from './table'
   import { mapGetters } from 'vuex'
-  import { getMemberProfile } from '../../api/member/member'
+  import { copyProperties } from "../../utils";
+  import { validMobiles } from "../../utils/validate";
   import { getPretrialPage } from '../../api/member/pretrial'
+  import {
+    getItemDelivery
+  } from "../../api/item";
+  import {
+    getAllMailbox,
+    getDefaultReceiveAddress,
+    findMemberAddressList,
+    saveHandType,
+    getResvCode,
+    saveTakeType
+  } from "../../api/accept";
 
   export default {
     components: {
       PretrialTable
     },
     data() {
+      const validateMobile = (rule, value, callback) => {
+        if (validMobiles(value)) {
+          callback()
+        } else {
+          callback(new Error('手机号格式不正确'))
+        }
+      }
       return {
         itemName: undefined,
         status: undefined,
@@ -58,16 +172,133 @@
         page: this.$store.state.app.page,
         pageSize: this.$store.state.app.rows,
         pageSizes: this.$store.state.app.pageSize,
-        total: 0
+        total: 0,
+        dialogLoading: false,
+        btnLoading: false,
+        handTypeVisible: false,
+        takeTypeVisible: false,
+        handTypeList: [],
+        takeTypeList: [],
+        mailboxList: [],
+        handAddressee: {},
+        closestMailboxList: [],
+        memberAddressList: [],
+        handTypeInfo: {
+          id: undefined,
+          workNo: undefined,
+          handType: undefined,
+          mailboxInfo: {
+            id: undefined,
+            mailboxId: undefined,
+            senderName: undefined,
+            senderMobile: undefined
+          },
+          postInfo: {
+            id: undefined,
+            expressCompany: undefined,
+            expressNumber: undefined
+          },
+          mailboxPost: {
+            id: undefined,
+            mailboxDeviceId: undefined,
+            mailboxLat: undefined,
+            mailboxLng: undefined,
+            mailboxName: undefined,
+            mailboxAddress: undefined,
+            senderName: undefined,
+            senderMobile: undefined
+          }
+        },
+        takeTypeInfo: {
+          id: undefined,
+          workNo: undefined,
+          memberId: undefined,
+          takeType: undefined,
+          mailboxInfo: {
+            id: undefined,
+            mailboxId: undefined,
+            consigneeName: undefined,
+            consigneeMobile: undefined
+          },
+          postInfo: {
+            id: undefined,
+            name: undefined,
+            phone: undefined,
+            address: undefined,
+            addresseeId: undefined
+          }
+        },
+        handTypeRules: {
+          handType: [
+            {required: true, type: 'number', message: '请选择交件方式', trigger: 'change'}
+          ],
+          'mailboxInfo.mailboxId': [
+            {required: true, message: '请选择信包箱', trigger: 'change'}
+          ],
+          'mailboxInfo.senderName': [
+            {required: true, message: '请输入交件人姓名', trigger: 'blur'}
+          ],
+          'mailboxInfo.senderMobile': [
+            {required: true, message: '请输入交件人手机号', trigger: 'blur'},
+            {validator: validateMobile, trigger: 'blur'}
+          ],
+          'postInfo.expressCompany': [
+            {required: true, message: '请选择快递公司', trigger: 'change'}
+          ],
+          'postInfo.expressNumber': [
+            {required: true, message: '请输入快递单号', trigger: 'blur'}
+          ],
+          'mailboxPost.mailboxDeviceId': [
+            {required: true, message: '请选择信包箱', trigger: 'change'}
+          ],
+          'mailboxPost.senderName': [
+            {required: true, message: '请输入交件人姓名', trigger: 'blur'}
+          ],
+          'mailboxPost.senderMobile': [
+            {required: true, message: '请输入交件人手机号', trigger: 'blur'},
+            {validator: validateMobile, trigger: 'blur'}
+          ]
+        },
+        takeTypeRules: {
+          takeType: [
+            {required: true, type: 'number', message: '请选择取件方式', trigger: 'change'}
+          ],
+          'mailboxInfo.mailboxId': [
+            {required: true, message: '请选择信包箱', trigger: 'change'}
+          ],
+          'mailboxInfo.consigneeName': [
+            {required: true, message: '请输入取件人姓名', trigger: 'blur'}
+          ],
+          'mailboxInfo.consigneeMobile': [
+            {required: true, message: '请输入取件人手机号', trigger: 'blur'},
+            {validator: validateMobile, trigger: 'blur'}
+          ],
+          'postInfo.name': [
+            {required: true, message: '请输入收件人姓名', trigger: 'blur'}
+          ],
+          'postInfo.phone': [
+            {required: true, message: '请输入收件人手机号', trigger: 'blur'},
+            {validator: validateMobile, trigger: 'blur'}
+          ],
+          'postInfo.address': [
+            {required: true, message: '请输入收件地址', trigger: 'blur'}
+          ],
+          'postInfo.addresseeId': [
+            {required: true, message: '请选择收件地址', trigger: 'change'}
+          ]
+        }
       }
     },
     computed: {
       ...mapGetters([
-        'id','enums'
+        'id', 'enums'
       ])
     },
     created() {
       this.loadPage()
+      this.getMailboxes()
+      this.getReceiveAddress()
+      this.getMemberAddressList(this.id)
     },
     methods: {
       resetSearch(){
@@ -78,10 +309,8 @@
       },
       loadPage() {
         getPretrialPage(this.page, this.pageSize, this.itemName, this.status, this.id).then(response => {
-          if (response.status == 200) {
-            this.preauditRecordList = response.data.records;
-            this.total = response.data.total;
-          }
+          this.preauditRecordList = response.data.records
+          this.total = response.data.total
         })
       },
       reloadPage() {
@@ -96,6 +325,163 @@
       handleCurrentChange(page) {
         this.page = page
         this.loadPage()
+      },
+      handleHandType(row) {
+        this.handTypeVisible = true
+        this.getItemHandTypes(row.itemId)
+        if (row.handTypeInfo) {
+          copyProperties(row.handTypeInfo, this.handTypeInfo)
+        }
+        this.handTypeInfo.workNo = row.workNo
+      },
+      handleTakeType(row) {
+        this.takeTypeVisible = true
+        this.getItemTakeTypes(row.itemId)
+        if (row.takeTypeInfo) {
+          copyProperties(row.takeTypeInfo, this.takeTypeInfo)
+        }
+        this.takeTypeInfo.workNo = row.workNo
+        this.takeTypeInfo.memberId = this.memberId
+      },
+      showResvCode(row) {
+        getResvCode(row.workNo).then(response => {
+          if (response.data) {
+            this.$message({
+              showClose: true,
+              type: 'success',
+              duration: 0,
+              message: '开箱码：' + response.data
+            })
+          } else {
+            this.$message.warning('正在查询开箱码，请稍后重新查看')
+          }
+        })
+      },
+      getReceiveAddress() {
+        getDefaultReceiveAddress().then(response => {
+          this.handAddressee = response.data
+        })
+      },
+      getMailboxes() {
+        getAllMailbox({}).then(response => {
+          this.mailboxList = response.data
+        })
+      },
+      getItemHandTypes(itemId) {
+        this.handTypeList = []
+        getItemDelivery(itemId).then(response => {
+          const handTypeList = response.data.handType.split(',')
+          for (const handType of handTypeList) {
+            this.handTypeList.push(parseInt(handType))
+          }
+        })
+      },
+      getItemTakeTypes(itemId) {
+        this.takeTypeList = []
+        getItemDelivery(itemId).then(response => {
+          const takeTypeList = response.data.takeType.split(',')
+          for (const takeType of takeTypeList) {
+            this.takeTypeList.push(parseInt(takeType))
+          }
+        })
+      },
+      getMemberAddressList(memberId) {
+        findMemberAddressList(memberId).then(response => {
+          this.memberAddressList = response.data
+        })
+      },
+      submitHandType() {
+        this.$refs['handTypeForm'].validate(valid => {
+          if (valid) {
+            this.dialogLoading = true
+            this.btnLoading = true
+            saveHandType(this.handTypeInfo).then(() => {
+              this.resetHandTypeForm()
+              this.$message.success('保存成功')
+              this.loadPage()
+            })
+          } else {
+            return false
+          }
+        })
+      },
+      submitTakeType() {
+        this.$refs['takeTypeForm'].validate(valid => {
+          if (valid) {
+            this.dialogLoading = true
+            this.btnLoading = true
+            saveTakeType(this.takeTypeInfo).then(() => {
+              this.resetTakeTypeForm()
+              this.$message.success('保存成功')
+              this.loadPage()
+            })
+          } else {
+            return false
+          }
+        })
+      },
+      resetHandTypeForm() {
+        this.handTypeVisible = false
+        this.dialogLoading = false
+        this.btnLoading = false
+        this.resetHandTypeTemp()
+        this.$refs['handTypeForm'].resetFields()
+      },
+      resetHandTypeTemp() {
+        this.handTypeInfo = {
+          id: undefined,
+          workNo: undefined,
+          handType: undefined,
+          mailboxInfo: {
+            id: undefined,
+            mailboxId: undefined,
+            senderName: undefined,
+            senderMobile: undefined
+          },
+          postInfo: {
+            id: undefined,
+            expressCompany: undefined,
+            expressNumber: undefined
+          },
+          mailboxPost: {
+            id: undefined,
+            mailboxDeviceId: undefined,
+            mailboxLat: undefined,
+            mailboxLng: undefined,
+            mailboxName: undefined,
+            mailboxAddress: undefined,
+            senderName: undefined,
+            senderMobile: undefined
+          }
+        }
+      },
+      resetTakeTypeForm() {
+        this.takeTypeVisible = false
+        this.dialogLoading = false
+        this.btnLoading = false
+        this.resetTakeTypeTemp()
+        this.$refs['takeTypeForm'].resetFields()
+      },
+      resetTakeTypeTemp() {
+        this.takeTypeInfo = {
+          id: undefined,
+          workNo: undefined,
+          memberId: undefined,
+          takeType: undefined,
+          mailboxInfo: {
+            id: undefined,
+            mailboxId: undefined,
+            consigneeName: undefined,
+            consigneeMobile: undefined
+          },
+          postInfo: {
+            id: undefined,
+            name: undefined,
+            phone: undefined,
+            address: undefined,
+            addresseeId: undefined
+          }
+        }
       }
     }
   }

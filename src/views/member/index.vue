@@ -1,14 +1,5 @@
 <template>
   <div class="my-item">
-    <!--<div class="data-box">
-      <div class="label-bg">
-        <div class="label">我的办件</div>
-        <div class="more"><router-link :to="{path: '/member/process'}">更多></router-link></div>
-      </div>
-      <div class="data-bg">
-        <process-table :data="processData" :take-type="changeTakeType" :post-code="getPostCode"></process-table>
-      </div>
-    </div>-->
     <div class="data-box">
       <div class="label-bg">
         <div class="label">我的预审</div>
@@ -18,6 +9,17 @@
         <pretrial-table :data="pretrialData"
                         :show-delivery="false">
         </pretrial-table>
+      </div>
+    </div>
+    <div class="data-box">
+      <div class="label-bg">
+        <div class="label">我的办件</div>
+        <div class="more"><a href="/web/api/sso/redirect?url=/member/pretrial">更多></a></div>
+      </div>
+      <div class="data-bg">
+        <process-table :data="processData"
+                       :show-delivery="false">
+        </process-table>
       </div>
     </div>
     <!--<div class="data-box">

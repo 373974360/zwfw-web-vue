@@ -1,10 +1,10 @@
 import fetch from '../../utils/fetch'
 
-export function getMyProcessPage(page, rows, itemName, inStatus) {
+export function getMyProcessPage(query) {
   return fetch({
-    url: '/api/zwfw-web/process/list',
+    url: '/web/api/handling/getProcessPage',
     method: 'get',
-    params: {page, rows, itemName, inStatus}
+    params: query
   })
 }
 

@@ -386,9 +386,9 @@
     },
     methods: {
       resetSearch() {
-        this.page = this.$store.state.app.page,
-        this.pageSize = this.$store.state.app.rows,
-        this.itemName = undefined,
+        this.page = this.$store.state.app.page
+        this.pageSize = this.$store.state.app.rows
+        this.itemName = undefined
         this.status = undefined
       },
       loadPage() {

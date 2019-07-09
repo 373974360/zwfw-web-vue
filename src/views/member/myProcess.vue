@@ -6,16 +6,25 @@
     <div class="data-bg">
       <div class="data-tool">
         <div class="search-container">
-          <el-input type="text" v-model="keywords" placeholder="请输入办件名称进行检索" @keyup.enter.native="reloadPage"></el-input>
+          <el-input type="text" v-model="itemName" placeholder="请输入事项名称进行检索" @keyup.enter.native="reloadPage"></el-input>
           <el-button typ="primary" size="small" @click="reloadPage">检&nbsp;&nbsp;索</el-button>
+          <el-button type="primary" size="small" @click="resetSearch">清&nbsp;&nbsp;空</el-button>
         </div>
-        <div class="checkbox-container">
-          <el-checkbox-group v-model="checkList" @change="reloadPage">
-            <el-checkbox v-for="status in enums['ItemProcessStatus']" :key="status.code" :label="status.var">{{status.value}}</el-checkbox>
-          </el-checkbox-group>
+        <div class="search-container" style="margin-right: 10px">
+          <!--<el-checkbox-group v-model="checkList" @change="reloadPage">
+            <el-checkbox v-for="status in enums['HandlingStatusEnum']" :key="status.code" :label="status.var">{{status.value}}</el-checkbox>
+          </el-checkbox-group>-->
+          <el-select v-model="status" placeholder="办件状态">
+            <el-option
+              v-for = "o in enums['HandlingStatusEnum']"
+              :label="o.value"
+              :value="o.code">
+            </el-option>
+          </el-select>
         </div>
       </div>
-      <process-table :data="processData" :take-type="changeTakeType" :post-code="getPostCode"></process-table>
+      <process-table :data="processData" :show-delivery="true" :take-type="changeTakeType" :post-code="getPostCode">
+      </process-table>
       <div class="page-container">
         <el-pagination
           @size-change="handleSizeChange"
@@ -28,6 +37,69 @@
         </el-pagination>
       </div>
     </div>
+
+    <el-dialog title="修改取件方式" :visible.sync="takeTypeVisible" :close-on-click-modal="closeOnClickModal"
+               :before-close="resetTakeTypeForm">
+      <el-form ref="takeTypeForm" :model="takeTypeInfo" :rules="takeTypeRules" v-loading="dialogLoading"
+               label-position="right" label-width="120px">
+        <el-form-item label="取件方式" prop="takeType">
+          <el-select v-model="takeTypeInfo.takeType" style="width: 80%">
+            <el-option v-for="item in takeTypeList" :key="item" :value="item" :label="item | enums('TakeTypeEnum')">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="信包箱" prop="mailboxInfo.mailboxId" v-if="takeTypeInfo.takeType === 2">
+          <el-select v-model="takeTypeInfo.mailboxInfo.mailboxId" style="width: 80%">
+            <el-option v-for="item in mailboxList" :key="item.id" :value="item.id" :label="item.name">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="取件人姓名" prop="mailboxInfo.consigneeName" v-if="takeTypeInfo.takeType === 2">
+          <el-input v-model="takeTypeInfo.mailboxInfo.consigneeName"></el-input>
+        </el-form-item>
+        <el-form-item label="取件人手机号" prop="mailboxInfo.consigneeMobile" v-if="takeTypeInfo.takeType === 2">
+          <el-input v-model="takeTypeInfo.mailboxInfo.consigneeMobile"></el-input>
+        </el-form-item>
+        <el-form-item label="收件人姓名" prop="postInfo.name" v-if="takeTypeInfo.takeType === 3 && !cardVisible">
+          <el-input v-model="takeTypeInfo.postInfo.name"></el-input>
+        </el-form-item>
+        <el-form-item label="手机号" prop="postInfo.phone" v-if="takeTypeInfo.takeType === 3 && !cardVisible">
+          <el-input v-model="takeTypeInfo.postInfo.phone"></el-input>
+        </el-form-item>
+        <el-form-item label="收件地址" prop="postInfo.address" v-if="takeTypeInfo.takeType === 3 && !cardVisible">
+          <el-input v-model="takeTypeInfo.postInfo.address"></el-input>
+        </el-form-item>
+        <el-form-item label="收件地址" prop="postInfo.addresseeId" v-if="takeTypeInfo.takeType === 3 && cardVisible">
+          <el-card class="box-card">
+            <div slot="header" class="clearfix card-header">
+              <div class="card-item">
+                <p class="p1">
+                  {{cardHeader.name}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{cardHeader.phone}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </p>
+                <p>{{cardHeader.address}}</p>
+              </div>
+              <el-button type="primary" @click="showCardItems">选择地址</el-button>
+              <el-button type="text" @click="showTakeTypeAddresseeForm">添加地址</el-button>
+            </div>
+            <div class="card-body" v-show="cardItemVisible">
+              <div v-for="item in memberAddressList" :key="item.id" class="card-item">
+                <el-radio v-model="takeTypeInfo.postInfo.addresseeId" :label="item.id">{{item.remark}}
+                </el-radio>
+                <p class="p1">
+                  {{item.name}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{item.phone}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </p>
+                <p>{{item.address}}</p>
+              </div>
+              <div v-if="!memberAddressList || memberAddressList.length <= 0">没有任何收件地址信息</div>
+            </div>
+          </el-card>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="danger" icon="circle-cross" :loading="btnLoading" @click="resetTakeTypeForm">取 消</el-button>
+        <el-button type="primary" icon="circle-check" :loading="btnLoading" @click="submitTakeType">确 定</el-button>
+      </div>
+    </el-dialog>
 
     <el-dialog title="提示" :visible.sync="dialogTipVisible" :close-on-click-modal="false" class="dialog">
       <div v-loading="dialogLoading">
@@ -73,23 +145,99 @@
 <script>
   import { ProcessTable } from './table'
   import { mapGetters } from 'vuex'
+  import { copyProperties } from "../../utils";
+  import { validMobiles } from "../../utils/validate";
   import { getPhoneVerifyCodeLogged, validateMemberInfo } from '../../api/member/member'
   import { getMyProcessPage, sendPostCode } from '../../api/member/process'
+  import {
+    getItemDelivery
+  } from "../../api/item";
+  import {
+    getAllMailbox,
+    findMemberAddressList,
+    saveTakeType
+  } from "../../api/accept";
 
   export default {
     components: {
       ProcessTable
     },
     data() {
+      const validateMobile = (rule, value, callback) => {
+        if (validMobiles(value)) {
+          callback()
+        } else {
+          callback(new Error('手机号格式不正确'))
+        }
+      }
       return {
-        keywords: '',
-        checkList: [],
+        itemName: '',
+        status: undefined,
         processData: [],
         dialogVisible: false,
         dialogTipVisible: false,
         dialogLoading: false,
         dialogFormLoading: false,
+        btnLoading: false,
         currentRow: undefined,
+        takeTypeVisible: false,
+        cardVisible: false,
+        cardItemVisible: false,
+        takeTypeList: [],
+        mailboxList: [],
+        memberAddressList: [],
+        cardHeader: {
+          name: '',
+          phone: '',
+          address: ''
+        },
+        takeTypeInfo: {
+          id: undefined,
+          workNo: undefined,
+          memberId: undefined,
+          takeType: undefined,
+          mailboxInfo: {
+            id: undefined,
+            mailboxId: undefined,
+            consigneeName: undefined,
+            consigneeMobile: undefined
+          },
+          postInfo: {
+            id: undefined,
+            name: undefined,
+            phone: undefined,
+            address: undefined,
+            addresseeId: undefined
+          }
+        },
+        takeTypeRules: {
+          takeType: [
+            {required: true, type: 'number', message: '请选择取件方式', trigger: 'change'}
+          ],
+          'mailboxInfo.mailboxId': [
+            {required: true, message: '请选择信包箱', trigger: 'change'}
+          ],
+          'mailboxInfo.consigneeName': [
+            {required: true, message: '请输入取件人姓名', trigger: 'blur'}
+          ],
+          'mailboxInfo.consigneeMobile': [
+            {required: true, message: '请输入取件人手机号', trigger: 'blur'},
+            {validator: validateMobile, trigger: 'blur'}
+          ],
+          'postInfo.name': [
+            {required: true, message: '请输入收件人姓名', trigger: 'blur'}
+          ],
+          'postInfo.phone': [
+            {required: true, message: '请输入收件人手机号', trigger: 'blur'},
+            {validator: validateMobile, trigger: 'blur'}
+          ],
+          'postInfo.address': [
+            {required: true, message: '请输入收件地址', trigger: 'blur'}
+          ],
+          'postInfo.addresseeId': [
+            {required: true, message: '请选择收件地址', trigger: 'change'}
+          ]
+        },
         validateInfo: {
           verifyCode: undefined,
           random: undefined,
@@ -113,22 +261,152 @@
     },
     computed: {
       ...mapGetters([
-        'enums'
+        'id', 'enums', 'closeOnClickModal'
       ])
+    },
+    watch: {
+      'takeTypeInfo.postInfo.addresseeId'() {
+        if (this.cardVisible) {
+          this.initCardHeader();
+          this.cardItemVisible = false;
+        }
+      }
     },
     created() {
       this.loadPage()
+      this.getMailboxes()
+      this.getMemberAddressList(this.id)
     },
     methods: {
+      resetSearch() {
+        this.page = this.$store.state.app.page
+        this.pageSize = this.$store.state.app.row
+        this.itemName = undefined
+        this.status = undefined
+      },
       loadPage() {
-        getMyProcessPage(this.page, this.pageSize, this.keywords, this.checkList.join()).then(response => {
-          if (response.httpCode === 200) {
-            this.processData = response.data.list
-            this.total = response.data.total
+        let query = {
+          page: this.page,
+          size: this.pageSize,
+          itemName: this.itemName,
+          status: this.status,
+          memberId: this.id
+        }
+        getMyProcessPage(query).then(response => {
+          this.processData = response.data.records
+          this.total = response.data.total
+        })
+      },
+      getMailboxes() {
+        getAllMailbox({}).then(response => {
+          this.mailboxList = response.data
+        })
+      },
+      getItemTakeTypes(itemId) {
+        this.takeTypeList = []
+        getItemDelivery(itemId).then(response => {
+          const takeTypeList = response.data.takeType.split(',')
+          for (const takeType of takeTypeList) {
+            this.takeTypeList.push(parseInt(takeType))
           }
         })
       },
-      changeTakeType(row) {},
+      getMemberAddressList(memberId) {
+        findMemberAddressList(memberId).then(response => {
+          this.memberAddressList = response.data
+        })
+      },
+      changeTakeType(row) {
+        this.takeTypeVisible = true
+        this.getItemTakeTypes(row.itemId)
+        if (row.takeTypeInfo) {
+          copyProperties(row.takeTypeInfo, this.takeTypeInfo)
+        }
+        this.takeTypeInfo.workNo = row.workNo
+        this.takeTypeInfo.memberId = this.id
+        this.initCardHeader()
+      },
+      submitTakeType() {
+        this.$refs['takeTypeForm'].validate(valid => {
+          if (valid) {
+            this.dialogLoading = true
+            this.btnLoading = true
+            saveTakeType(this.takeTypeInfo).then(() => {
+              this.resetTakeTypeForm()
+              this.$message.success('保存成功')
+              this.loadPage()
+              this.getMemberAddressList(this.id)
+            })
+          } else {
+            return false
+          }
+        })
+      },
+      resetTakeTypeForm() {
+        this.takeTypeVisible = false
+        this.dialogLoading = false
+        this.btnLoading = false
+        this.resetTakeTypeTemp()
+        this.$refs['takeTypeForm'].resetFields()
+      },
+      resetTakeTypeTemp() {
+        this.takeTypeInfo = {
+          id: undefined,
+          workNo: undefined,
+          memberId: undefined,
+          takeType: undefined,
+          mailboxInfo: {
+            id: undefined,
+            mailboxId: undefined,
+            consigneeName: undefined,
+            consigneeMobile: undefined
+          },
+          postInfo: {
+            id: undefined,
+            name: undefined,
+            phone: undefined,
+            address: undefined,
+            addresseeId: undefined
+          }
+        }
+      },
+      showCardItems() {
+        this.cardItemVisible = !this.cardItemVisible;
+      },
+      initCardHeader() {
+        if (this.memberAddressList.length <= 0) {
+          this.cardVisible = false;
+          this.takeTypeInfo.postInfo.addresseeId = undefined;
+          return;
+        }
+        let addressee;
+        if (this.takeTypeInfo.postInfo.addresseeId) {
+          for (let item of this.memberAddressList) {
+            if (item.id === this.takeTypeInfo.postInfo.addresseeId) {
+              addressee = item;
+              break;
+            }
+          }
+        } else {
+          addressee = this.memberAddressList[0];
+        }
+        this.takeTypeInfo.postInfo.addresseeId = addressee.id;
+        copyProperties(addressee, this.cardHeader)
+        this.cardVisible = true;
+      },
+      showTakeTypeAddresseeForm() {
+        this.cardVisible = false;
+        this.takeTypeInfo.postInfo.addresseeId = undefined;
+        this.resetCardHeader();
+        this.cardItemVisible = false;
+      },
+      resetCardHeader() {
+        this.cardHeader = {
+          name: '',
+          phone: '',
+          address: ''
+        }
+      },
       getPostCode(row) {
         this.currentRow = row;
         this.dialogTipVisible = true;
@@ -314,6 +592,70 @@
           color: #2b2b2b;
         }
       }
+    }
+  }
+  .card-header {
+    .card-item {
+      border: none;
+      margin: 0;
+      width: 80%;
+      float: left;
+    }
+    .el-button {
+      float: right;
+    }
+  }
+
+  .card-item {
+    padding: 8px;
+    margin: 8px 0;
+    font-size: 14px;
+    border: 1px solid #d0d0d0;
+    height: 80px;
+    .el-radio {
+      height: 64px;
+      line-height: 64px;
+      text-align: center;
+      width: 10%;
+      float: left;
+    }
+    p {
+      margin: 0;
+      height: 32px;
+      line-height: 32px;
+      width: 88%;
+      float: left;
+    }
+    .p1 {
+      font-size: 16px;
+      font-weight: bold;
+      span {
+        padding: 3px 6px;
+        color: #dd1100;
+        font-size: 14px;
+        font-weight: normal;
+        border: 1px solid #dd1100;
+        border-radius: 3px;
+      }
+    }
+  }
+
+  .clearfix:before, .clearfix:after {
+    display: table;
+    content: "";
+  }
+
+  .clearfix:after {
+    clear: both
+  }
+
+  .box-card {
+    width: 100%;
+    .el-card__body {
+      padding: 0;
+    }
+    .card-body {
+      padding: 12px;
     }
   }
 </style>

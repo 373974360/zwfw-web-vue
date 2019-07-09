@@ -54,3 +54,11 @@ export function getOpenCode(workNo) {
     params: {workNo}
   })
 }
+
+export function queryLogistics(company, number) {
+  return fetch({
+    url: '/web/api/sso/handType/queryLogistics',
+    method: 'get',
+    params: {company, number}
+  })
+}

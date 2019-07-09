@@ -23,7 +23,11 @@
           </el-select>
         </div>
       </div>
-      <process-table :data="processData" :show-delivery="true" :take-type="changeTakeType" :post-code="getPostCode">
+      <process-table :data="processData"
+                     :show-delivery="true"
+                     :take-type="changeTakeType"
+                     :post-code="getPostCode"
+                     :on-logistics="showLogistics">
       </process-table>
       <div class="page-container">
         <el-pagination
@@ -139,6 +143,33 @@
         </el-row>
       </el-form>
     </el-dialog>
+
+    <el-dialog title="物流信息" :visible.sync="logisticsVisible" :close-on-click-modal="closeOnClickModal">
+      <el-card class="box-card">
+        <div slot="header" class="clearfix card-header">
+          <p><b>物流状态&nbsp;&nbsp;&nbsp;&nbsp;{{logistics.deliverystatus | deliveryStatusFilter}}</b></p>
+          <p>承运来源：{{logistics.type | expressTypeFilter}}</p>
+          <p>运单编号：{{logistics.number}}
+            <!--<el-button type="text" @click="refreshLogistics(logistics)">物流信息不对</el-button>-->
+          </p>
+        </div>
+      </el-card>
+      <div class="track-list">
+        <ul>
+          <li v-for="(item, index) in logistics.list"
+              :class="(index === 0 ? 'first' : '') + ' ' + (index === logistics.list.length - 1 ? 'last' : '')">
+            <div class="node-container">
+              <div class="node"></div>
+            </div>
+            <div class="content">
+              <p class="txt">{{item.status | removeNote(' ')}}</p>
+              <p class="time">{{item.time | date('YYYY-MM-DD HH:mm:ss')}}</p>
+            </div>
+          </li>
+          <div style="clear: both"></div>
+        </ul>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -156,7 +187,8 @@
     getAllMailbox,
     findMemberAddressList,
     saveTakeType,
-    getOpenCode
+    getOpenCode,
+    queryLogistics
   } from "../../api/accept";
 
   export default {
@@ -257,7 +289,9 @@
         page: this.$store.state.app.page,
         pageSize: this.$store.state.app.rows,
         pageSizes: this.$store.state.app.pageSize,
-        total: 0
+        total: 0,
+        logistics: {},
+        logisticsVisible: false
       }
     },
     computed: {
@@ -422,6 +456,14 @@
           } else {
             this.$message.warning('正在查询取件码，请稍后重新查看')
           }
+        })
+      },
+      showLogistics(row) {
+        const company = row.takeTypeInfo.postInfo.expressCompany;
+        const number = row.takeTypeInfo.postInfo.expressNumber;
+        queryLogistics(company, number).then(response => {
+          this.logistics = response.data;
+          this.logisticsVisible = true;
         })
       },
       handleSendPostCode() {
@@ -669,6 +711,66 @@
     }
     .card-body {
       padding: 12px;
+    }
+  }
+
+  .track-list{
+    padding: 20px;
+    position: relative;
+    ul {
+      list-style: none;
+      overflow: visible;
+      margin-top: 12px;
+      li{
+        position: relative;
+        width: 100%;
+        float: left;
+        padding: 0px 25px;
+        line-height: 18px;
+        border-left: 1px solid #d0d0d0;
+        color: #666;
+        .node {
+          position: absolute;
+          left: -5px;
+          top: 0;
+          width: 10px;
+          height: 10px;
+          background-color: #d0d0d0;
+          border-radius: 10px;
+        }
+        .content {
+          width: 100%;
+          border-bottom: 1px solid #d0d0d0;
+          top: -18px;
+          position: relative;
+        }
+      }
+      li.first {
+        color: #dd1100;
+        .node-container {
+          position: absolute;
+          top: -5px;
+          left: -10px;
+          width: 20px;
+          height: 20px;
+          background-color: #fbc0c2;
+          border-radius: 20px;
+          .node {
+            top: 4px;
+            left: 4px;
+            width: 12px;
+            height: 12px;
+            background-color: #dd1100;
+            border-radius: 12px;
+          }
+        }
+      }
+      li.last {
+        border: none;
+        .content {
+          border: none;
+        }
+      }
     }
   }
 </style>

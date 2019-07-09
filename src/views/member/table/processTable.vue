@@ -20,7 +20,7 @@
       <el-table-column label="当前状态" width="120" align="center">
         <template scope="scope">
           <span v-if="scope.row.status === 15">
-            {{scope.row.status | enums('HandlingStatusEnum')}} | {{scope.row.takeTypeInfo.takeType | enums('TakeStatusEnum')}}
+            {{scope.row.status | enums('HandlingStatusEnum')}} | {{scope.row.takeTypeInfo.takeStatus | enums('TakeStatusEnum')}}
           </span>
           <span v-else>{{scope.row.status | enums('HandlingStatusEnum')}}</span>
         </template>
@@ -28,7 +28,8 @@
       <el-table-column label="操作" align="center" v-if="showDelivery">
         <template scope="scope">
           <el-button v-if="scope.row.status === 10" type="text" @click="handleTakeType(scope.row)">修改取件方式</el-button>
-          <el-button v-else-if="scope.row.takeTypeInfo.takeType === 4" type="text" @click="handlePostCode(scope.row)">获取取件码</el-button>
+          <el-button v-else-if="scope.row.takeTypeInfo.takeStatus === 22" type="text" @click="handlePostCode(scope.row)">获取取件码</el-button>
+          <el-button v-else-if="[32,33].includes(scope.row.takeTypeInfo.takeStatus)" type="text" @click="handleLogistics(scope.row)">查看物流</el-button>
           <!--<el-button v-else type="text" @click="handleShowDetail(scope.row)">查看</el-button>-->
         </template>
       </el-table-column>
@@ -44,7 +45,8 @@
       data: Array,
       showDelivery: Boolean,
       takeType: Function,
-      postCode: Function
+      postCode: Function,
+      onLogistics: Function
     },
     methods: {
       formatStatus(row, column, cellValue) {
@@ -58,6 +60,9 @@
       },
       handlePostCode(row) {
         this.postCode(row)
+      },
+      handleLogistics(row) {
+        this.onLogistics(row)
       },
       handleShowDetail(row) {
         this.$router.push({path: `/member/processDetail/${row.id}`});

@@ -155,7 +155,8 @@
   import {
     getAllMailbox,
     findMemberAddressList,
-    saveTakeType
+    saveTakeType,
+    getOpenCode
   } from "../../api/accept";
 
   export default {
@@ -408,8 +409,20 @@
         }
       },
       getPostCode(row) {
-        this.currentRow = row;
-        this.dialogTipVisible = true;
+        /* this.currentRow = row;
+        this.dialogTipVisible = true; */
+        getOpenCode(row.workNo).then(response => {
+          if (response.data) {
+            this.$message({
+              showClose: true,
+              type: 'success',
+              duration: 0,
+              message: '取件码：' + response.data
+            })
+          } else {
+            this.$message.warning('正在查询取件码，请稍后重新查看')
+          }
+        })
       },
       handleSendPostCode() {
         this.dialogTipVisible = false;

@@ -46,3 +46,11 @@ export function saveTakeType(data) {
     data
   })
 }
+
+export function getOpenCode(workNo) {
+  return fetch({
+    url: '/web/api/sso/takeType/getOpenCode',
+    method: 'get',
+    params: {workNo}
+  })
+}

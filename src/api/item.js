@@ -31,3 +31,11 @@ export function getItemPreorderConfig(itemId) {
     params: {itemId}
   })
 }
+
+export function getItemDelivery(itemId) {
+  return fetch({
+    url: '/web/api/item/getItemDelivery',
+    method: 'get',
+    params: {itemId}
+  })
+}

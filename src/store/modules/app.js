@@ -17,7 +17,8 @@ const app = {
     fileAccepts: 'image/jpg,image/jpeg,image/png,image/bmp,image/gif,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/pdf,text/plain,application/zip,application/rar',
     tokenErrorMsg: [
       'Member token expired!', 'Member token signature error!', 'Member token is null or empty!'
-    ]
+    ],
+    closeOnClickModal: false
   },
   mutations: {
     SET_ENUMS: (state, enums) => {

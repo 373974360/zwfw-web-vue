@@ -14,9 +14,9 @@
           {{scope.row.status | enums('PreauditStatusEnum')}}
         </template>-->
       </el-table-column>
-      <!--<el-table-column prop="preauditOption" label="审核意见" width="120" align="center"></el-table-column>-->
-      <!--<el-table-column prop="operateTime" :formatter="formatDate" label="审核时间" width="110" align="center"></el-table-column>-->
-      <el-table-column label="交件方式" align="center">
+      <el-table-column prop="preauditOption" label="审核意见" align="center"></el-table-column>
+      <el-table-column prop="operateTime" :formatter="formatDate" label="审核时间" width="120" align="center"></el-table-column>
+      <!--<el-table-column label="交件方式" align="center" v-if="showDelivery">
         <template scope="scope">
           <el-tooltip effect="dark" placement="top" content="点击修改">
             <el-button type="text" @click="handleHandType(scope.row)">
@@ -26,7 +26,7 @@
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column label="取件方式" align="center">
+      <el-table-column label="取件方式" align="center" v-if="showDelivery">
         <template scope="scope">
           <el-tooltip effect="dark" placement="top" content="点击修改">
             <el-button type="text" @click="handleTakeType(scope.row)">
@@ -35,16 +35,17 @@
             </el-button>
           </el-tooltip>
         </template>
-      </el-table-column>
-      <el-table-column label="操作" width="120" align="center">
+      </el-table-column>-->
+      <el-table-column label="操作" width="120" align="center" v-if="showDelivery">
         <template scope="scope">
           <el-button v-if="scope.row.status === 2" type="text" @click="handleUpdate(scope.row.id)">修改</el-button>
           <el-button v-if="scope.row.status === 3 && (!scope.row.handTypeInfo || [11,21,31,51].includes(scope.row.handTypeInfo.handStatus))"
                      type="text" @click="handleHandType(scope.row)">
             {{scope.row.handTypeInfo ? '修改交件方式' : '选择交件方式'}}
           </el-button>
-          <el-button v-if="scope.row.status === 3 && !scope.row.takeTypeInfo" type="text" @click="handleTakeType(scope.row)">
-            选择取件方式
+          <el-button v-if="scope.row.status === 3 && (!scope.row.takeTypeInfo || [11,21,31].includes(scope.row.takeTypeInfo.takeStatus))"
+                     type="text" @click="handleTakeType(scope.row)">
+            {{scope.row.takeTypeInfo ? '修改取件方式' : '选择取件方式'}}
           </el-button>
           <el-button v-if="scope.row.handTypeInfo && [21, 51].includes(scope.row.handTypeInfo.handStatus)" type="text"
                      @click="showResvCode(scope.row)">
@@ -62,6 +63,7 @@
   export default {
     props: {
       data: Array,
+      showDelivery: Boolean,
       onHandType: {
         type: Function,
         default: function () {

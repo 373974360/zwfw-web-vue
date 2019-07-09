@@ -10,7 +10,8 @@ const getters = {
   enums: state => state.app.enums,
   dicts: state => state.app.dicts,
   deptCategoryId: state => state.app.deptCategoryId,
-  resourceUrl: state => state.app.resourceUrl
+  resourceUrl: state => state.app.resourceUrl,
+  closeOnClickModal: state => state.app.closeOnClickModal
 }
 
 export default getters

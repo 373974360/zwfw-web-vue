@@ -15,7 +15,9 @@
         <div class="more"><a href="/web/api/sso/redirect?url=/member/pretrial">更多></a></div>
       </div>
       <div class="data-bg">
-        <pretrial-table :data="pretrialData"></pretrial-table>
+        <pretrial-table :data="pretrialData"
+                        :show-delivery="false">
+        </pretrial-table>
       </div>
     </div>
     <!--<div class="data-box">

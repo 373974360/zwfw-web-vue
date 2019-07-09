@@ -140,7 +140,6 @@
   import { mapGetters } from 'vuex'
   import { copyProperties } from "../../utils";
   import { validMobiles } from "../../utils/validate";
-  import { getMemberProfile } from '../../api/member/member'
   import { getPretrialPage } from '../../api/member/pretrial'
   import {
     getItemDelivery
@@ -297,8 +296,8 @@
     },
     created() {
       this.loadPage()
-      this.getMailboxes();
-      this.getReceiveAddress();
+      this.getMailboxes()
+      this.getReceiveAddress()
       this.getMemberAddressList(this.id)
     },
     methods: {
@@ -310,9 +309,8 @@
       },
       loadPage() {
         getPretrialPage(this.page, this.pageSize, this.itemName, this.status, this.id).then(response => {
-            this.preauditRecordList = response.data.records;
-            this.total = response.data.total;
-          }
+          this.preauditRecordList = response.data.records
+          this.total = response.data.total
         })
       },
       reloadPage() {

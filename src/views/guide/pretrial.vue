@@ -47,29 +47,29 @@
         <div class="msg-content">
           <div class="table-title">{{item.name}}</div>
           <table>
-            <template v-if="member.type == memberType.nature">
+            <template v-if="member.infoPerson">
               <tr>
-                <th>姓名：</th><td>{{member.naturePerson.name}}</td>
-                <th>身份证号：</th><td>{{member.naturePerson.idcard}}</td>
+                <th>姓名：</th><td>{{member.infoPerson.customerName}}</td>
+                <th>身份证号：</th><td>{{member.infoPerson.idNumber}}</td>
               </tr>
               <tr>
-                <th>联系电话：</th><td>{{member.naturePerson.phone}}</td>
+                <th>联系电话：</th><td>{{member.infoPerson.customerPhone}}</td>
               </tr>
               <tr>
-                <th>通讯地址：</th><td colspan="3">{{member.naturePerson.address}}</td>
+                <th>通讯地址：</th><td colspan="3">{{member.infoPerson.customerAddress}}</td>
               </tr>
             </template>
-            <template v-if="member.type == memberType.legal">
+            <template v-if="member.infoLegal">
               <tr>
-                <th>企业名称：</th><td>{{member.legalPerson.companyName}}</td>
-                <th>企业工商注册号：</th><td>{{member.legalPerson.companyCode}}</td>
+                <th>企业名称：</th><td>{{member.infoLegal.enterpriseName}}</td>
+                <th>企业工商注册号：</th><td>{{member.infoLegal.licenseNo}}</td>
               </tr>
               <tr>
-                <th>企业法人：</th><td>{{member.legalPerson.legalPerson}}</td>
-                <th>法人身份证号：</th><td>{{member.legalPerson.idcard}}</td>
+                <th>企业法人：</th><td>{{member.infoLegal.legalName}}</td>
+                <th>法人身份证号：</th><td>{{member.infoLegal.legalIdNumber}}</td>
               </tr>
               <tr>
-                <th>通讯地址：</th><td colspan="3">{{member.legalPerson.registerPlace}}</td>
+                <th>通讯地址：</th><td colspan="3">{{member.infoLegal.enterpriseAddress}}</td>
               </tr>
             </template>
             <!--<tr v-if="item.handleType == 'blxs_wsbl' || item.handleType == 'blxs_wsys'">
@@ -157,7 +157,6 @@
   import { copyProperties } from '../../utils'
   import { getItemDetail, /*getItemConditions,*/ getItemMaterials } from '../../api/item'
   import { getPretrialInfo, submitPretrial, getMailboxes } from '../../api/member/pretrial'
-  import { getMemberProfile } from '../../api/member/member'
 
   export default {
     components: {
@@ -173,8 +172,6 @@
         checkedConditions: [],
         indeterminate: false,
         secondForm: false,
-        member: {},
-        memberType: this.$store.state.app.memberType,
         item: {},
         itemPretrial: {
           id: '',
@@ -210,7 +207,7 @@
     },
     computed: {
       ...mapGetters([
-        'id', 'enums'
+        'id', 'enums', 'member'
       ])
     },
     created() {
@@ -222,15 +219,6 @@
         this.pretrialId = this.$route.params.value
         this.init2()
       }
-      getMemberProfile().then(response => {
-        this.member = response.data
-        this.itemPretrial.memberId = response.data.infoInformation.userId;
-      }).catch(error => {
-        this.$message.error('未登录，请重新登录！')
-        setTimeout(function () {
-          window.location.href = '/web/api/sso/login'
-        }, 1000);
-      })
       /*getMailboxes().then(response => {
         this.mailboxes = response.data
       })*/
@@ -418,19 +406,16 @@
         this.doSubmit()
       },
       doSubmit() {
-        //console.log(JSON.stringify(this.itemPretrial))
-
+        this.itemPretrial.memberId = this.id;
+        // console.log(JSON.stringify(this.itemPretrial))
         submitPretrial(this.itemPretrial).then(response => {
           if (response.status == 200) {
             this.$message.success('申请提交成功，请耐心等待审核！')
-            this.$router.push({path: '/member'})
-          } else {
-            this.$message.error(response.message)
-            this.loading = false
+            // this.$router.push({path: '/member'})
+            setTimeout(function () {
+              window.location.href = '/web/api/sso/redirect?url=/member'
+            }, 1000);
           }
-        }).catch(error => {
-          this.$message.error('系统繁忙，请稍后重试！')
-          this.loading = false
         })
       },
       notify1() {

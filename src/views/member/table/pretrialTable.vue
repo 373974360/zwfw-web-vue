@@ -83,8 +83,8 @@
     },
     methods: {
       handleUpdate(id) {
-        this.$router.push({path: `/guide/pretrial/id/${id}`})
-        // window.location.href = 'http://localhost:8765/web/api/sso/login?url=/guide/pretrial/id/' + id
+        // this.$router.push({path: `/guide/pretrial/id/${id}`})
+        window.location.href = '/web/api/sso/redirect?url=/guide/pretrial/id/' + id
       },
       formatStatus(row, column, cellValue) {
         return enums(cellValue, 'PreauditStatusEnum')

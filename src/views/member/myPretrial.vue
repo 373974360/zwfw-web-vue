@@ -168,7 +168,6 @@
       }
       return {
         itemName: undefined,
-        memberId: undefined,
         status: undefined,
         preauditRecordList: [],
         page: this.$store.state.app.page,
@@ -297,9 +296,10 @@
       ])
     },
     created() {
-      this.init();
+      this.loadPage()
       this.getMailboxes();
       this.getReceiveAddress();
+      this.getMemberAddressList(this.id)
     },
     methods: {
       resetSearch(){
@@ -308,31 +308,10 @@
         this.itemName = undefined,
         this.status = undefined
       },
-      init() {
-        getMemberProfile().then(response => {
-          if (response.status == 200) {
-            this.memberId = response.data.infoInformation.userId;
-            this.loadPage()
-            this.getMemberAddressList(this.memberId)
-          } else {
-            this.$message.error('数据加载失败')
-          }
-        }).catch(error => {
-          this.$message.error('未登录，请重新登录！')
-          setTimeout(function () {
-            window.location.href = '/web/api/sso/login?url=/member/pretrial'
-          }, 1000);
-        })
-      },
       loadPage() {
-        // this.memberId = this.id
-        this.preauditRecordList = [];
-        getPretrialPage(this.page, this.pageSize, this.itemName, this.status, this.memberId).then(response => {
-          if (response.status == 200) {
+        getPretrialPage(this.page, this.pageSize, this.itemName, this.status, this.id).then(response => {
             this.preauditRecordList = response.data.records;
             this.total = response.data.total;
-          } else {
-            this.$message.error('数据加载失败')
           }
         })
       },

@@ -21,8 +21,8 @@
         <!--<el-menu-item index="/guide">
           <span>云服务</span>
         </el-menu-item>-->
-        <el-menu-item index="/member">
-          <span>我要查</span>
+        <el-menu-item index="">
+          <span><a href="/web/api/sso/redirect?url=/member">我要查</a></span>
         </el-menu-item>
       </el-menu>
     </div>

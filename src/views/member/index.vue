@@ -1,6 +1,6 @@
 <template>
   <div class="my-item">
-    <div class="data-box">
+    <!--<div class="data-box">
       <div class="label-bg">
         <div class="label">我的办件</div>
         <div class="more"><router-link :to="{path: '/member/process'}">更多></router-link></div>
@@ -8,17 +8,17 @@
       <div class="data-bg">
         <process-table :data="processData" :take-type="changeTakeType" :post-code="getPostCode"></process-table>
       </div>
-    </div>
+    </div>-->
     <div class="data-box">
       <div class="label-bg">
         <div class="label">我的预审</div>
-        <div class="more"><router-link :to="{path: '/member/pretrial'}">更多></router-link></div>
+        <div class="more"><a href="/web/api/sso/redirect?url=/member/pretrial">更多></a></div>
       </div>
       <div class="data-bg">
         <pretrial-table :data="pretrialData"></pretrial-table>
       </div>
     </div>
-    <div class="data-box">
+    <!--<div class="data-box">
       <div class="label-bg">
         <div class="label">我的收藏</div>
         <div class="more"><router-link :to="{path: '/member/collection'}">更多></router-link></div>
@@ -26,7 +26,7 @@
       <div class="data-bg">
         <collection-table :data="collectionData" :handle-remove="removeFavorite"></collection-table>
       </div>
-    </div>
+    </div>-->
 
     <el-dialog title="提示" :visible.sync="dialogTipVisible" :close-on-click-modal="false" class="dialog">
       <div v-loading="dialogLoading">
@@ -83,7 +83,6 @@
     },
     data() {
       return {
-        memberId: undefined,
         pretrialData: [],
         collectionData: [],
         processData: [],
@@ -119,24 +118,12 @@
     },
     methods: {
       init() {
-        getMemberProfile().then(response => {
-          if (response.status == 200) {
-            this.memberId = response.data.infoInformation.userId;
-            getPretrialPage(1, 5, null, null, this.memberId).then(response => {
-              this.pretrialData = response.data.records;
-            })
-            // this.pretrialData = response.data.pretrialList
-            // this.collectionData = response.data.favoriteList
-            // this.processData = response.data.processList
-          } else {
-            this.$message.error('数据加载失败')
-          }
-        }).catch(error => {
-          this.$message.error('未登录，请重新登录！')
-          setTimeout(function () {
-            window.location.href = '/web/api/sso/login'
-          }, 1000);
+        getPretrialPage(1, 5, null, null, this.id).then(response => {
+          this.pretrialData = response.data.records;
         })
+        // this.pretrialData = response.data.pretrialList
+        // this.collectionData = response.data.favoriteList
+        // this.processData = response.data.processList
       },
       changeTakeType(row) {},
       getPostCode(row) {

@@ -4,8 +4,9 @@
       <div class="navbar2">
         <router-link :to="{path: '/'}">首&nbsp;&nbsp;&nbsp;页</router-link>
         <router-link :to="{path: '/guide'}">办事大厅</router-link>
-        <router-link :to="{path: '/member'}">个人中心</router-link>
-        <router-link :to="{path: '/member/message'}">消&nbsp;&nbsp;&nbsp;息</router-link>
+        <a href="/web/api/sso/redirect?url=/member">个人中心</a>
+        <!--<router-link :to="{path: '/member'}">个人中心</router-link>-->
+        <!--<router-link :to="{path: '/member/message'}">消&nbsp;&nbsp;&nbsp;息</router-link>-->
         <el-input v-model="searchWords" icon="search" :on-icon-click="handleIconClick"/>
       </div>
     </div>

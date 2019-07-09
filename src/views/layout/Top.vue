@@ -6,14 +6,14 @@
       </div>
       <div class="top_bx right">
         <template v-if="token">
-          当前用户：{{name}} <em>|</em>
-          <router-link :to="{path: '/member'}">个人中心</router-link> <em>|</em>
+          当前用户：{{storageName}} <em>|</em>
+          <a href="/web/api/sso/redirect?url=/member">个人中心</a> <em>|</em>
           <a href="javascript:void(0)" @click="logout">注销</a>
         </template>
         <template v-else>
           <!--如果没有登录-->
-          <span class="svg-container"><icon-svg iconClass="user"/></span><router-link :to="{path: '/login'}">登录</router-link> <em>|</em>
-          <router-link :to="{path: '/register'}">注册</router-link>
+          <span class="svg-container"><icon-svg iconClass="user"/></span><router-link :to="{path: '/login'}">登录</router-link><!-- <em>|</em>-->
+          <!--<router-link :to="{path: '/register'}">注册</router-link>-->
         </template>
       </div>
     </div>
@@ -26,7 +26,7 @@
   export default {
     computed: {
       ...mapGetters([
-        'token', 'name'
+        'token', 'storageName'
       ])
     },
     methods: {

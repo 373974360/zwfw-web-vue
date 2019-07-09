@@ -6,7 +6,7 @@
       <div class="login-bg">
         <div class="login-container">
           <el-form class="login-form" ref="loginForm" :model="loginForm" :rules="loginRules" autoComplete="on" label-position="left">
-            <div class="title">用户登录</div>
+            <!--<div class="title">用户登录</div>
             <el-form-item prop="account">
               <span class="svg-container"><icon-svg iconClass="user"/></span>
               <el-input type="text" v-model="loginForm.account" auto-complete="on" placeholder="请输入用户名"></el-input>
@@ -27,14 +27,14 @@
                 <span class="captcha2" @click.self="changeVerifyCode">换一张</span>
               </el-col>
             </el-row>
-            <el-checkbox v-model="loginForm.autoLogin">下次自动登录</el-checkbox>
-            <el-button type="primary" style="width: 100%" :loading="loading" @click.native.prevent="handleLogin">登&nbsp;录</el-button>
-            <div class="forget">
+            <el-checkbox v-model="loginForm.autoLogin">下次自动登录</el-checkbox>-->
+            <el-button type="primary" style="width: 100%; margin-top:200px" :loading="loading" @click.native.prevent="handleLogin">登&nbsp;录</el-button>
+            <!--<div class="forget">
               <router-link :to="{path: '/retrieve'}">忘记密码？</router-link>
             </div>
             <div class="sign-up">
               <router-link :to="{path: '/register'}">立即注册账号</router-link>
-            </div>
+            </div>-->
           </el-form>
         </div>
       </div>
@@ -114,11 +114,7 @@
             })
           }
         })*/
-        // window.location.href= 'http://zwfw.xa.gov.cn/zdpyc/sso/login'
-        // window.location.href= 'http://sfrz.shaanxi.gov.cn/sysauthserver/authorize?response_type=code&client_id=000000047&redirect_uri=http://www.chengshengming.com:9001'
-        // window.location.href= 'http://zwfw.xa.gov.cn/zdpyc/sso/login?service=http://www.chengshengming.com:9001/#/member/index'
         // this.$router.push({path: '/member'})
-        // window.location.href = '/web/api/sso/getMemberProfile'
         window.location.href = '/web/api/sso/login'
       },
       changeVerifyCode() {

@@ -81,11 +81,11 @@
         this.deptList = response.data
         this.loadItemList(response.data[0].id)
       })
-      if (this.token) {
+      /*if (this.token) {
         getAllFavorites().then(response => {
           this.favoriteList = response.data
         })
-      }
+      }*/
     },
     methods: {
       loadItemList(deptId) {

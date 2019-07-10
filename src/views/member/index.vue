@@ -14,7 +14,7 @@
     <div class="data-box">
       <div class="label-bg">
         <div class="label">我的办件</div>
-        <div class="more"><a href="/web/api/sso/redirect?url=/member/pretrial">更多></a></div>
+        <div class="more"><a href="/web/api/sso/redirect?url=/member/process">更多></a></div>
       </div>
       <div class="data-bg">
         <process-table :data="processData"

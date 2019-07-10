@@ -128,6 +128,14 @@
         // this.pretrialData = response.data.pretrialList
         // this.collectionData = response.data.favoriteList
         // this.processData = response.data.processList
+        let processQuery = {
+          page: 1,
+          size: 5,
+          memberId: this.id
+        }
+        getMyProcessPage(processQuery).then(response => {
+          this.processData = response.data.records
+        })
       },
       changeTakeType(row) {},
       getPostCode(row) {

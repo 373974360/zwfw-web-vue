@@ -17,7 +17,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="createTime" :formatter="formatDate" label="申报日期" width="150" align="center"></el-table-column>
-      <el-table-column label="当前状态" width="120" align="center">
+      <el-table-column label="当前状态" width="150" align="center">
         <template scope="scope">
           <span v-if="scope.row.status === 15">
             {{scope.row.status | enums('HandlingStatusEnum')}} | {{scope.row.takeTypeInfo.takeStatus | enums('TakeStatusEnum')}}

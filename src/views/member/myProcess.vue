@@ -178,7 +178,7 @@
   import { mapGetters } from 'vuex'
   import { copyProperties } from "../../utils";
   import { validMobiles } from "../../utils/validate";
-  import { getPhoneVerifyCodeLogged, validateMemberInfo } from '../../api/member/member'
+  import { getMemberProfile, getPhoneVerifyCodeLogged, validateMemberInfo } from '../../api/member/member'
   import { getMyProcessPage, sendPostCode } from '../../api/member/process'
   import {
     getItemDelivery
@@ -207,6 +207,7 @@
         itemName: '',
         status: undefined,
         processData: [],
+        member: {},
         dialogVisible: false,
         dialogTipVisible: false,
         dialogLoading: false,
@@ -309,6 +310,7 @@
     },
     created() {
       this.loadPage()
+      this.getMemberInfo()
       this.getMailboxes()
       this.getMemberAddressList(this.id)
     },
@@ -330,6 +332,11 @@
         getMyProcessPage(query).then(response => {
           this.processData = response.data.records
           this.total = response.data.total
+        })
+      },
+      getMemberInfo() {
+        getMemberProfile().then(response => {
+          this.member = response.data
         })
       },
       getMailboxes() {
@@ -360,6 +367,10 @@
         this.takeTypeInfo.workNo = row.workNo
         this.takeTypeInfo.memberId = this.id
         this.initCardHeader()
+        if (!this.takeTypeInfo.mailboxInfo.id) {
+          this.takeTypeInfo.mailboxInfo.consigneeName = this.member.infoInformation.name
+          this.takeTypeInfo.mailboxInfo.consigneeMobile = this.member.infoInformation.cellPhone
+        }
       },
       submitTakeType() {
         this.$refs['takeTypeForm'].validate(valid => {
@@ -409,6 +420,13 @@
         this.cardItemVisible = !this.cardItemVisible;
       },
       initCardHeader() {
+        this.takeTypeInfo.postInfo.name = this.member.infoInformation.name
+        this.takeTypeInfo.postInfo.phone = this.member.infoInformation.cellPhone
+        if (this.member.infoInformation.registerType.indexOf('personal') > -1) {
+          this.takeTypeInfo.postInfo.address = this.member.infoPerson.customerAddress
+        } else {
+          this.takeTypeInfo.postInfo.address = this.member.infoLegal.enterpriseAddress
+        }
         if (this.memberAddressList.length <= 0) {
           this.cardVisible = false;
           this.takeTypeInfo.postInfo.addresseeId = undefined;

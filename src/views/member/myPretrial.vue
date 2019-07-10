@@ -189,6 +189,7 @@
   import { mapGetters } from 'vuex'
   import { copyProperties } from "../../utils";
   import { validMobiles } from "../../utils/validate";
+  import { getMemberProfile } from "../../api/member/member";
   import { getPretrialPage } from '../../api/member/pretrial'
   import {
     getItemDelivery
@@ -225,6 +226,7 @@
         pageSize: this.$store.state.app.rows,
         pageSizes: this.$store.state.app.pageSize,
         total: 0,
+        member: {},
         dialogLoading: false,
         btnLoading: false,
         handTypeVisible: false,
@@ -373,6 +375,7 @@
     },
     created() {
       this.loadPage()
+      this.getMemberInfo()
       this.getMailboxes()
       this.getReceiveAddress()
       this.getMemberAddressList(this.id)
@@ -410,6 +413,11 @@
         this.page = page
         this.loadPage()
       },
+      getMemberInfo() {
+        getMemberProfile().then(response => {
+          this.member = response.data
+        })
+      },
       handleHandType(row) {
         this.handTypeVisible = true
         this.getItemHandTypes(row.itemId)
@@ -418,6 +426,14 @@
         }
         this.handTypeInfo.workNo = row.workNo
         this.resetHandMailboxPostSelection()
+        if (!this.handTypeInfo.mailboxInfo.id) {
+          this.handTypeInfo.mailboxInfo.senderName = this.member.infoInformation.name
+          this.handTypeInfo.mailboxInfo.senderMobile = this.member.infoInformation.cellPhone
+        }
+        if (!this.handTypeInfo.mailboxPost.id) {
+          this.handTypeInfo.mailboxPost.senderName = this.member.infoInformation.name
+          this.handTypeInfo.mailboxPost.senderMobile = this.member.infoInformation.cellPhone
+        }
       },
       handleTakeType(row) {
         this.takeTypeVisible = true
@@ -428,6 +444,10 @@
         this.takeTypeInfo.workNo = row.workNo
         this.takeTypeInfo.memberId = this.id
         this.initCardHeader()
+        if (!this.takeTypeInfo.mailboxInfo.id) {
+          this.takeTypeInfo.mailboxInfo.consigneeName = this.member.infoInformation.name
+          this.takeTypeInfo.mailboxInfo.consigneeMobile = this.member.infoInformation.cellPhone
+        }
       },
       showResvCode(row) {
         getResvCode(row.workNo).then(response => {
@@ -574,6 +594,13 @@
         this.cardItemVisible = !this.cardItemVisible;
       },
       initCardHeader() {
+        this.takeTypeInfo.postInfo.name = this.member.infoInformation.name
+        this.takeTypeInfo.postInfo.phone = this.member.infoInformation.cellPhone
+        if (this.member.infoInformation.registerType.indexOf('personal') > -1) {
+          this.takeTypeInfo.postInfo.address = this.member.infoPerson.customerAddress
+        } else {
+          this.takeTypeInfo.postInfo.address = this.member.infoLegal.enterpriseAddress
+        }
         if (this.memberAddressList.length <= 0) {
           this.cardVisible = false;
           this.takeTypeInfo.postInfo.addresseeId = undefined;

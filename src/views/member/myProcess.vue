@@ -178,8 +178,8 @@
   import { mapGetters } from 'vuex'
   import { copyProperties } from "../../utils";
   import { validMobiles } from "../../utils/validate";
-  import { getPhoneVerifyCodeLogged, validateMemberInfo } from '../../api/member/member'
-  import { getMyProcessPage, sendPostCode } from '../../api/member/process'
+  import { getMemberProfile, getPhoneVerifyCodeLogged, validateMemberInfo } from '../../api/member/member'
+  import { getMyProcessPage, getHandlingRecord, sendPostCode } from '../../api/member/process'
   import {
     getItemDelivery
   } from "../../api/item";
@@ -207,6 +207,7 @@
         itemName: '',
         status: undefined,
         processData: [],
+        member: {},
         dialogVisible: false,
         dialogTipVisible: false,
         dialogLoading: false,
@@ -309,8 +310,8 @@
     },
     created() {
       this.loadPage()
+      this.getMemberInfo()
       this.getMailboxes()
-      this.getMemberAddressList(this.id)
     },
     methods: {
       resetSearch() {
@@ -332,6 +333,16 @@
           this.total = response.data.total
         })
       },
+      getMemberInfo() {
+        return new Promise((resolve, reject) => {
+          getMemberProfile().then(response => {
+            this.member = response.data
+            resolve()
+          }).catch(err => {
+            reject(err)
+          })
+        })
+      },
       getMailboxes() {
         getAllMailbox({}).then(response => {
           this.mailboxList = response.data
@@ -346,9 +357,23 @@
           }
         })
       },
+      getHandlingRecordInfo(workNo) {
+        return new Promise((resolve, reject) => {
+          getHandlingRecord({workNo}).then(response => {
+            resolve(response.data)
+          }).catch(err => {
+            reject(err)
+          })
+        })
+      },
       getMemberAddressList(memberId) {
-        findMemberAddressList(memberId).then(response => {
-          this.memberAddressList = response.data
+        return new Promise((resolve, reject) => {
+          findMemberAddressList(memberId).then(response => {
+            this.memberAddressList = response.data
+            resolve()
+          }).catch(err => {
+            err
+          })
         })
       },
       changeTakeType(row) {
@@ -358,8 +383,17 @@
           copyProperties(row.takeTypeInfo, this.takeTypeInfo)
         }
         this.takeTypeInfo.workNo = row.workNo
-        this.takeTypeInfo.memberId = this.id
-        this.initCardHeader()
+        this.getHandlingRecordInfo(row.workNo).then(res => {
+          const member = eval('(' + res.detail + ')')
+          this.takeTypeInfo.memberId = member.idcardNo
+          this.getMemberAddressList(member.idcardNo).then(() => {
+            this.initCardHeader()
+          })
+        })
+        if (!this.takeTypeInfo.mailboxInfo.id) {
+          this.takeTypeInfo.mailboxInfo.consigneeName = this.member.infoInformation.name
+          this.takeTypeInfo.mailboxInfo.consigneeMobile = this.member.infoInformation.cellPhone
+        }
       },
       submitTakeType() {
         this.$refs['takeTypeForm'].validate(valid => {
@@ -370,7 +404,6 @@
               this.resetTakeTypeForm()
               this.$message.success('保存成功')
               this.loadPage()
-              this.getMemberAddressList(this.id)
             })
           } else {
             return false
@@ -409,6 +442,13 @@
         this.cardItemVisible = !this.cardItemVisible;
       },
       initCardHeader() {
+        this.takeTypeInfo.postInfo.name = this.member.infoInformation.name
+        this.takeTypeInfo.postInfo.phone = this.member.infoInformation.cellPhone
+        if (this.member.infoInformation.registerType.indexOf('personal') > -1) {
+          this.takeTypeInfo.postInfo.address = this.member.infoPerson.customerAddress
+        } else {
+          this.takeTypeInfo.postInfo.address = this.member.infoLegal.enterpriseAddress
+        }
         if (this.memberAddressList.length <= 0) {
           this.cardVisible = false;
           this.takeTypeInfo.postInfo.addresseeId = undefined;

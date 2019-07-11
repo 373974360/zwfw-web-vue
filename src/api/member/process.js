@@ -8,6 +8,14 @@ export function getMyProcessPage(query) {
   })
 }
 
+export function getHandlingRecord(query) {
+  return fetch({
+    url: '/web/api/handling/getHandlingRecord',
+    method: 'get',
+    params: query
+  })
+}
+
 export function sendPostCode(processNumber) {
   const data = {processNumber};
   return fetch({

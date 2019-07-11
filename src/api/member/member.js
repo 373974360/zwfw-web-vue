@@ -7,12 +7,9 @@ export function getMemberProfile() {
   })
 }
 
-
-
-
 export function getMyProfile() {
   return fetch({
-    url: '/api/zwfw-web/member/getDetailInfo',
+    url: '/web/api/sso/getMemberProfile',
     method: 'get'
   })
 }

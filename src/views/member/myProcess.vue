@@ -179,7 +179,7 @@
   import { copyProperties } from "../../utils";
   import { validMobiles } from "../../utils/validate";
   import { getMemberProfile, getPhoneVerifyCodeLogged, validateMemberInfo } from '../../api/member/member'
-  import { getMyProcessPage, sendPostCode } from '../../api/member/process'
+  import { getMyProcessPage, getHandlingRecord, sendPostCode } from '../../api/member/process'
   import {
     getItemDelivery
   } from "../../api/item";
@@ -208,7 +208,6 @@
         status: undefined,
         processData: [],
         member: {},
-        memberCard: undefined,
         dialogVisible: false,
         dialogTipVisible: false,
         dialogLoading: false,
@@ -311,14 +310,7 @@
     },
     created() {
       this.loadPage()
-      this.getMemberInfo().then(() => {
-        if (this.member.infoInformation.registerType.indexOf('personal') > -1) {
-          this.memberCard = this.member.infoPerson.idNumber
-        } else {
-          this.memberCard = this.member.infoLegal.legalIdNumber
-        }
-        this.getMemberAddressList(this.memberCard)
-      })
+      this.getMemberInfo()
       this.getMailboxes()
     },
     methods: {
@@ -365,9 +357,23 @@
           }
         })
       },
+      getHandlingRecordInfo(workNo) {
+        return new Promise((resolve, reject) => {
+          getHandlingRecord({workNo}).then(response => {
+            resolve(response.data)
+          }).catch(err => {
+            reject(err)
+          })
+        })
+      },
       getMemberAddressList(memberId) {
-        findMemberAddressList(memberId).then(response => {
-          this.memberAddressList = response.data
+        return new Promise((resolve, reject) => {
+          findMemberAddressList(memberId).then(response => {
+            this.memberAddressList = response.data
+            resolve()
+          }).catch(err => {
+            err
+          })
         })
       },
       changeTakeType(row) {
@@ -377,8 +383,13 @@
           copyProperties(row.takeTypeInfo, this.takeTypeInfo)
         }
         this.takeTypeInfo.workNo = row.workNo
-        this.takeTypeInfo.memberId = this.memberCard
-        this.initCardHeader()
+        this.getHandlingRecordInfo(row.workNo).then(res => {
+          const member = eval('(' + res.detail + ')')
+          this.takeTypeInfo.memberId = member.idcardNo
+          this.getMemberAddressList(member.idcardNo).then(() => {
+            this.initCardHeader()
+          })
+        })
         if (!this.takeTypeInfo.mailboxInfo.id) {
           this.takeTypeInfo.mailboxInfo.consigneeName = this.member.infoInformation.name
           this.takeTypeInfo.mailboxInfo.consigneeMobile = this.member.infoInformation.cellPhone
@@ -393,7 +404,6 @@
               this.resetTakeTypeForm()
               this.$message.success('保存成功')
               this.loadPage()
-              this.getMemberAddressList(this.id)
             })
           } else {
             return false

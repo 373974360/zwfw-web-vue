@@ -532,7 +532,7 @@
               this.resetTakeTypeForm()
               this.$message.success('保存成功')
               this.loadPage()
-              this.getMemberAddressList(this.id)
+              this.getMemberAddressList(this.memberCard)
             })
           } else {
             return false

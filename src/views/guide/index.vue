@@ -35,6 +35,7 @@
               </p>
             </div>
           </li>
+          <li v-if="itemList.length == 0" class="none">查无相关事项</li>
         </ul>
       </div>
       <div class="page-container">
@@ -220,5 +221,11 @@
   .page-container {
     text-align: center;
     margin-top: 16px;
+  }
+  .none {
+    text-align: center;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    font-weight: bold;
   }
 </style>

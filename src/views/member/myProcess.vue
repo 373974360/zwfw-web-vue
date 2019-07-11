@@ -208,6 +208,7 @@
         status: undefined,
         processData: [],
         member: {},
+        memberCard: undefined,
         dialogVisible: false,
         dialogTipVisible: false,
         dialogLoading: false,
@@ -310,9 +311,15 @@
     },
     created() {
       this.loadPage()
-      this.getMemberInfo()
+      this.getMemberInfo().then(() => {
+        if (this.member.infoInformation.registerType.indexOf('personal') > -1) {
+          this.memberCard = this.member.infoPerson.idNumber
+        } else {
+          this.memberCard = this.member.infoLegal.legalIdNumber
+        }
+        this.getMemberAddressList(this.memberCard)
+      })
       this.getMailboxes()
-      this.getMemberAddressList(this.id)
     },
     methods: {
       resetSearch() {
@@ -335,8 +342,13 @@
         })
       },
       getMemberInfo() {
-        getMemberProfile().then(response => {
-          this.member = response.data
+        return new Promise((resolve, reject) => {
+          getMemberProfile().then(response => {
+            this.member = response.data
+            resolve()
+          }).catch(err => {
+            reject(err)
+          })
         })
       },
       getMailboxes() {
@@ -365,7 +377,7 @@
           copyProperties(row.takeTypeInfo, this.takeTypeInfo)
         }
         this.takeTypeInfo.workNo = row.workNo
-        this.takeTypeInfo.memberId = this.id
+        this.takeTypeInfo.memberId = this.memberCard
         this.initCardHeader()
         if (!this.takeTypeInfo.mailboxInfo.id) {
           this.takeTypeInfo.mailboxInfo.consigneeName = this.member.infoInformation.name

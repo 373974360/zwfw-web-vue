@@ -227,6 +227,7 @@
         pageSizes: this.$store.state.app.pageSize,
         total: 0,
         member: {},
+        memberCard: undefined,
         dialogLoading: false,
         btnLoading: false,
         handTypeVisible: false,
@@ -375,10 +376,16 @@
     },
     created() {
       this.loadPage()
-      this.getMemberInfo()
+      this.getMemberInfo().then(() => {
+        if (this.member.infoInformation.registerType.indexOf('personal') > -1) {
+          this.memberCard = this.member.infoPerson.idNumber
+        } else {
+          this.memberCard = this.member.infoLegal.legalIdNumber
+        }
+        this.getMemberAddressList(this.memberCard)
+      })
       this.getMailboxes()
       this.getReceiveAddress()
-      this.getMemberAddressList(this.id)
     },
     mounted() {
       this.baiduMapVisible = false
@@ -414,8 +421,13 @@
         this.loadPage()
       },
       getMemberInfo() {
-        getMemberProfile().then(response => {
-          this.member = response.data
+        return new Promise((resolve, reject) => {
+          getMemberProfile().then(response => {
+            this.member = response.data
+            resolve()
+          }).catch(err => {
+            reject(err)
+          })
         })
       },
       handleHandType(row) {
@@ -442,7 +454,7 @@
           copyProperties(row.takeTypeInfo, this.takeTypeInfo)
         }
         this.takeTypeInfo.workNo = row.workNo
-        this.takeTypeInfo.memberId = this.id
+        this.takeTypeInfo.memberId = this.memberCard
         this.initCardHeader()
         if (!this.takeTypeInfo.mailboxInfo.id) {
           this.takeTypeInfo.mailboxInfo.consigneeName = this.member.infoInformation.name

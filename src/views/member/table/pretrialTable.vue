@@ -14,8 +14,16 @@
           {{scope.row.status | enums('PreauditStatusEnum')}}
         </template>-->
       </el-table-column>
-      <el-table-column prop="preauditOption" label="审核意见" align="center"></el-table-column>
-      <el-table-column prop="operateTime" :formatter="formatDate" label="审核时间" width="120" align="center"></el-table-column>
+      <el-table-column prop="preauditOptio" label="审核意见" align="center">
+        <template slot-scope="scope">
+          {{scope.row.status != 1 ? scope.row.preauditOption : ''}}
+        </template>
+      </el-table-column>
+      <el-table-column prop="operateTime" :formatter="formatDate" label="审核时间" width="120" align="center">
+        <template slot-scope="scope">
+          {{scope.row.status != 1 ? scope.row.operateTime : ''}}
+        </template>
+      </el-table-column>
       <!--<el-table-column label="交件方式" align="center" v-if="showDelivery">
         <template scope="scope">
           <el-tooltip effect="dark" placement="top" content="点击修改">

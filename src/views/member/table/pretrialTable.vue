@@ -43,7 +43,7 @@
                      type="text" @click="handleHandType(scope.row)">
             {{scope.row.handTypeInfo ? '修改交件方式' : '选择交件方式'}}
           </el-button>
-          <el-button v-if="scope.row.status === 3 && !scope.row.handTypeInfo.handTime && (!scope.row.takeTypeInfo || [11,21,31].includes(scope.row.takeTypeInfo.takeStatus))"
+          <el-button v-if="scope.row.status === 3 && (!scope.row.handTypeInfo || !scope.row.handTypeInfo.handTime) && (!scope.row.takeTypeInfo || [11,21,31].includes(scope.row.takeTypeInfo.takeStatus))"
                      type="text" @click="handleTakeType(scope.row)">
             {{scope.row.takeTypeInfo ? '修改取件方式' : '选择取件方式'}}
           </el-button>

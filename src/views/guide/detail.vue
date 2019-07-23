@@ -4,11 +4,11 @@
       <div class="left">
         <div class="typeInfo">
           <p class="p1">事项类型</p>
-          <p class="p2">行政审批</p>
+          <p class="p2">{{basicInfo.itemType | enums('ItemTypeEnum')}}</p>
           <p class="p1">办理主体</p>
           <p class="p2">{{basicInfo.dealDeptName}}</p>
           <p class="p1">办理类型</p>
-          <p class="p2">{{basicInfo.itemType | enums('ItemTypeEnum')}}</p>
+          <p class="p2">{{basicInfo.dealType | enums('DealTypeEnum')}}</p>
         </div>
         <el-button type="primary" @click="linkToPretrial">
           <div class="svg-container"><icon-svg iconClass="online"/></div>
@@ -60,7 +60,7 @@
               <th>法定期限</th><td>{{basicInfo.lawComptime}}</td>
             </tr>
             <tr>
-              <th>办理时间</th><td>法定工作日 上午9:00-12:00 下午14:00-17:00</td>
+              <th>办理时间</th><td>{{basicInfo.acceptTime}}</td>
               <th>咨询电话</th><td>{{basicInfo.askTel}}</td>
             </tr>
             <tr>
@@ -125,7 +125,8 @@
         <div class="message" v-show="basicInfo.handleWorkflow">
           <span class="msg-label">办理流程</span>
           <div class="msg-content">
-            <a :href="basicInfo.handleWorkflow" target="_blank">{{basicInfo.handleWorkflow}}</a>
+<!--            <a :href="basicInfo.handleWorkflow" target="_blank">{{basicInfo.handleWorkflow}}</a>-->
+            <img class="handle-workflow-img" :src="basicInfo.handleWorkflow">
           </div>
         </div>
         <div class="message" v-show="basicInfo.chargeStandard || basicInfo.chargeBasis">

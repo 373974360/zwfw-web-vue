@@ -2,8 +2,17 @@
   <el-row>
     <el-col :span="4">
       <div class="menu-title">
+        <div class="svg-container"><icon-svg iconClass="category"></icon-svg></div>
+        <div class="svg-text">按分类</div>
+      </div>
+      <div class="menu-item">
+        <el-menu class="category" mode="vertical">
+          <el-tree :data="categoryList" @node-click="handleNodeClick"></el-tree>
+        </el-menu>
+      </div>
+      <div class="menu-title">
         <div class="svg-container"><icon-svg iconClass="department"></icon-svg></div>
-        <div class="svg-text">按部门分类</div>
+        <div class="svg-text">按部门</div>
       </div>
       <div class="menu-item">
         <el-menu class="category" mode="vertical">
@@ -55,13 +64,14 @@
 
 <script>
   import { mapGetters } from 'vuex'
-  import { getItemCategory, getItemPageByCategories } from '../../api/guide'
+  import { getCategoryTree, getItemsByCategoryId, getItemDepartment, getItemPageByDepartmentId } from '../../api/guide'
   import { getAllFavorites, addFavorite, delFavorite } from '../../api/member/favorite'
 
   export default {
     name: 'service_guide',
     data() {
       return {
+        categoryList: [],
         deptList: [],
         itemList: [],
         favoriteList: [],
@@ -78,9 +88,13 @@
       ])
     },
     created() {
-      getItemCategory(this.deptCategoryId).then(response => {
+      getCategoryTree().then(response => {
+        this.categoryList = response.data
+        this.handleNodeClick(response.data[0])
+      })
+      getItemDepartment(this.deptCategoryId).then(response => {
         this.deptList = response.data
-        this.loadItemList(response.data[0].id)
+        // this.loadItemList(response.data[0].id)
       })
       /*if (this.token) {
         getAllFavorites().then(response => {
@@ -89,6 +103,13 @@
       }*/
     },
     methods: {
+      handleNodeClick(categoryList) {
+        // console.log(categoryList)
+        getItemsByCategoryId(this.page, this.pageSize, categoryList.id).then(response => {
+          this.itemList = response.data.records;
+          this.total = response.data.total;
+        })
+      },
       loadItemList(deptId) {
         this.currentDeptId = deptId
         this.page = 1
@@ -96,7 +117,7 @@
         this.loadPage()
       },
       loadPage() {
-        getItemPageByCategories(this.page, this.pageSize, this.currentDeptId).then(response => {
+        getItemPageByDepartmentId(this.page, this.pageSize, this.currentDeptId).then(response => {
           this.itemList = response.data.records;
           this.total = response.data.total;
         })
@@ -183,9 +204,14 @@
         line-height: 40px;
         font-size: 15px;
         text-align: left;
-        padding-left: 36px !important;
+        padding: 0 10px !important;
         border-bottom: 1px solid #e6e6e6;
         white-space: inherit;
+      }
+      .el-tree {
+        background-color: #f2f2f2;
+        border: transparent;
+        color: #48576A;
       }
     }
   }

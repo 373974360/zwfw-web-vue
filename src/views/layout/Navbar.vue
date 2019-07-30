@@ -15,8 +15,11 @@
         <!--<el-menu-item index="/guide">
           <span>办事指南</span>
         </el-menu-item>-->
-        <el-menu-item index="/guide">
-          <span>办事大厅</span>
+        <el-menu-item index="/guide?serviceObject=1">
+          <span>个人办事</span>
+        </el-menu-item>
+        <el-menu-item index="/guide?serviceObject=2">
+          <span>法人办事</span>
         </el-menu-item>
         <!--<el-menu-item index="/guide">
           <span>云服务</span>

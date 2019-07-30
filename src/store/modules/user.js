@@ -9,7 +9,8 @@ const    user = {
     token: getToken(),
     id: '',
     name: '',
-    member: {}
+    member: {},
+    memberType: ''
   },
   mutations: {
     SET_ID: (state, id) => {
@@ -21,6 +22,16 @@ const    user = {
     SET_MEMBER: (state, member) => {
       state.member = member
     },
+    SET_MEMBER_TYPE: (state, member) => {
+      let serviceObject = undefined
+      if (member.infoPerson) { // 自然人
+        serviceObject = '1';
+      } else if (member.infoLegal) { // 法人
+        serviceObject = '2';
+      }
+      console.log("memberType: " + serviceObject)
+      state.memberType = serviceObject
+    }
   },
   actions: {
     DoLogin({commit}, loginInfo) {
@@ -49,6 +60,7 @@ const    user = {
             commit('SET_ID', data.infoInformation.userId)
             commit('SET_NAME', data.infoInformation.name)
             commit('SET_MEMBER', data)
+            commit('SET_MEMBER_TYPE', data)
             window.sessionStorage.setItem("id", data.infoInformation.userId, )
             window.sessionStorage.setItem("name", data.infoInformation.name)
             // console.log(user.state.id)

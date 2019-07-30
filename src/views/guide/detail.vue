@@ -142,6 +142,7 @@
 </template>
 
 <script>
+  import { Message } from 'element-ui'
   import { mapGetters } from 'vuex'
   import { getItemDetail, /*getItemConditions,*/ getItemMaterials, getItemPreorderConfig } from '../../api/item'
   import { getAllFavorites, addFavorite, delFavorite } from '../../api/member/favorite'
@@ -165,7 +166,7 @@
     },
     computed: {
       ...mapGetters([
-        'token', 'resourceUrl'
+        'token', 'resourceUrl', 'memberType'
       ]),
     },
     created() {
@@ -240,6 +241,23 @@
         }
       },
       linkToPretrial() {
+        if (!this.token) {
+          Message({
+            message: "登录超时，请重新登录",
+            type: 'error',
+            duration: 5 * 1000
+          })
+          this.$router.push({path: `/login`})
+          return
+        }
+        if (this.basicInfo.serviceObject.toString().indexOf(this.memberType) == -1) {
+          Message({
+            message: "只可以办理与登录账号相同类别的事项！",
+            type: 'warning',
+            duration: 5 * 1000
+          })
+          return
+        }
         // this.$router.push({path: `/guide/pretrial/itemId/${this.itemId}`})
         window.location.href = '/web/api/sso/redirect?url=/guide/pretrial/itemId/' + this.itemId
       },

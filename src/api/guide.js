@@ -8,11 +8,11 @@ export function getCategoryTree(id) {
   })
 }
 
-export function getItemsByCategoryId(page, size, categoryId) {
+export function getItemsByCategoryId(page, size, categoryId, serviceObject) {
   return fetch({
     url: '/web/api/item/getItemsByCategoryId',
     method: 'get',
-    params: {page, size, categoryId}
+    params: {page, size, categoryId, serviceObject}
   })
 }
 
@@ -24,11 +24,11 @@ export function getItemDepartment(parentId) {
   })
 }
 
-export function getItemPageByDepartmentId(page, size, departmentId) {
+export function getItemPageByDepartmentId(page, size, departmentId, serviceObject) {
   return fetch({
     url: '/web/api/item/getItemPageByDepartmentId',
     method: 'get',
-    params: {page, size, departmentId}
+    params: {page, size, departmentId, serviceObject}
   })
 }
 

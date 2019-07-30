@@ -8,7 +8,7 @@
           <router-link :to="{path: `/guide/detail/${scope.row.itemId}`}">{{scope.row.itemName}}</router-link>
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" :formatter="formatDate" label="提交时间" width="120" align="center"></el-table-column>
+      <el-table-column prop="createTime" :formatter="formatDate" label="提交时间" width="110" align="center"></el-table-column>
       <el-table-column prop="status" :formatter="formatStatus" label="审核状态" width="100" align="center">
         <!--<template slot-scope="scope">
           {{scope.row.status | enums('PreauditStatusEnum')}}
@@ -19,9 +19,9 @@
           {{scope.row.status != 1 ? scope.row.preauditOption : ''}}
         </template>
       </el-table-column>
-      <el-table-column prop="operateTime" :formatter="formatDate" label="审核时间" width="120" align="center">
+      <el-table-column prop="operateTime" :formatter="formatDate" label="审核时间" width="110" align="center">
         <template slot-scope="scope">
-          {{scope.row.status != 1 ? scope.row.operateTime : ''}}
+          {{scope.row.status != 1 ? formatDate(null, null, scope.row.operateTime) : ''}}
         </template>
       </el-table-column>
       <!--<el-table-column label="交件方式" align="center" v-if="showDelivery">

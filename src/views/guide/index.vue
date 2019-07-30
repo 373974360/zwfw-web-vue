@@ -1,20 +1,20 @@
 <template>
   <el-row>
     <el-col :span="4">
-      <div class="menu-title">
+      <div class="menu-title" @click="tab1()">
         <div class="svg-container"><icon-svg iconClass="category"></icon-svg></div>
         <div class="svg-text">按分类</div>
       </div>
-      <div class="menu-item">
+      <div class="menu-item" v-if="this.tab == 1">
         <el-menu class="category" mode="vertical">
           <el-tree :data="categoryList" @node-click="handleNodeClick"></el-tree>
         </el-menu>
       </div>
-      <div class="menu-title">
+      <div class="menu-title" @click="tab2()">
         <div class="svg-container"><icon-svg iconClass="department"></icon-svg></div>
         <div class="svg-text">按部门</div>
       </div>
-      <div class="menu-item">
+      <div class="menu-item" v-if="this.tab == 2">
         <el-menu class="category" mode="vertical">
           <template v-for="item in deptList">
             <el-menu-item :index="item.name" @click="loadItemList(item.id)">{{item.name}}</el-menu-item>
@@ -71,6 +71,7 @@
     name: 'service_guide',
     data() {
       return {
+        tab: 1,
         categoryList: [],
         deptList: [],
         itemList: [],
@@ -79,7 +80,8 @@
         total: 0,
         page: this.$store.state.app.page,
         pageSize: this.$store.state.app.rows,
-        pageSizes: this.$store.state.app.pageSize
+        pageSizes: this.$store.state.app.pageSize,
+        serviceObject: undefined
       }
     },
     computed: {
@@ -88,9 +90,10 @@
       ])
     },
     created() {
+      this.serviceObject = this.$route.query.serviceObject
+      console.log("serviceObject: " + this.serviceObject)
       getCategoryTree().then(response => {
         this.categoryList = response.data
-        this.handleNodeClick(response.data[0])
       })
       getItemDepartment(this.deptCategoryId).then(response => {
         this.deptList = response.data
@@ -103,9 +106,15 @@
       }*/
     },
     methods: {
+      tab1() {
+        this.tab = 1;
+      },
+      tab2() {
+        this.tab = 2;
+      },
       handleNodeClick(categoryList) {
         // console.log(categoryList)
-        getItemsByCategoryId(this.page, this.pageSize, categoryList.id).then(response => {
+        getItemsByCategoryId(this.page, this.pageSize, categoryList.id, this.serviceObject).then(response => {
           this.itemList = response.data.records;
           this.total = response.data.total;
         })
@@ -117,7 +126,7 @@
         this.loadPage()
       },
       loadPage() {
-        getItemPageByDepartmentId(this.page, this.pageSize, this.currentDeptId).then(response => {
+        getItemPageByDepartmentId(this.page, this.pageSize, this.currentDeptId, this.serviceObject).then(response => {
           this.itemList = response.data.records;
           this.total = response.data.total;
         })
@@ -172,7 +181,7 @@
   }
 </script>
 
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style rel="stylesheet/scss" lang="scss">
   .menu-title {
     height: 60px;
     font-size: 16px;
@@ -212,6 +221,11 @@
         background-color: #f2f2f2;
         border: transparent;
         color: #48576A;
+        .el-tree-node.is-current {
+          .el-tree-node__content  {
+              color: #20a0ff;
+          }
+        }
       }
     }
   }

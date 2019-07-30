@@ -2,7 +2,7 @@ import fetch from '../../utils/fetch'
 
 export function getMyProcessPage(query) {
   return fetch({
-    url: '/web/api/handling/getProcessPage',
+    url: '/web/api/sso/handling/getProcessPage',
     method: 'get',
     params: query
   })
@@ -10,7 +10,7 @@ export function getMyProcessPage(query) {
 
 export function getHandlingRecord(query) {
   return fetch({
-    url: '/web/api/handling/getHandlingRecord',
+    url: '/web/api/sso/handling/getHandlingRecord',
     method: 'get',
     params: query
   })

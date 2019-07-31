@@ -64,7 +64,7 @@
 
 <script>
   import { mapGetters } from 'vuex'
-  import { getCategoryTree, getItemsByCategoryId, getItemDepartment, getItemPageByDepartmentId } from '../../api/guide'
+  import { getCategoryTree, getItemPageByCategoryId, getItemDepartment, getItemPageByDepartmentId } from '../../api/guide'
   import { getAllFavorites, addFavorite, delFavorite } from '../../api/member/favorite'
 
   export default {
@@ -114,7 +114,7 @@
       },
       handleNodeClick(categoryList) {
         // console.log(categoryList)
-        getItemsByCategoryId(this.page, this.pageSize, categoryList.id, this.serviceObject).then(response => {
+        getItemPageByCategoryId(this.page, this.pageSize, categoryList.id, this.serviceObject).then(response => {
           this.itemList = response.data.records;
           this.total = response.data.total;
         })

@@ -8,9 +8,9 @@ export function getCategoryTree(id) {
   })
 }
 
-export function getItemsByCategoryId(page, size, categoryId, serviceObject) {
+export function getItemPageByCategoryId(page, size, categoryId, serviceObject) {
   return fetch({
-    url: '/web/api/item/getItemsByCategoryId',
+    url: '/web/api/item/getItemPageByCategoryId',
     method: 'get',
     params: {page, size, categoryId, serviceObject}
   })
